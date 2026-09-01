@@ -1,0 +1,52 @@
+Complete steps to be followed in the entire buildup
+Problem Definition & System Requirements
+Domain Scope & Capability Definition
+Culinary Knowledge Ontology Design
+Data Source Identification
+Data Collection & Acquisition
+Data Licensing & Provenance Management
+Raw Data Ingestion
+Data Cleaning & Normalization
+Data Deduplication & Quality Filtering
+Culinary Knowledge Extraction
+Dataset Schema Design
+Pretraining Corpus Construction
+Instruction Dataset Construction
+Evaluation Dataset Construction
+Dataset Quality Validation
+Train–Validation–Test Splitting
+Tokenizer Design
+Vocabulary Construction
+Tokenization & Sequence Packing
+SLM Architecture Design
+Parameter & Hyperparameter Specification
+Training Infrastructure Setup
+Model Initialization
+Pretraining Pipeline Development
+SLM Pretraining
+Training Monitoring & Checkpointing
+Pretraining Validation
+Instruction Tuning Dataset Preparation
+Supervised Fine-Tuning
+Model Alignment & Behavioral Tuning
+Model Evaluation
+Culinary Knowledge Evaluation
+Language & Instruction-Following Evaluation
+Hallucination & Reliability Evaluation
+Ablation Studies
+Benchmark Comparison
+Error Analysis
+Model Optimization
+Inference Pipeline Development
+RAG Knowledge Layer Integration
+SLM–RAG Orchestration
+Application API Development
+Deployment Architecture
+Model Quantization & Compression
+Inference Optimization
+End-to-End System Testing
+Safety & Reliability Validation
+Production Deployment
+Monitoring & Evaluation Pipeline
+Documentation & Reproducibility
+Final Demonstration & Performance Analysis

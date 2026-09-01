@@ -1,0 +1,45 @@
+# PoC training run  (15M model, baseline master_baseline.md §7 / §12)
+# Target: prove the pipeline runs start-to-finish and resume is bit-exact.
+model_config: configs/model_15m.yaml
+tokenizer: artifacts/tokenizers/poc-16k
+run_name: poc-15m-001
+seed: 1337
+
+# --- data ---
+train_shards: data/corpus/poc/train
+val_shards: data/corpus/poc/val
+sequence_length: 1024
+pack_sequences: true
+
+# --- optimizer / schedule ---
+precision: bf16
+optimizer: adamw
+lr: 6.0e-4
+betas: [0.9, 0.95]
+weight_decay: 0.1
+grad_clip: 1.0
+warmup_ratio: 0.03
+lr_schedule: cosine
+min_lr_ratio: 0.1
+
+# --- batch ---
+micro_batch_size: 16
+grad_accum_steps: 4          # global batch ~= 16*4*1024 = 65,536 tokens
+max_steps: 2000              # PoC is short by design
+gradient_checkpointing: false
+
+# --- io / logging ---
+checkpoint_dir: artifacts/checkpoints/poc-15m-001
+checkpoint_every_steps: 250
+keep_last_n: 3
+save_best_on: val_loss
+eval_every_steps: 250
+log_every_steps: 10
+tracker: wandb               # or "none" for a fully offline smoke run
+wandb_project: food-slm-poc
+
+# --- PoC acceptance checks (asserted by scripts/run_poc_checks.py) ---
+acceptance:
+  runs_end_to_end: true
+  resume_bit_exact: true      # resume from step 250 -> identical loss at step 500
+  samples_are_english: true   # manual eyeball on generated continuations

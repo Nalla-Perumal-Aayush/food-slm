@@ -1,0 +1,32 @@
+# 15M Proof-of-Concept  (baseline master_baseline.md §5.2 / §12)
+# Purpose: validate the ENTIRE toolchain end to end on ~1-hour runs.
+# Judged for pipeline correctness, NOT culinary quality.
+# Same code path as Config A — only these numbers differ.
+# Param count: ~15.4M total
+name: food-slm-15m-poc
+arch: decoder_only_transformer
+
+hidden_dim: 320
+num_layers: 8
+num_heads: 5           # head_dim = 64
+num_kv_heads: 5
+ffn_inner_dim: 896     # SwiGLU, multiple of 64
+activation: silu
+ffn_type: swiglu
+
+positional: rope
+rope_theta: 10000.0
+
+norm: rmsnorm
+norm_position: pre
+qk_norm: true
+z_loss_weight: 1.0e-4
+
+tie_embeddings: true
+vocab_size: 16384
+
+dropout: 0.1
+attention_dropout: 0.0
+
+max_seq_len: 1024      # PoC trains at 1K only
+init: scaled_normal

@@ -1,0 +1,29 @@
+# Config A — LOCKED release architecture  (baseline master_baseline.md §5.1)
+# Param count: ~89.8M total  (~79.3M non-embedding + ~10.5M tied embedding)
+name: food-slm-89m
+arch: decoder_only_transformer
+
+hidden_dim: 640
+num_layers: 16
+num_heads: 10          # head_dim = 64
+num_kv_heads: 10       # MHA (GQA benchmark dropped)
+ffn_inner_dim: 1728    # SwiGLU, ~8/3 * hidden_dim, multiple of 64
+activation: silu
+ffn_type: swiglu
+
+positional: rope
+rope_theta: 10000.0
+
+norm: rmsnorm
+norm_position: pre
+qk_norm: true
+z_loss_weight: 1.0e-4
+
+tie_embeddings: true
+vocab_size: 16384      # set by tokenizer; keep in sync with configs/tokenizer.yaml
+
+dropout: 0.1           # residual + FFN (data-constrained repeated-epoch regime)
+attention_dropout: 0.0
+
+max_seq_len: 4096      # final target; trained via 1K -> 2K -> 4K curriculum
+init: scaled_normal    # std = 0.02, residual proj scaled by 1/sqrt(2*num_layers); exact scheme TBD

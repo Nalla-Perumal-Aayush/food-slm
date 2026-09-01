@@ -1,0 +1,45 @@
+# Tokenizer spec  (baseline master_baseline.md §6)
+# LOCKED: vocab size, byte-level property.
+# BENCHMARKED: BPE vs Unigram algorithm on the final corpus.
+vocab_size: 16384
+byte_level: true          # no UNK; Tamil proper nouns survive via byte fallback
+algorithm: bpe            # candidate; unigram benchmarked against this
+lowercase: false
+nfkc_normalize: true
+
+special_tokens:
+  - "<|pad|>"
+  - "<|bos|>"
+  - "<|eos|>"
+  - "<|unk|>"              # reserved, should never fire with byte fallback
+
+# Structural / control tokens — instruction & serialization format ONLY,
+# not a compression feature. Each must prove utility before it stays in.
+structural_tokens:
+  - "<DISH>"
+  - "<INGREDIENT>"
+  - "<QTY>"
+  - "<UNIT>"
+  - "<STEP>"
+  - "<TECHNIQUE>"
+  - "<TIME>"
+  - "<TEMP>"
+  - "<REGION>"
+  - "<OUTCOME>"
+  - "<CONSTRAINT>"
+
+# Instruction-format markers (chat template)
+chat_tokens:
+  - "<|user|>"
+  - "<|assistant|>"
+  - "<|system|>"
+
+analysis_report:
+  # metrics emitted by src/food_slm/tokenizer/analyze.py
+  - token_fertility
+  - compression_ratio
+  - vocab_utilization
+  - culinary_term_fragmentation
+  - number_unit_efficiency
+  - tamil_name_fragmentation
+  - sequence_length_efficiency

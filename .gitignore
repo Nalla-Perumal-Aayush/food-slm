@@ -1,0 +1,47 @@
+# --- caches / environments ---
+.cache/
+.wandb/
+wandb/
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+
+# --- data: large / regenerable / license-sensitive ---
+data/raw/**
+!data/raw/.gitkeep
+data/interim/**
+!data/interim/.gitkeep
+data/corpus/**
+!data/corpus/.gitkeep
+
+# --- model artifacts ---
+artifacts/checkpoints/**
+!artifacts/checkpoints/.gitkeep
+artifacts/tokenizers/**
+!artifacts/tokenizers/.gitkeep
+*.pt
+*.bin
+*.safetensors
+*.gguf
+
+# --- misc ---
+.env
+*.log
+.DS_Store
+Thumbs.db
+
+# --- tracked on purpose ---
+# data/canonical/**   (canonical JSONL knowledge store IS versioned)
+# data/eval/**        (eval sets + forbidden-entity list ARE versioned)
+# Documents/**         (planning docs ARE versioned)
+
+# office temp lock files
+~$*.docx
+~$*.xlsx
