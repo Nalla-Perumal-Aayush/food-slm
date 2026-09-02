@@ -1,7 +1,7 @@
 # Master Project Baseline
 ## From-Scratch Small Language Model — South Indian Cuisine (vegetarian & non-vegetarian)
 
-**Status:** Phases 1–3 frozen. Domain, architecture, tokenization, data-integrity framework, and schema v2 frozen through Revision 5. **Revision 6 (2026-09-02): the final SLM is LOCKED at ~150M parameters (Config B — d=768, L=20, 12 heads, SwiGLU 1984), tolerance ±5% for implementation fixes. No longer data-driven — 150M is the release target. Data collection is scaled to whatever 150M needs (~15–45B training tokens), sourced from permissive/open corpora + the culinary pipeline — see §8.** This document is the **single final reference** — edited in place, not versioned as a separate file.
+**Status:** Phases 1–3 frozen. Domain, architecture, tokenization, data-integrity framework, schema v2, extraction pipeline, and evaluation strategy frozen through Revision 7. **Revision 6 (2026-09-02): the final SLM is LOCKED at ~150M parameters (Config B — d=768, L=20, 12 heads, SwiGLU 1984), tolerance ±5% for implementation fixes. No longer data-driven — 150M is the release target. Data collection is scaled to whatever 150M needs (~15–45B training tokens), sourced from permissive/open corpora + the culinary pipeline — see §8.** This document is the **single final reference** — edited in place, not versioned as a separate file.
 **Next stage:** Phase 4 — Data Source Identification & Collection Strategy (see §8 and §13), executed against the schema v2 deltas in §3.1.
 
 ---
@@ -10,6 +10,7 @@
 
 | Rev | Date | Change |
 |---|---|---|
+| 7 | 2026-09-02 | **Extraction/synthesis pipeline + evaluation strategy designed.** `Documents/mcp_extraction_pipeline.md` — domain-agnostic **extract · synthesize · validate** engine; MCP server with 11 tools; Claude orchestrator + sub-agents; **self-hosted scraping only** (httpx+trafilatura / self-hosted Chromium; no scraping SaaS; robots.txt + rate-limit + cache); license classifier gates every source; agents write only to `data/interim/canon_staging/`, `promote_staged(reviewer)` is the sole path into `data/canonical/`; **facts not prose** (nothing scraped enters `data/corpus/`). `Documents/evaluation_strategy.md` — **AI-primary, human-anchored**: ground-truth anchors (forbidden-entity list + ~500–1000 golden QA pairs from primary sources + ~300–500 golden validation records) built once by a human; multi-family AI panels (GPT-4o + Gemini + local Qwen2.5-7B decide; Claude is tiebreak only — anti-circularity) do the scaling; **2.5% random human calibration** per batch/round, halt if AI-vs-human agreement < 90%. `configs/coverage_targets.yaml` (domain target matrix), `configs/agents.yaml` (role→provider roster), `src/food_slm/data/llm.py` (provider-agnostic multi-model client + Panel/consensus). |
 | 6 | 2026-09-02 | **Final model size LOCKED at ~150M parameters** (was data-driven). **Config B** — d=768, L=20, 12 MHA heads (head_dim 64), SwiGLU `ffn_inner_dim` 1984, vocab 16384 → **151,225,600 params (+0.8% of 150M)**; accepted tolerance **±5%** for implementation fixes (vocab lock, FFN rounding). `configs/model_150m.yaml` created; validated by `scripts/validate_model.py`. 89M (Config A) demoted to an optional mid-scale de-risk / ablation rung. 350M rung removed. **Data collection scaled to 150M's needs** (~15–45B training tokens) — the general-English base grows to ~12–40B tokens from **permissive / openly-licensed corpora (downloaded, not self-crawled)**; culinary stays authentic + grounded-synthetic under the existing integrity gates. "Scrape everything" is **not** adopted — it would forfeit the clean open-source release (license contamination) and eval integrity; §8 explains why it is also unnecessary. Timeline for the 150M run: ~1.5–3 weeks on the 70 W GPU. |
 | 5 | 2026-09-02 | **Domain expanded: Tamil Nadu vegetarian → South Indian cuisine.** Geography = Tamil Nadu, Kerala, Karnataka, Andhra Pradesh, Telangana, Puducherry. Diet = **vegetarian + non-vegetarian at full depth** (seafood, poultry, red meat, egg). **Religion / community out of scope** — dietary constraints modelled practically and neutrally; dishes tagged by region/style, never by community or religion. Model stays a **food-domain specialist** (general-English corpus is a language substrate only). **Model size is data-driven** — scale ladder 15M → 40M → 89M (Config A) → 150M → 350M, the rungs above 89M gated on 89M eval curves; no pre-commitment. Tamil-script policy generalised to a **4-script Dravidian policy** (Tamil, Malayalam, Kannada, Telugu). **Vocabulary size re-opened for benchmark** (16k → 24k candidate). **Schema v2 deltas** specified (§3.1) — pending code. Eval sets + forbidden-entity list to be rebuilt at the new scope. MCP-orchestrated structured-extraction pipeline moved onto the critical path. **Timeline 12–16 weeks → 6–12 months.** |
 | 4 | 2026-09-02 | **Tamil-script question resolved** (`Documents/tamil_script_policy.md`): "recognized, never required" — English-only I/O, native script only in a fixed inline form capped at ≤0.5% of pretraining tokens (hard gate), popular romanized transliteration is the join key, NFC at ingestion, Tamil-script vocab ≤5%, Tamil-heavy sources are extraction-only. **Forbidden-entity list frozen** before data collection (`data/eval/forbidden_entities.jsonl` + `.lock.json`, 18 seed entries, SHA-pinned, leak-checked in `scripts/validate_canonical.py`). Re-affirmed and hard-locked (no longer "proposed"): **4K context**, **bf16**, **general-English base corpus** (domain-only pretraining relaxation confirmed). |
@@ -177,7 +178,7 @@ The model outputs natural English prose. Consistency of shape comes from trainin
 
 **Decided data principles:**
 - AI-assisted collection/processing and AI-generated synthetic data are permitted (as augmentation, not replacement). Synthetic culinary data is generated only by serializing/paraphrasing canonical records, is fact-validated against canonical entities, is provenance-tagged, and is ratio-capped per capability (§8.2).
-- An **MCP-orchestrated structured-extraction pipeline** (Claude as lead orchestrator + sub-agents) is on the v2 critical path — but it extracts *structured facts* into the canonical store, it does **not** scrape prose into `data/corpus/`. Copyrighted recipe sites are `reference_only`: facts (ingredient lists, procedures) are extracted and re-expressed; expressive prose is not trained on. Human validation throughput, not extraction speed, is the rate limit.
+- An **MCP-orchestrated structured-extraction pipeline** (`Documents/mcp_extraction_pipeline.md`) is on the critical path — Claude orchestrator + sub-agents, **self-hosted scraping only**. It extracts *structured facts* into the canonical store; it does **not** scrape prose into `data/corpus/`. Copyrighted recipe sites are `reference_only`: facts are extracted and re-expressed; expressive prose is not trained on. Agents write only to `data/interim/canon_staging/`; `promote_staged(reviewer)` is the sole path into `data/canonical/`. Validation is **AI-primary, human-anchored** (`Documents/evaluation_strategy.md`): multi-family AI panels + cross-source corroboration decide; a **2.5% random human calibration sample** per batch, halt if agreement < 90%. The same engine runs backwards for synthesis (§8.2).
 - Provenance, deduplication, and quality filtering are mandatory.
 - Train/validation/test leakage prevention is mandatory. Splitting is **entity-disjoint** (a dish/recipe in train must not appear in val/test), not row-random — required because the model is expected to memorize.
 - A **train × eval n-gram contamination scan** + a **forbidden-entity scan** are hard gates before any training run.
@@ -344,7 +345,7 @@ download tens of GB before the mix ratios (§8.3) are fixed.
 
 | Bucket | Target | Notes |
 |---|---|---|
-| Canonical store records | ~10k–25k | comprehensive dish/ingredient/technique/region coverage, 6 regions, veg + non-veg |
+| Canonical store records | ~10k–25k (`configs/coverage_targets.yaml` sums to ~20k) | comprehensive dish/ingredient/technique/region coverage, 6 regions, veg + non-veg |
 | Authentic culinary tokens (unique) | ~150–500M | bounded by what exists + is licensable/extractable |
 | Synthetic culinary tokens (unique) | ~0.3–1B | capped ≤ 1–2× authentic (§8.2) |
 | **Unique culinary tokens** | **~0.5–1.5B** | the domain ceiling — not raised by more crawling |
@@ -363,8 +364,16 @@ memorizes.
 ## 9. Evaluation Architecture
 
 ```
-Model → Automated Metrics + AI Judge + Human Validation → Final Assessment
+Model → Automated Metrics + AI-Judge Panel + 2.5% Human Calibration → Final Assessment
 ```
+
+**AI-primary, human-anchored** (`Documents/evaluation_strategy.md`). Human effort is bounded:
+build ~1,500 golden items once (forbidden-entity list + golden QA set from primary sources +
+golden validation records), then a **2.5% random calibration sample** per eval round (halt if
+AI-vs-human agreement < 90%). The deciding judge panel is **GPT-4o + Gemini + a local model**
+(never Claude alone — Claude does extraction/synthesis, so it is a tiebreak cross-check only).
+Forbidden-entity probes and automated metrics (perplexity, generalization gap, format adherence,
+reproducibility) need no judge at all.
 
 **Metric families:** perplexity, validation loss, factual accuracy, ingredient correctness, procedure correctness, structured multi-step reasoning accuracy, instruction adherence, substitution accuracy, scaling accuracy, **per-region accuracy (all 6 regions reported separately)**, **veg / non-veg parity (accuracy gap between the two must be small)**, response-format adherence (§4.2), relevance, coherence, **hallucination rate, abstention correctness**, safety violation rate (incl. non-veg handling), **religion/community-leakage rate (must be ~0 — the model must not attribute dishes to communities or explain religious practice)**, consistency, **generalization gap (seen-dish vs unseen-dish accuracy)**, AI-as-a-Judge score, human evaluation score.
 
@@ -375,7 +384,7 @@ Success requires **structured / compositional reasoning over patterns represente
 ### 9.2 Integrity requirements
 
 - Held-out **"forbidden entity" list** (dishes/ingredients that must never appear in any training data) frozen before data collection — makes hallucination probes genuine. Mechanism live (`data/eval/forbidden_entities.jsonl` + `.lock.json`, SHA-pinned, amendments logged; `food_slm.data.forbidden.verify_lock` gates every training run; leak-checked against the canonical store by `scripts/validate_canonical.py` and against the assembled corpus by the Phase 11 gate). **Rev 5: the list must be rebuilt and re-frozen at the South India scope** — target ~80–150 entries spanning all 6 regions and veg + non-veg, both `withheld_real` (abstention) and `fictitious` (fabrication). The 18 TN-veg seed entries carry over.
-- Evaluation set built **before** the final corpus is frozen, balanced across the 6 regions and veg/non-veg, with a dedicated religion/community-leakage probe set.
+- Evaluation set built **before** the final corpus is frozen, balanced across the 6 regions and veg/non-veg, with a dedicated religion/community-leakage probe set. The **golden QA set (~500–1000 pairs) and golden validation set (~300–500 records) come from primary human sources, never AI generation** (`Documents/evaluation_strategy.md` §2).
 - Entity-disjoint train/val/test split; n-gram contamination scan + forbidden-entity scan as hard pre-training gates.
 
 Exact metric definitions, test-set sizes, scoring rubrics, and thresholds are finalized during the dedicated evaluation phase.
@@ -400,7 +409,7 @@ Hugging Face Model → Tokenizer → Inference Engine → User Query → SLM →
 
 ### 🔒 Frozen now
 
-True from-scratch SLM · Random initialization, no pretrained weights · Decoder-only Transformer · **Config B architecture — the LOCKED release (~150M ±5%): d=768, L=20, 12 MHA heads, SwiGLU 1984, RoPE, pre-norm RMSNorm + QK-norm + z-loss, tied embeddings, dropout 0.05–0.1 → 151.2M params** · **Ladder 15M PoC → 40M ablations → 89M (Config A) optional de-risk → 150M release; no 350M rung** · **Target ~15–45B training tokens; general-English base from permissive/open corpora (downloaded, not crawled); indiscriminate scraping rejected (§8.0)** · **Byte-level BPE** (no UNK) · **South Indian culinary domain — TN, Kerala, Karnataka, Andhra Pradesh, Telangana, Puducherry; vegetarian + non-vegetarian** · **Religion / community out of scope (neutral practical constraints; region/style tags only)** · **Food-domain specialist (general-English = substrate only)** · English interaction · **Dravidian 4-script policy "recognized, never required" (≤0.5% of tokens, transliteration bridge, NFC)** · **Structured/compositional reasoning success criterion** · **Capability tiers (abstention = Core)** · **4K context (hard-locked); 2K = throughput fallback; 1K→2K→4K curriculum** · **bf16 (hard-locked)** · **General-English base corpus (permissive only, download not scrape)** · **Formalized synthetic-data pipeline with per-capability ratio caps** · **MCP structured-extraction pipeline on the critical path (facts only, not prose)** · **Entity-disjoint splitting + contamination scan + forbidden-entity scan (hard gates)** · **Common record envelope + per-type content/structure schemas** · Typed directional relationships · Recipe process-DAG · Standardized measurement normalization · Three-stage evaluation (automated + AI judge + human) · Provenance/licensing requirements · RTX 2000 Ada 16GB / i9-14900K / 64GB RAM · 6–12 month timeline · Independent of RAG in core dev · Open-source via Hugging Face + GitHub
+True from-scratch SLM · Random initialization, no pretrained weights · Decoder-only Transformer · **Config B architecture — the LOCKED release (~150M ±5%): d=768, L=20, 12 MHA heads, SwiGLU 1984, RoPE, pre-norm RMSNorm + QK-norm + z-loss, tied embeddings, dropout 0.05–0.1 → 151.2M params** · **Ladder 15M PoC → 40M ablations → 89M (Config A) optional de-risk → 150M release; no 350M rung** · **Target ~15–45B training tokens; general-English base from permissive/open corpora (downloaded, not crawled); indiscriminate scraping rejected (§8.0)** · **Byte-level BPE** (no UNK) · **South Indian culinary domain — TN, Kerala, Karnataka, Andhra Pradesh, Telangana, Puducherry; vegetarian + non-vegetarian** · **Religion / community out of scope (neutral practical constraints; region/style tags only)** · **Food-domain specialist (general-English = substrate only)** · English interaction · **Dravidian 4-script policy "recognized, never required" (≤0.5% of tokens, transliteration bridge, NFC)** · **Structured/compositional reasoning success criterion** · **Capability tiers (abstention = Core)** · **4K context (hard-locked); 2K = throughput fallback; 1K→2K→4K curriculum** · **bf16 (hard-locked)** · **General-English base corpus (permissive only, download not scrape)** · **Formalized synthetic-data pipeline with per-capability ratio caps** · **MCP extract·synthesize·validate engine (self-hosted scraping, facts not prose, `promote_staged` sole path into the store)** · **AI-primary human-anchored evaluation (multi-family panels; 2.5% human calibration; golden sets from primary sources)** · **Entity-disjoint splitting + contamination scan + forbidden-entity scan (hard gates)** · **Common record envelope + per-type content/structure schemas** · Typed directional relationships · Recipe process-DAG · Standardized measurement normalization · Three-stage evaluation (automated + AI judge + human) · Provenance/licensing requirements · RTX 2000 Ada 16GB / i9-14900K / 64GB RAM · 6–12 month timeline · Independent of RAG in core dev · Open-source via Hugging Face + GitHub
 
 ### 🟡 Proposed — pending experimental validation
 
@@ -408,9 +417,11 @@ True from-scratch SLM · Random initialization, no pretrained weights · Decoder
 
 ### 📝 Pending code (specified, not yet implemented)
 
-Per-script romanization guides (Malayalam, Kannada, Telugu) · Rebuilt forbidden-entity list at South India scope (~80–150 entries) · MCP extraction-pipeline tool contract · Seed-store expansion beyond the single TN worked example · Eval **suites** (`eval/suites.py`, `judge.py`, `report.py`) · Curriculum stage ordering + RoPE context extension (`train/curriculum.py`)
+Per-script romanization guides (Malayalam, Kannada, Telugu) · Rebuilt forbidden-entity list at South India scope (~100–150 entries) · **MCP server + tools** (`data/{mcp_server,licensing,ingest,extract,dedup}.py`, `scripts/canon_run.py`) · Golden QA + golden validation sets (Phase 10) · Eval **suites / judge / report** (`eval/suites.py`, `judge.py`, `report.py`) · Curriculum stage ordering + RoPE context extension (`train/curriculum.py`)
 
-*Done (Fork A toolchain):* schema **v2** · **`FoodSLM` model** validated at 15M / 40M / 89M / **150M (Config B)** · **byte-level BPE tokenizer** · **canonical→text serializer** · **PoC dev-sample fetcher** · **sequence packing** (`train/packing.py`, deterministic shards + manifest + `PackedDataset`) · **training loop** (`train/loop.py` — bf16 AdamW, warmup+cosine, grad-accum, z-loss) · **bit-exact checkpoint/resume** (`train/checkpoint.py`) · **eval perplexity + generation** (`eval/{perplexity,generate}.py`). 15M PoC runs end-to-end on the 70 W GPU.
+*Done (Fork A toolchain):* schema **v2** · **`FoodSLM` model** validated at 15M / 40M / 89M / **150M (Config B)** · **byte-level BPE tokenizer** · **canonical→text serializer** · **PoC dev-sample fetcher** · **sequence packing** · **training loop** (bf16 AdamW, warmup+cosine, grad-accum, z-loss) · **bit-exact checkpoint/resume** · **eval perplexity + generation**. 15M PoC runs end-to-end on the 70 W GPU.
+
+*Done (pipeline design):* `Documents/mcp_extraction_pipeline.md` + `Documents/evaluation_strategy.md` · `configs/coverage_targets.yaml` + `configs/agents.yaml` · `src/food_slm/data/llm.py` (provider-agnostic multi-model client + Panel/consensus, `FakeProvider` for tests).
 
 ---
 
@@ -439,18 +450,14 @@ The 51-phase roadmap is unchanged in overall order; the data block (Phases 4–1
 ```
 Phase 3  Ontology
 Phase 4  Data Source ID + Licensing            (South India authentic culinary + permissive general-English)
-         + write the MCP extraction-pipeline tool contract
-Phase 5  Canonical Schema (JSONL knowledge store)   ← grounding source for all synthesis
-         ✅ v1 FINALIZED 2026-09-02 — spec: Documents/phase5_canonical_schema.md;
-            src/food_slm/schema/{models,store}.py; 13 record types, common envelope,
-            measurement normalization, typed relationships, recipe process-DAG.
-         📝 v2 deltas specified (§3.1) — cuisine_state, names[], non-veg categories,
-            constraint reframe, region hierarchy. Apply BEFORE serious Phase 6/7 collection.
-Phase 6  Authentic Ingestion → Clean → Normalize (Dravidian NFC) → Dedup
+         ✅ pipeline + eval strategy DESIGNED — Documents/mcp_extraction_pipeline.md,
+            Documents/evaluation_strategy.md, configs/coverage_targets.yaml, configs/agents.yaml
+Phase 5  Canonical Schema — ✅ v2 IMPLEMENTED (src/food_slm/schema/, migration run on seed store)
+Phase 6  Authentic Ingestion → Clean → Normalize (Dravidian NFC) → Dedup   (self-hosted scraping)
 Phase 7  Culinary Knowledge Extraction → populate canonical store
-         (MCP-orchestrated: gap analysis → source proposal + license check → extract →
-          entity-resolve → queue for human validation)
-Phase 7b Synthetic Data Generation Pipeline        (grounded, validated, dedup'd, ratio-capped)
+         (MCP: list_gaps → propose_sources → [human OK] → register_source → fetch → extract →
+          resolve → validate [AI panel] → stage → [2.5% human calibration] → promote_staged)
+Phase 7b Synthetic Data Generation Pipeline        (same engine backwards: synthesize → validate)
 Phase 8  Pretraining Corpus Assembly               (general-EN base + culinary authentic + synthetic;
                                                     ≤0.5% native-script token gate)
 Phase 9  Instruction Dataset Construction          (mostly agent-built from canonical store)
@@ -466,4 +473,4 @@ RAG integration (40–41), quantization/compression (44), alignment beyond abste
 
 ---
 
-*Rev 5 expanded the domain to South Indian cuisine (6 regions, veg + non-veg). **Rev 6 locks the final model at ~150M parameters (Config B, ±5%)** and sizes the data programme to it (~15–45B training tokens, general-English base from permissive/open corpora; indiscriminate scraping rejected, §8.0). Frozen: the domain, the architecture (Config B), byte-level tokenization, 4K context, bf16, the corpus strategy, the data-integrity framework, the reasoning success criterion, the capability tiers, and the schema (v2). Derived (empirical): vocabulary size, tokenizer algorithm, and the training hyperparameters — decided bottom-up on the 15M PoC → 40M → (89M) rungs before the single 150M run.*
+*Rev 5 expanded the domain to South Indian cuisine (6 regions, veg + non-veg). **Rev 6 locks the final model at ~150M parameters (Config B, ±5%)** and sizes the data programme to it (~15–45B training tokens; general-English base from permissive/open corpora, downloaded not scraped). **Rev 7 designs the extract·synthesize·validate engine** (`Documents/mcp_extraction_pipeline.md`, self-hosted scraping, facts-not-prose) and the **AI-primary, human-anchored evaluation** (`Documents/evaluation_strategy.md`, multi-family panels, 2.5% human calibration, golden sets from primary sources). Frozen: domain, architecture (Config B), byte-level tokenization, 4K context, bf16, corpus strategy, data-integrity framework, extraction pipeline design, evaluation strategy, reasoning criterion, capability tiers, schema v2. Derived (empirical): vocabulary size, tokenizer algorithm, training hyperparameters — decided bottom-up on 15M → 40M → (89M) before the single 150M run.*

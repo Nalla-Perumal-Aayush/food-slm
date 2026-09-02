@@ -1,0 +1,35 @@
+# AI agent roster — role -> providers (Documents/mcp_extraction_pipeline.md §5,
+# Documents/evaluation_strategy.md §6). Consumed by src/food_slm/data/llm.py.
+#
+# Security: first-party APIs only; zero-data-retention where offered; >=1 local model in every
+# panel. Only public URLs + public source text ever leave the machine. API keys from env:
+#   ANTHROPIC_API_KEY  OPENAI_API_KEY  GOOGLE_API_KEY  (OLLAMA_HOST optional, default localhost)
+#
+# Anti-circularity: Claude does extraction + synthesis, so it is NOT a deciding vote on the
+# data-validation or model-judge panels — only a tiebreak cross-check.
+
+roles:
+  orchestrator:
+    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5, family: anthropic}
+
+  extraction:
+    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5, family: anthropic}
+
+  synthesis:
+    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5, family: anthropic}
+
+  data_validation:            # panel — different families; unanimous + corroboration => auto
+    - {name: gpt-4o,        kind: openai,    model: gpt-4o,                 family: openai}
+    - {name: gemini-pro,    kind: google,    model: gemini-2.0-pro,         family: google}
+    - {name: qwen-local,    kind: ollama,    model: qwen2.5:7b-instruct-q4_K_M, family: open, local: true}
+
+  data_validation_tiebreak:   # only consulted on a split
+    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5,       family: anthropic}
+
+  model_judge:                # deciding panel for Phases 31-37 — must exclude anthropic
+    - {name: gpt-4o,        kind: openai,    model: gpt-4o,                 family: openai}
+    - {name: gemini-pro,    kind: google,    model: gemini-2.0-pro,         family: google}
+    - {name: qwen-local,    kind: ollama,    model: qwen2.5:7b-instruct-q4_K_M, family: open, local: true}
+
+  model_judge_tiebreak:
+    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5,       family: anthropic}

@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.0.9] — 2026-09-02
+### Added
+- **Extraction / synthesis pipeline design** — `Documents/mcp_extraction_pipeline.md`:
+  domain-agnostic **extract · synthesize · validate** engine; MCP server with 11 tools; Claude
+  orchestrator + sub-agents; **self-hosted scraping only** (httpx+trafilatura / self-hosted
+  Chromium; no scraping SaaS; robots.txt + rate-limit + cache); license classifier gates every
+  source; agents write only to `data/interim/canon_staging/`, `promote_staged(reviewer)` is the
+  sole path into `data/canonical/`; nothing scraped enters `data/corpus/`.
+- **Evaluation strategy** — `Documents/evaluation_strategy.md`: **AI-primary, human-anchored**.
+  Human builds ~1,500 golden items once (forbidden-entity list + golden QA set from primary
+  sources + golden validation records), then a **2.5% random calibration sample** per batch/round
+  (halt if AI-vs-human agreement < 90%). Deciding panels are GPT-4o + Gemini + a local model;
+  Claude is a tiebreak cross-check only (anti-circularity). Automated metrics + forbidden-entity
+  probes need no judge.
+- `configs/coverage_targets.yaml` — domain target matrix (~20k records: dishes by
+  state × category × veg/non-veg, techniques, ingredients, constraints, problems, terms).
+- `configs/agents.yaml` — role → provider roster; judge panel excludes Anthropic.
+- `src/food_slm/data/llm.py` — provider-agnostic multi-model client (Anthropic / OpenAI /
+  Google / local Ollama, lazy SDK import), `FakeProvider`, `Panel` + consensus (`unanimous` /
+  `split` / `needs_human`, distinct-family count). `tests/test_llm.py` (6 tests).
+- `requirements.txt` — commented Phase-6 pipeline deps (anthropic, openai, google-generativeai,
+  httpx, trafilatura, playwright, sentence-transformers, mcp).
+
 ## [0.0.8] — 2026-09-02
 ### Added
 - **Training loop** (`src/food_slm/train/loop.py`) — causal LM, bf16 autocast on CUDA, AdamW

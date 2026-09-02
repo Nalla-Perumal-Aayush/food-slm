@@ -1,0 +1,139 @@
+# Canonical-store coverage targets — drives MCP `list_gaps()` (Documents/mcp_extraction_pipeline.md).
+# Domain-agnostic engine: this file defines the domain. Totals ~= the ~10k-25k record target
+# for the 150M release (master_baseline.md §8.3). Numbers are targets, not quotas — the pipeline
+# stops pursuing a cell once it is within 10% or a human marks it "saturated".
+
+schema_version: "2"
+domain: south_indian_cuisine
+
+# --- per-type totals -----------------------------------------------------------
+record_targets:
+  source:        400
+  dish:          2500
+  recipe:        5000        # ~2 variants per dish on average
+  ingredient:    1500
+  technique:     300
+  equipment:     80
+  region:        60          # 6 states + sub-regions + cooking styles
+  state:         400         # ingredient/mixture/dish states for recipe DAGs
+  outcome:       200
+  constraint:    120
+  problem:       600
+  term:          2000
+  rel:           8000
+
+# --- dish coverage: cuisine_state x category ---------------------------------
+# each state gets a share; within a state, category weights sum to ~1.0.
+# non_veg_fraction is the target share of dishes in that state that are non-vegetarian.
+cuisine_states:
+  tamil_nadu:      {dish_share: 0.28, non_veg_fraction: 0.30}
+  kerala:          {dish_share: 0.22, non_veg_fraction: 0.55}
+  karnataka:       {dish_share: 0.20, non_veg_fraction: 0.25}
+  andhra_pradesh:  {dish_share: 0.15, non_veg_fraction: 0.45}
+  telangana:       {dish_share: 0.10, non_veg_fraction: 0.45}
+  puducherry:      {dish_share: 0.03, non_veg_fraction: 0.40}
+  pan_south:       {dish_share: 0.02, non_veg_fraction: 0.20}
+
+dish_category_weights:            # applied within every cuisine_state
+  tiffin:            0.12
+  rice_dish:         0.08
+  sambar:            0.04
+  kuzhambu:          0.05
+  rasam:             0.03
+  saaru:             0.02
+  pulusu:            0.02
+  kootu:             0.04
+  poriyal:           0.05
+  thoran:            0.03
+  avial:             0.01
+  chutney:           0.06
+  thogayal:          0.03
+  pachadi:           0.03
+  podi:              0.03
+  biryani:           0.03
+  pulao:             0.02
+  kurma:             0.02
+  non_veg_curry:     0.06
+  seafood_dish:      0.04
+  egg_dish:          0.02
+  dry_curry:         0.03
+  gravy_curry:       0.03
+  sweet:             0.06
+  snack:             0.05
+  beverage:          0.02
+  pickle:            0.02
+  bread:             0.02
+  festival_special:  0.03
+  other:             0.02
+
+# --- style tags (region.level == "style") to reach -----------------------------
+# Regional / culinary styles only — never community or religion (baseline §2.1).
+style_targets:
+  [chettinad, kongunadu, malabar, udupi, mangalorean, rayalaseema, coorg,
+   hyderabadi-deccan, temple-style, allium-free]
+
+# --- technique families to cover (min per family) ----------------------------
+technique_family_min:
+  heat_dry: 20
+  heat_fat: 40
+  heat_moist: 40
+  mechanical: 25
+  fermentation: 20
+  soaking_hydration: 15
+  tempering: 15
+  resting: 10
+  assembly: 20
+  marination: 15
+
+# --- ingredient categories (min per category) ------------------------------
+ingredient_category_min:
+  dal_legume: 60
+  rice_grain: 40
+  flour: 40
+  vegetable: 250
+  leafy_green: 60
+  fruit: 80
+  spice_whole: 60
+  spice_ground: 60
+  herb: 40
+  tempering_agent: 15
+  souring_agent: 20
+  sweetener: 20
+  fat_oil: 25
+  dairy: 25
+  nut_seed: 40
+  seafood: 80
+  poultry: 20
+  red_meat: 25
+  egg: 5
+  flavouring: 25
+  leavening: 10
+
+# --- constraint kinds (min) -------------------------------------------------
+constraint_kind_min:
+  dietary: 40          # allium-free, vegan, egg-free, no-shellfish, jain-style, ...
+  allergy: 25
+  preference: 25
+  medical: 20          # diabetic-friendly, low-oil, ...
+  cooking_style: 30
+
+# --- problem scopes (min) -------------------------------------------------
+problem_scope_min:
+  ingredient_prep: 80
+  fermentation: 60
+  cooking: 150
+  texture: 120
+  flavour: 100
+  storage: 50
+  doneness: 40
+
+# --- gap ranking: what list_gaps() prioritises -----------------------------
+priority_order:
+  - under_min_ingredient_category
+  - under_min_technique_family
+  - dish_cell_below_50pct          # a (state, category) cell < 50% of target
+  - missing_style_tag
+  - problem_scope_below_50pct
+  - dish_cell_below_90pct
+  - recipe_variants_thin           # dishes with < 1 recipe
+  - terminology_below_target

@@ -37,5 +37,17 @@ typer==0.15.1
 pytest==8.3.4
 ruff==0.9.4
 
-# NOT used in v1 (poor native-Windows support, dense 89M model needs none):
+# --- extraction / evaluation pipeline (Phase 6+; install when starting Phase 6) ---
+# NOT installed yet — src/food_slm/data/llm.py imports these lazily.
+#   anthropic                 # orchestrator + extraction + synthesis + judge tiebreak
+#   openai                    # data-validation + model-judge panel
+#   google-generativeai       # data-validation + model-judge panel
+#   httpx                     # self-hosted fetch + local Ollama client
+#   trafilatura               # static-page main-content extraction
+#   playwright                # self-hosted headless Chromium for JS pages
+#   sentence-transformers     # bge-small-en-v1.5 embeddings (entity resolution / dedup)
+#   mcp                       # the MCP server SDK
+# Local models via Ollama (separate install): qwen2.5:7b-instruct, llama3.1:8b-instruct
+
+# NOT used in v1 (poor native-Windows support, dense 150M model needs none):
 #   bitsandbytes, flash-attn, deepspeed, xformers, triton, peft, trl

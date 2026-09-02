@@ -11,7 +11,10 @@ Flow:
 Modules:
   forbidden.py   IMPLEMENTED - frozen forbidden-entity list: lock verification + leak checks
   serialize.py   IMPLEMENTED (PoC-minimal) - canonical store -> training text
-  ingest.py      raw source -> interim records + provenance
+  llm.py         IMPLEMENTED - provider-agnostic multi-model client + Panel/consensus
+  licensing.py   source license classifier (Documents/mcp_extraction_pipeline.md §4)
+  mcp_server.py  the 11 canon-pipeline tools (Documents/mcp_extraction_pipeline.md §2)
+  ingest.py      raw source -> interim records + provenance (self-hosted scraping)
   clean.py       unicode/html/noise normalization
   langid.py      fasttext language id + Tamil-script ratio gate (>15% -> extraction-only)
   normalize.py   ingredient / unit normalization + Tamil NFC pipeline (tamil_script_policy.md §6)
