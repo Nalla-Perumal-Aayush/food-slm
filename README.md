@@ -14,7 +14,7 @@ interacting in English. Food-domain specialist — not a general assistant.
 
 | | |
 |---|---|
-| Phase | 4 — Data Source ID + MCP contract. Fork A: model + tokenizer + sequence packing built & tested; next = training loop → checkpoint/resume → eval harness |
+| Phase | 4 — Data Source ID + MCP contract. **Fork A toolchain complete** (model, tokenizer, packing, training loop, bit-exact checkpoint/resume, perplexity + generation); 15M PoC runs end-to-end. Next = real seed corpus + full PoC run. |
 | Domain | South Indian cuisine, 6 regions, veg + non-veg; religion/community out of scope |
 | Canonical store | **schema v2** (`src/food_slm/schema/`, `configs/canonical_enums.yaml`); seed store migrated — `python scripts/validate_canonical.py` |
 | Native scripts | 4-script Dravidian policy "recognized, never required" — English I/O, transliteration bridge, ≤0.5% of tokens |
@@ -41,8 +41,8 @@ src/food_slm/
   data/             ingestion, cleaning, normalization, dedup, synthetic pipeline
   tokenizer/        byte-level BPE trainer + analysis report — built
   model/            config-driven transformer (FoodSLM) — built + validated at 15M/40M/89M
-  train/            sequence packing (done) + training loop, checkpoint/resume, curriculum
-  eval/             perplexity, generation, AI-judge harness
+  train/            packing + training loop + bit-exact checkpoint/resume (done); curriculum next
+  eval/             perplexity + generation (done); suites, AI-judge, report next
 scripts/            thin CLI entry points
 artifacts/          (gitignored) checkpoints, trained tokenizers, reports
 ```

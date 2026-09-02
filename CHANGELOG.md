@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.0.8] — 2026-09-02
+### Added
+- **Training loop** (`src/food_slm/train/loop.py`) — causal LM, bf16 autocast on CUDA, AdamW
+  (β 0.9/0.95, wd 0.1), linear warmup + cosine decay to `min_lr_ratio` (pure function of step),
+  gradient accumulation, global grad-norm clip, z-loss (in the model). Periodic val eval +
+  checkpoints. `TrainConfig` from YAML; `deterministic=True` / `device=` overrides;
+  `stop_after` for resume testing.
+- **Bit-exact checkpoint/resume** (`train/checkpoint.py`) — saves model + optimizer + step +
+  python/numpy/torch RNG state. `BatchSampler` — deterministic, position-independent micro-batch
+  index stream (batch *b* is a pure function of `(seed, b)`), so resume just sets `start_batch`.
+  `prune_checkpoints` keeps the last N.
+- **Eval** (`src/food_slm/eval/`) — `perplexity.py` (`evaluate_loss`, `perplexity_report`),
+  `generate.py` (temperature / top-k / top-p sampling, `generate_text`).
+- `scripts/train.py`, `scripts/run_poc_checks.py`; `tests/test_train.py` (7 tests — LR schedule,
+  sampler determinism/resumability, checkpoint round-trip, exact checkpoint at stop, bit-exact
+  resume in deterministic mode, no-divergence resume, short run learns).
+### Verified
+- 15M PoC trains end-to-end on the RTX 2000 Ada: loss 9.77 → 7.0 in 60 steps, ~38k tok/s;
+  interrupt-at-20 → resume-to-40 continues the trajectory cleanly.
+- `ModelConfig` now validates `hidden_dim % num_heads` and `num_heads % num_kv_heads`.
+
 ## [0.0.7] — 2026-09-02
 ### Added
 - **Sequence packing** (`src/food_slm/train/packing.py`) — tokenize each document, append

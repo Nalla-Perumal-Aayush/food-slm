@@ -193,3 +193,7 @@ class PackedDataset:
     def __getitem__(self, i: int):
         row = np.asarray(self._mm[i], dtype=np.int64)
         return row, row.copy()
+
+    def batch(self, idx) -> np.ndarray:
+        """Stack the given window indices into an ``(len(idx), seq_len)`` int64 array."""
+        return np.stack([np.asarray(self._mm[int(j)], dtype=np.int64) for j in idx])

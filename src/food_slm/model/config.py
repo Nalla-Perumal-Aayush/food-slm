@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from food_slm.utils import load_yaml
 
@@ -40,6 +40,14 @@ class ModelConfig(BaseModel):
     @classmethod
     def from_yaml(cls, path: str | Path) -> ModelConfig:
         return cls(**load_yaml(path))
+
+    @model_validator(mode="after")
+    def _check_heads(self) -> ModelConfig:
+        if self.hidden_dim % self.num_heads != 0:
+            raise ValueError("hidden_dim must be divisible by num_heads")
+        if self.num_heads % self.num_kv_heads != 0:
+            raise ValueError("num_heads must be divisible by num_kv_heads")
+        return self
 
     @property
     def head_dim(self) -> int:

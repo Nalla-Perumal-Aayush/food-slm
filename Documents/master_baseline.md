@@ -408,9 +408,9 @@ True from-scratch SLM · Random initialization, no pretrained weights · Decoder
 
 ### 📝 Pending code (specified, not yet implemented)
 
-Per-script romanization guides (Malayalam, Kannada, Telugu) · Rebuilt forbidden-entity list at South India scope (~80–150 entries) · MCP extraction-pipeline tool contract · Seed-store expansion beyond the single TN worked example · **Training loop → checkpoint/resume → eval harness** (rest of Fork A)
+Per-script romanization guides (Malayalam, Kannada, Telugu) · Rebuilt forbidden-entity list at South India scope (~80–150 entries) · MCP extraction-pipeline tool contract · Seed-store expansion beyond the single TN worked example · Eval **suites** (`eval/suites.py`, `judge.py`, `report.py`) · Curriculum stage ordering + RoPE context extension (`train/curriculum.py`)
 
-*Done:* schema **v2** · **`FoodSLM` model** validated at 15M / 40M / 89M / **150M (Config B)** + `configs/model_150m.yaml` · **byte-level BPE tokenizer** trainer + analyzer (`src/food_slm/tokenizer/`) · **canonical→text serializer** (`data/serialize.py`) · **PoC dev-sample fetcher** (`scripts/fetch_sample.py` — **not** the training corpus) · **sequence packing** (`train/packing.py` + `scripts/pack_corpus.py`) — deterministic `uint16` shards + reproducibility manifest + `PackedDataset` memmap reader.
+*Done (Fork A toolchain):* schema **v2** · **`FoodSLM` model** validated at 15M / 40M / 89M / **150M (Config B)** · **byte-level BPE tokenizer** · **canonical→text serializer** · **PoC dev-sample fetcher** · **sequence packing** (`train/packing.py`, deterministic shards + manifest + `PackedDataset`) · **training loop** (`train/loop.py` — bf16 AdamW, warmup+cosine, grad-accum, z-loss) · **bit-exact checkpoint/resume** (`train/checkpoint.py`) · **eval perplexity + generation** (`eval/{perplexity,generate}.py`). 15M PoC runs end-to-end on the 70 W GPU.
 
 ---
 
@@ -418,7 +418,7 @@ Per-script romanization guides (Malayalam, Kannada, Telugu) · Rebuilt forbidden
 
 The 15M model is **not a throwaway toy** — it is the project's first implementation milestone and de-risking instrument.
 
-**Progress (Fork A):** ✅ **model** — `FoodSLM` validated at 15M / 40M / 89M / **150M (Config B, 151,225,600 params)** on CUDA bf16. ✅ **tokenizer** — byte-level BPE trainer + analyzer, lossless byte round-trip across all 4 Dravidian scripts. ✅ **serializer** + **PoC dev-sample fetcher**. ✅ **sequence packing** (`train/packing.py`) — deterministic `uint16` windows + manifest with content hashes; `PackedDataset` memmap reader; PoC corpus packed (8,969 train + 183 val windows @ 1024). **Remaining:** training loop (AdamW, warmup+cosine, bf16, grad-accum, z-loss) → bit-exact checkpoint/resume → eval harness (perplexity + generation).
+**Progress (Fork A):** ✅ **model** validated at 15M/40M/89M/**150M (Config B)**. ✅ **tokenizer** — byte-level BPE + analyzer. ✅ **serializer** + **PoC sample fetcher**. ✅ **sequence packing** — deterministic `uint16` shards + `PackedDataset`. ✅ **training loop** (`train/loop.py`) — bf16 AdamW, warmup+cosine, grad-accum, grad-clip, z-loss; **bit-exact checkpoint/resume** (`train/checkpoint.py` — model+optim+RNG + deterministic `BatchSampler`); periodic val eval. ✅ **eval** — `perplexity.py` + `generate.py` (temperature/top-k/top-p). **15M PoC verified end-to-end on the RTX 2000 Ada** (loss 9.77→7.0/60 steps, ~38k tok/s; interrupt→resume continues cleanly). **Remaining:** populate a real seed corpus + run the full ~1-hour 15M PoC and eyeball samples; then 40M ablations.
 
 **What it proves:**
 - The full pipeline runs end to end: canonical JSONL → tokenizer training → sequence packing → training loop → checkpoint/resume → evaluation harness → sample generation.

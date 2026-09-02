@@ -6,10 +6,8 @@ run_name: poc-15m-001
 seed: 1337
 
 # --- data ---
-train_shards: data/corpus/poc/train
-val_shards: data/corpus/poc/val
-sequence_length: 1024
-pack_sequences: true
+shard_dir: data/corpus/poc      # holds tokens.bin (train) + val.bin + manifest.json
+sequence_length: 1024           # must match the packed manifest
 
 # --- optimizer / schedule ---
 precision: bf16
@@ -34,8 +32,9 @@ checkpoint_every_steps: 250
 keep_last_n: 3
 save_best_on: val_loss
 eval_every_steps: 250
+eval_batches: 20
 log_every_steps: 10
-tracker: wandb               # or "none" for a fully offline smoke run
+tracker: none               # "wandb" for a tracked run, "none" for offline
 wandb_project: food-slm-poc
 
 # --- PoC acceptance checks (asserted by scripts/run_poc_checks.py) ---
