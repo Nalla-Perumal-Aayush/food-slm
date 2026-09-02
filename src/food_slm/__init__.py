@@ -1,6 +1,6 @@
-"""Food-SLM: from-scratch decoder-only SLM for Tamil Nadu vegetarian cuisine.
+"""Food-SLM: from-scratch decoder-only SLM for South Indian cuisine (veg + non-veg).
 
-See Documents/master_baseline.md (Revision 2) for the frozen specification.
+See Documents/master_baseline.md (Revision 6) for the frozen specification.
 """
 
-__version__ = "0.0.1"
+__version__ = "0.0.7"

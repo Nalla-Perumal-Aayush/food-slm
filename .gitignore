@@ -20,6 +20,8 @@ data/interim/**
 !data/interim/.gitkeep
 data/corpus/**
 !data/corpus/.gitkeep
+data/instruction/**
+!data/instruction/.gitkeep
 
 # --- model artifacts ---
 artifacts/checkpoints/**
@@ -34,6 +36,8 @@ artifacts/tokenizers/**
 # --- misc ---
 .env
 *.log
+# forbidden-entity freeze audit trail IS versioned
+!data/eval/forbidden_entities.amendments.log
 .DS_Store
 Thumbs.db
 

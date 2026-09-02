@@ -1,0 +1,19 @@
+{
+  "sha256": "205a4141265b075f1fb84f99e022361ee1245cd2e98c44b086ea4cb484028f2b",
+  "n_entries": 18,
+  "kinds": {
+    "withheld_real": 11,
+    "fictitious": 7
+  },
+  "frozen_on": "2026-09-01",
+  "last_amended": "2026-09-01T23:43:51+00:00",
+  "amendments": [
+    {
+      "at": "2026-09-01T23:43:51+00:00",
+      "from_sha256": null,
+      "to_sha256": "205a4141265b075f1fb84f99e022361ee1245cd2e98c44b086ea4cb484028f2b",
+      "n_entries": 18,
+      "note": "initial freeze before Phase 4 data collection"
+    }
+  ]
+}

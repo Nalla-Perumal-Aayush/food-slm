@@ -1,10 +1,24 @@
 """Tokenizer training + analysis (baseline §6, Phases 17-19).
 
-LOCKED: vocab_size 16384, byte-level, structural/control tokens.
-BENCHMARKED: BPE vs Unigram algorithm on the final corpus.
+LOCKED: byte-level (no UNK), structural/control tokens.
+BENCHMARKED: vocab size (16k vs 24k) + BPE vs Unigram algorithm on the final corpus.
 
-Modules (to be implemented):
-  train.py     train a HF `tokenizers` model from configs/tokenizer.yaml
-  analyze.py   fertility, compression ratio, vocab utilization,
-               culinary-term / Tamil-name fragmentation, number/unit efficiency
+  train.py     byte-level BPE training from configs/tokenizer.yaml
+  analyze.py   fertility, compression, vocab utilization, culinary-term /
+               native-name fragmentation, number/unit efficiency
 """
+from food_slm.tokenizer.analyze import analyze_tokenizer
+from food_slm.tokenizer.train import (
+    TokenizerSpec,
+    build_tokenizer,
+    load_tokenizer,
+    train_tokenizer,
+)
+
+__all__ = [
+    "TokenizerSpec",
+    "build_tokenizer",
+    "train_tokenizer",
+    "load_tokenizer",
+    "analyze_tokenizer",
+]

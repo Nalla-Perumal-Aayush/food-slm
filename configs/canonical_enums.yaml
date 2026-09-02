@@ -1,0 +1,102 @@
+# Controlled vocabularies for the canonical knowledge store (Phase 5 schema v2, §7 / §0.1).
+# Human copy: Documents/phase5_canonical_schema.md. Executable copy: the Literal types in
+# src/food_slm/schema/models.py (authoritative). This file is the reference the two agree with.
+# Changing any list is a schema change.
+
+schema_version: "2"
+
+record_types:
+  [source, ingredient, dish, recipe, technique, equipment, region,
+   state, outcome, constraint, problem, term, rel]
+
+# --- v2: languages / cuisine dimension -------------------------------------------------------
+dravidian_langs: [ta, ml, kn, te]          # Tamil, Malayalam, Kannada, Telugu
+lang_script: {ta: tamil, ml: malayalam, kn: kannada, te: telugu}
+cuisine_states:
+  [tamil_nadu, kerala, karnataka, andhra_pradesh, telangana, puducherry, pan_south]
+region_levels: [state, sub_region, style]
+
+# --- v2: community / religion terms rejected in labels + structure (and, via store, content) --
+# Regional / cooking-style tags only. Extend here + in models.DISALLOWED_COMMUNITY_TERMS.
+disallowed_community_terms:
+  [brahmin, iyer, iyengar, smartha, madhwa, muslim, christian, hindu, islamic, nasrani,
+   mappila, moplah, "syrian christian"]
+allowed_style_tags:
+  [chettinad, kongunadu, malabar, udupi, rayalaseema, coorg, hyderabadi-deccan, mangalorean,
+   "temple-style", "saatvik", "jain-style"]
+
+relationship_predicates:
+  [used_in, substitutes_for, precedes, transforms_state, variant_of, belongs_to_region,
+   requires_technique, requires_equipment, pairs_with, part_of, causes_problem, fixes_problem,
+   violates_constraint, satisfies_constraint, produces_outcome, has_alias, derived_from, seasonal_in]
+
+# predicate -> [allowed subject prefixes, allowed object prefixes]; "*" = any entity
+predicate_types:
+  used_in:              [[ing], [dish, recipe]]
+  substitutes_for:      [[ing], [ing]]
+  precedes:             [[tech], [tech]]
+  transforms_state:     [[tech], [state]]
+  variant_of:           [[dish], [dish]]
+  belongs_to_region:    [[dish, ing, tech, region], [region]]
+  requires_technique:   [[dish, recipe], [tech]]
+  requires_equipment:   [[dish, recipe, tech], [equip]]
+  pairs_with:           [[dish, ing], [dish, ing]]
+  part_of:              [["*"], ["*"]]
+  causes_problem:       [[ing, tech, state], [problem]]
+  fixes_problem:        [[tech, ing], [problem]]
+  violates_constraint:  [[ing, dish, recipe], [constraint]]
+  satisfies_constraint: [[dish, recipe], [constraint]]
+  produces_outcome:     [[recipe, tech], [outcome]]
+  has_alias:            [["*"], [term]]
+  derived_from:         [["*"], ["*"]]
+  seasonal_in:          [[ing, dish], [region]]
+
+units:
+  mass:        [mg, g, kg]
+  volume:      [ml, l, tsp, tbsp, cup]
+  count:       [count, clove, sprig, piece]
+  time:        [sec, min, hr]
+  temperature: [C]
+qualitative_values: [to_taste, a_pinch, a_few, handful, as_needed, garnish]
+canonical_base_unit: {mass: g, volume: ml, count: count, time: min, temperature: C, length: cm}
+
+action_verbs:
+  [soak, drain, rinse, grind, blend, mix, knead, ferment, rest, heat, temper, saute, fry,
+   deep_fry, roast, dry_roast, boil, simmer, pressure_cook, steam, add, combine, mash, season,
+   garnish, cool, serve, reduce, strain, cover, flip, marinate, sear, braise, grill]
+
+phases: [prep, soak, grind, ferment, temper, cook, assemble, finish, rest, serve]
+
+heat_levels: [low, medium-low, medium, medium-high, high]
+
+diet_flags:
+  [vegetarian, vegan, contains_dairy, contains_egg, contains_seafood, contains_poultry,
+   contains_red_meat]
+
+constraint_kinds: [dietary, allergy, preference, medical, cooking_style]
+
+license_class_usable_for:
+  public_domain:      [training, grounding]
+  permissive:         [training, grounding]
+  share_alike:        [training, grounding]     # attribution / share-alike obligations tracked
+  noncommercial:      [grounding, reference_only]
+  unknown:            [reference_only]
+  all_rights_reserved: [reference_only]
+
+ingredient_categories:
+  [dal_legume, rice_grain, flour, vegetable, leafy_green, fruit, spice_whole, spice_ground, herb,
+   tempering_agent, souring_agent, sweetener, fat_oil, dairy, nut_seed, flavouring, leavening,
+   salt, water, seafood, poultry, red_meat, egg, other]
+
+culinary_roles:
+  [base, thickener, souring, tempering, aromatic, sweetening, binding, garnish, fat, leavening,
+   colouring, bulking, protein, marinade]
+
+allergen_classes: [nuts, dairy, gluten, legume, sesame, mustard, fish, shellfish, egg, soy, none]
+
+dish_categories:
+  [tiffin, rice_dish, kuzhambu, sambar, rasam, kootu, poriyal, masiyal, thogayal, chutney, podi,
+   pachadi, appalam_vadagam, sweet, snack, beverage, pickle, bread, festival_special,
+   biryani, pulao, kurma, non_veg_curry, seafood_dish, egg_dish, thoran, avial, olan,
+   mezhukkupuratti, palya, gojju, saaru, pulusu, pappu, vepudu, dry_curry, gravy_curry, stew,
+   porridge, other]

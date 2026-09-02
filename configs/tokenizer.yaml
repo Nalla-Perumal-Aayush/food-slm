@@ -1,11 +1,22 @@
-# Tokenizer spec  (baseline master_baseline.md §6)
-# LOCKED: vocab size, byte-level property.
-# BENCHMARKED: BPE vs Unigram algorithm on the final corpus.
-vocab_size: 16384
-byte_level: true          # no UNK; Tamil proper nouns survive via byte fallback
+# Tokenizer spec  (baseline master_baseline.md §6; scripts: Documents/tamil_script_policy.md)
+# LOCKED: byte-level property.  BENCHMARKED: vocab size (16k vs 24k) + BPE vs Unigram.
+vocab_size: 16384         # default / PoC; 24k is the other benchmark candidate (baseline §6)
+byte_level: true          # no UNK; Dravidian proper nouns survive via byte fallback
 algorithm: bpe            # candidate; unigram benchmarked against this
 lowercase: false
-nfkc_normalize: true
+nfkc_normalize: true      # applied on text already NFC-normalized at ingestion
+
+# Dravidian-script handling (baseline §6) — "recognized, never required" for ta/ml/kn/te.
+dravidian_script:
+  # tokenizer training sees native script only at its true corpus frequency; no injected text
+  inject_balancing_text: false
+  max_vocab_share: 0.08           # <= ~8% of vocab may be native-script tokens (guardrail, 4 scripts)
+  max_pretraining_token_share: 0.005   # HARD GATE at corpus-assembly time (data.assemble)
+  ingestion_normalization_form: nfc    # data.normalize target before the tokenizer's NFKC
+  source_corpus_eligibility_max_native_ratio: 0.15  # data.langid: above this -> extraction-only
+  add_script_structural_token: false
+  # informational analysis targets (not gates)
+  target_median_tokens_per_dish_name_native: 6
 
 special_tokens:
   - "<|pad|>"
@@ -41,5 +52,6 @@ analysis_report:
   - vocab_utilization
   - culinary_term_fragmentation
   - number_unit_efficiency
-  - tamil_name_fragmentation
+  - native_name_fragmentation
+  - native_script_vocab_share
   - sequence_length_efficiency

@@ -38,7 +38,7 @@ class ModelConfig(BaseModel):
     init: str = "scaled_normal"
 
     @classmethod
-    def from_yaml(cls, path: str | Path) -> "ModelConfig":
+    def from_yaml(cls, path: str | Path) -> ModelConfig:
         return cls(**load_yaml(path))
 
     @property
@@ -47,11 +47,14 @@ class ModelConfig(BaseModel):
         return self.hidden_dim // self.num_heads
 
     def param_count(self) -> dict[str, int]:
+        """Analytic parameter count — matches ``FoodSLM.num_params`` within rounding."""
         d, L, v = self.hidden_dim, self.num_layers, self.vocab_size
         h = self.ffn_inner_dim
-        attn = 4 * d * d                              # q, k, v, o  (MHA)
-        ffn = 3 * d * h                               # gate, up, down (SwiGLU)
-        per_layer = attn + ffn + 2 * d                # + 2 RMSNorm gains
+        attn = 4 * d * d                              # q, k, v, o  (MHA, no bias)
+        ffn = 3 * d * h                               # gate, up, down (SwiGLU, no bias)
+        norms = 2 * d                                 # 2 pre-norm RMSNorm gains
+        qk = 2 * self.head_dim if self.qk_norm else 0  # per-head q/k RMSNorm gains
+        per_layer = attn + ffn + norms + qk
         non_embed = L * per_layer + d                 # + final norm
         embed = v * d                                 # tied -> counted once
         return {

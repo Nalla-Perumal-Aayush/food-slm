@@ -1,0 +1,42 @@
+# Measurement conversion tables for canonical-store normalization (Phase 5 schema v1, §6).
+# Indian metric kitchen convention. Overridable — the normalizer loads this file, never hardcodes.
+
+schema_version: "1"
+
+# volume unit -> millilitres
+volume_ml:
+  tsp: 5.0
+  tbsp: 15.0
+  cup: 240.0
+  ml: 1.0
+  l: 1000.0
+
+# mass unit -> grams
+mass_g:
+  mg: 0.001
+  g: 1.0
+  kg: 1000.0
+
+# time unit -> minutes
+time_min:
+  sec: 0.016666667
+  min: 1.0
+  hr: 60.0
+
+# Per-ingredient dry densities for volume->mass conversion, g per ml.
+# key: "<ingredient_id>" or "<ingredient_id>|<form>". Only add a value you can cite.
+# If an ingredient is absent here, the normalizer KEEPS dimension=volume (never guesses).
+density_g_per_ml:
+  "ing:rice-raw|raw":          0.85
+  "ing:urad-dal-whole|whole":  0.80
+  "ing:urad-dal-split|split":  0.78
+  "ing:toor-dal|split":        0.80
+  "ing:moong-dal|split":       0.78
+  "ing:rava-sooji":            0.68
+  "ing:rice-flour|powder":     0.55
+  "ing:jaggery|ground":        0.85
+  "ing:sugar":                 0.85
+  "ing:salt|powder":           1.20
+  "ing:grated-coconut|fresh":  0.35
+  "ing:mustard-seeds|whole":   0.72
+  "ing:cumin-seeds|whole":     0.52

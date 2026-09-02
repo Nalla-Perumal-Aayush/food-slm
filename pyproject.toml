@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "food-slm"
-version = "0.0.1"
-description = "From-scratch decoder-only Small Language Model for Tamil Nadu vegetarian cuisine"
+version = "0.0.7"
+description = "From-scratch decoder-only Small Language Model for South Indian cuisine"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }

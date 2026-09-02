@@ -8,7 +8,12 @@ from pathlib import Path
 
 from food_slm.model.config import ModelConfig
 
-CONFIGS = ["configs/model_15m.yaml", "configs/model_40m.yaml", "configs/model_89m.yaml"]
+CONFIGS = [
+    "configs/model_15m.yaml",
+    "configs/model_40m.yaml",
+    "configs/model_89m.yaml",
+    "configs/model_150m.yaml",
+]
 
 
 def main() -> None:
