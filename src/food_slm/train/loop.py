@@ -109,6 +109,8 @@ def train(
     repo_root: str | Path | None = None,
     deterministic: bool = False,
     device: str | None = None,
+    checkpoint_dir: str | Path | None = None,
+    overrides: dict | None = None,
 ) -> TrainResult:
     """Train from *config_path*. ``stop_after`` breaks the loop after that optimizer step
     (saving a checkpoint) without changing the LR schedule — used for resume testing.
@@ -119,6 +121,12 @@ def train(
     cfg = TrainConfig.from_yaml(config_path)
     if max_steps is not None:
         cfg.max_steps = max_steps
+    if checkpoint_dir is not None:
+        cfg.checkpoint_dir = str(checkpoint_dir)
+    for k, v in (overrides or {}).items():
+        if not hasattr(cfg, k):
+            raise ValueError(f"unknown train override {k!r}")
+        setattr(cfg, k, v)
     if deterministic:
         torch.set_num_threads(1)
     set_seed(cfg.seed, deterministic=deterministic)

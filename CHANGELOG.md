@@ -26,6 +26,10 @@
   explicitly rejected** (force-upgrades `transformers` to 5.x and breaks the pinned stack;
   `fastembed` is isolated ONNX). `transformers` kept at 4.48.2.
 - `.env.example` — `FASTEMBED_CACHE_DIR`, `OLLAMA_HOST`; optional free-tier keys noted.
+### Fixed
+- `train()` gains `checkpoint_dir` + `overrides` params. `scripts/run_poc_checks.py` rewritten
+  to use isolated temp checkpoint dirs (was reusing one dir → `resume auto` picked a stale
+  checkpoint) and a tiny batch in deterministic-CPU mode so the check finishes in minutes.
 
 ## [0.0.8] — 2026-09-02
 ### Added
