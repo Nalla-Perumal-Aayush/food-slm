@@ -20,8 +20,8 @@ interacting in English. Food-domain specialist — not a general assistant.
 | Canonical store | **schema v2** (`src/food_slm/schema/`, `configs/canonical_enums.yaml`); seed store migrated — `python scripts/validate_canonical.py` |
 | Native scripts | 4-script Dravidian policy "recognized, never required" — English I/O, transliteration bridge, ≤0.5% of tokens |
 | Forbidden entities | mechanism live (SHA-locked); list to be rebuilt at South India scope (~100–150 entries) |
-| Data pipeline | designed — MCP extract·synthesize·validate engine, self-hosted scraping, facts-not-prose (`configs/coverage_targets.yaml`) |
-| Evaluation | AI-primary, human-anchored — multi-family panels + **2.5% human calibration** + golden sets from primary sources |
+| Data pipeline | designed — extract·synthesize·validate engine; **all-free stack** (Claude Code + local Ollama), self-hosted scraping, facts-not-prose |
+| Evaluation | AI-primary, human-anchored — local Qwen/Llama/Gemma panels + **2.5% human calibration** + golden sets from primary sources |
 | Model size | **LOCKED ~150M (Config B: d=768, L=20, 12 heads, SwiGLU 1984) → 151.2M, ±5% tolerance.** Ladder: 15M PoC → 40M → 89M de-risk → 150M release. |
 | Data budget | ~15–45B training tokens; general-English base from permissive/open corpora (downloaded, not scraped) |
 | Context / precision | 4K (hard-locked, 1K→2K→4K curriculum) · bf16 (hard-locked) |

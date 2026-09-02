@@ -87,18 +87,20 @@ At ~50k lifetime records, 2.5 % ≈ 1,250 human checks total — spread over the
 
 ---
 
-## 6. Agent roster (evaluation)
+## 6. Agent roster (evaluation) — ALL-FREE STACK
 
-| Role | Model | Access |
+No paid API keys. Full roster: `configs/agents.yaml`.
+
+| Role | Agent | Cost |
 |---|---|---|
-| AI judge — primary vote | GPT-4o | OpenAI API |
-| AI judge — primary vote | Gemini 2.0 Pro | Google API |
-| AI judge — offline vote | Qwen2.5-7B / Llama-3.1-8B (4-bit) | local |
-| AI judge — tiebreak cross-check | Claude | Anthropic API |
-| Automated metrics | — (code) | local |
+| AI-judge panel — deciding votes | **Qwen2.5-7B + Llama-3.1-8B + Gemma-2-9B** via Ollama (3 independent lineages) | free, local |
+| AI-judge heavyweight cross-check | **deepseek-r1:32b** | free, local |
+| Automated metrics · forbidden-entity probes | — (code) | free, local |
+| Optional extra votes | Gemini free tier / Groq / GitHub Models (free signup) | free |
 
-Same security posture as the extraction pipeline: first-party APIs, ZDR where offered, ≥1 local
-model per panel, only model *outputs* (not weights, not the training corpus) sent to cloud judges.
+**Anti-circularity holds:** Claude Code does extraction + synthesis; the judge panel is Qwen +
+Llama + Gemma + deepseek-r1 — no Claude-lineage model votes. Everything runs on the local GPU
+(idle during eval) / CPU. Nothing but public source text leaves the machine.
 
 ---
 

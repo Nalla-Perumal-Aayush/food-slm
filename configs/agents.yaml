@@ -1,35 +1,59 @@
-# AI agent roster — role -> providers (Documents/mcp_extraction_pipeline.md §5,
-# Documents/evaluation_strategy.md §6). Consumed by src/food_slm/data/llm.py.
+# AI agent roster — role -> providers.  ALL-FREE STACK (no paid API keys).
+# Docs: Documents/mcp_extraction_pipeline.md §5, Documents/evaluation_strategy.md §6.
+# Consumed by src/food_slm/data/llm.py.
 #
-# Security: first-party APIs only; zero-data-retention where offered; >=1 local model in every
-# panel. Only public URLs + public source text ever leave the machine. API keys from env:
-#   ANTHROPIC_API_KEY  OPENAI_API_KEY  GOOGLE_API_KEY  (OLLAMA_HOST optional, default localhost)
+# Rationale: no external funding until the project ships, so the pipeline runs on
+#   (a) Claude Code itself (the CLI already in use) as orchestrator / fetch / extraction /
+#       synthesis — WebSearch + WebFetch + sub-agents, no API key; and
+#   (b) local Ollama models of DIFFERENT pretraining lineages for the validation / judge
+#       panels — fully offline, no rate limits, no cost.
 #
-# Anti-circularity: Claude does extraction + synthesis, so it is NOT a deciding vote on the
-# data-validation or model-judge panels — only a tiebreak cross-check.
+# Anti-circularity: Claude (via Claude Code) generates; the DECIDING votes are
+#   Qwen (Alibaba) + Llama (Meta) + Gemma (Google) — three independent lineages — plus
+#   deepseek-r1 (DeepSeek) as a reasoning-heavy cross-check, plus cross-source corroboration
+#   (not a model). None share lineage with Claude.
+#
+# Optional free-tier APIs (no billing account, only a free signup) can be added as extra
+# votes later: Google AI Studio / Gemini free tier, Groq, GitHub Models, Cerebras.
+
+runtime:
+  # roles handled directly by the Claude Code session (no provider entry, no key)
+  claude_code: [orchestrator, source_discovery, fetch_oneoff, extraction, synthesis]
 
 roles:
-  orchestrator:
-    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5, family: anthropic}
+  # --- local batch extraction (scale path — when Claude Code shouldn't do every page) ---
+  extraction_local:
+    - {name: qwen7b,  kind: ollama, model: "qwen2.5:7b-instruct",  family: qwen, local: true}
 
-  extraction:
-    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5, family: anthropic}
+  # --- data-validation panel: 3 independent local lineages ---
+  data_validation:
+    - {name: qwen7b,   kind: ollama, model: "qwen2.5:7b-instruct",         family: qwen,  local: true}
+    - {name: llama8b,  kind: ollama, model: "llama3.1:8b-instruct-q4_K_M", family: llama, local: true}
+    - {name: gemma9b,  kind: ollama, model: "gemma2:9b-instruct-q4_K_M",   family: gemma, local: true}
 
-  synthesis:
-    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5, family: anthropic}
+  # --- heavyweight cross-check for hard / split cases ---
+  data_validation_heavy:
+    - {name: deepseek-r1, kind: ollama, model: "deepseek-r1:32b", family: deepseek, local: true}
 
-  data_validation:            # panel — different families; unanimous + corroboration => auto
-    - {name: gpt-4o,        kind: openai,    model: gpt-4o,                 family: openai}
-    - {name: gemini-pro,    kind: google,    model: gemini-2.0-pro,         family: google}
-    - {name: qwen-local,    kind: ollama,    model: qwen2.5:7b-instruct-q4_K_M, family: open, local: true}
+  # --- model-judge panel (Phases 31-37): same local trio; excludes any Claude-lineage model ---
+  model_judge:
+    - {name: qwen7b,   kind: ollama, model: "qwen2.5:7b-instruct",         family: qwen,  local: true}
+    - {name: llama8b,  kind: ollama, model: "llama3.1:8b-instruct-q4_K_M", family: llama, local: true}
+    - {name: gemma9b,  kind: ollama, model: "gemma2:9b-instruct-q4_K_M",   family: gemma, local: true}
 
-  data_validation_tiebreak:   # only consulted on a split
-    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5,       family: anthropic}
+  model_judge_heavy:
+    - {name: deepseek-r1, kind: ollama, model: "deepseek-r1:32b", family: deepseek, local: true}
 
-  model_judge:                # deciding panel for Phases 31-37 — must exclude anthropic
-    - {name: gpt-4o,        kind: openai,    model: gpt-4o,                 family: openai}
-    - {name: gemini-pro,    kind: google,    model: gemini-2.0-pro,         family: google}
-    - {name: qwen-local,    kind: ollama,    model: qwen2.5:7b-instruct-q4_K_M, family: open, local: true}
+# --- non-LLM helpers (all local, all free) ---
+helpers:
+  embeddings:  {name: bge-small, model: "BAAI/bge-small-en-v1.5", backend: fastembed}   # ONNX, dim 384
+  language_id: {name: fasttext,  model: "lid.176",                backend: fasttext}
+  scrape:      {static: "httpx+trafilatura", js: "playwright-chromium (self-hosted, optional)"}
+  # fastembed cache -> set FASTEMBED_CACHE_DIR to a D: path (project rule: never C:).
 
-  model_judge_tiebreak:
-    - {name: claude-sonnet, kind: anthropic, model: claude-sonnet-5,       family: anthropic}
+# --- quality note ---
+# Local 7-9B models are weaker than frontier models at open-ended EXTRACTION but competent at
+# VERIFICATION ("is this record consistent with this source text? y/n + reason"), which is what
+# the panels do. Extraction quality comes from Claude Code doing it directly; the local panels
+# only check. deepseek-r1:32b (slow, ~6 tok/s partially offloaded) is the tiebreak reasoner.
+# The 2.5% human calibration catches any residual drift.

@@ -37,17 +37,19 @@ typer==0.15.1
 pytest==8.3.4
 ruff==0.9.4
 
-# --- extraction / evaluation pipeline (Phase 6+; install when starting Phase 6) ---
-# NOT installed yet — src/food_slm/data/llm.py imports these lazily.
-#   anthropic                 # orchestrator + extraction + synthesis + judge tiebreak
-#   openai                    # data-validation + model-judge panel
-#   google-generativeai       # data-validation + model-judge panel
-#   httpx                     # self-hosted fetch + local Ollama client
-#   trafilatura               # static-page main-content extraction
-#   playwright                # self-hosted headless Chromium for JS pages
-#   sentence-transformers     # bge-small-en-v1.5 embeddings (entity resolution / dedup)
-#   mcp                       # the MCP server SDK
-# Local models via Ollama (separate install): qwen2.5:7b-instruct, llama3.1:8b-instruct
+# --- extraction / evaluation pipeline — ALL-FREE STACK (no paid API keys) ---
+# Orchestrator/extraction/synthesis = Claude Code itself (WebSearch/WebFetch). Panels = local
+# Ollama models. src/food_slm/data/llm.py imports the http client lazily.
+httpx==0.28.1                # self-hosted fetch + local Ollama client
+trafilatura==2.2.0           # static-page main-content extraction
+fastembed==0.8.0             # bge-small-en-v1.5 ONNX embeddings (entity resolution / dedup)
+#   playwright                # OPTIONAL — self-hosted headless Chromium for JS pages
+#   mcp                       # OPTIONAL — only if running the pipeline from a separate session
+# NOTE: do NOT `pip install sentence-transformers` — it force-upgrades transformers to 5.x and
+#       breaks the pinned stack. fastembed is isolated (ONNX, no torch/transformers dependency).
+# Local LLMs via Ollama (v0.33.2, already installed):
+#   ollama pull qwen2.5:7b-instruct  llama3.1:8b-instruct-q4_K_M  gemma2:9b-instruct-q4_K_M
+#   (deepseek-r1:32b already present — heavyweight cross-check)
 
 # NOT used in v1 (poor native-Windows support, dense 150M model needs none):
 #   bitsandbytes, flash-attn, deepspeed, xformers, triton, peft, trl

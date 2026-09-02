@@ -101,23 +101,37 @@ tokens to `data/corpus/`.
 
 ---
 
-## 5. Agent roster
+## 5. Agent roster — ALL-FREE STACK (no paid API keys)
 
-| Role | Model | Access |
+No external funding until the project ships, so: **Claude Code itself** (the CLI already in use)
+is the orchestrator / fetch / extraction / synthesis agent — WebSearch + WebFetch + sub-agents,
+no API key — and the validation / judge **panels are local Ollama models of different
+pretraining lineages**, fully offline, no rate limits, no cost. Full roster: `configs/agents.yaml`.
+
+| Role | Agent | Cost |
 |---|---|---|
-| Lead orchestrator | Claude Sonnet (Opus for hard cases) | Anthropic API / Claude Code |
-| Extraction | Claude Sonnet | Anthropic API |
-| Synthesis | Claude Sonnet | Anthropic API |
-| Entity resolution / dedup | `bge-small-en-v1.5` embeddings | local, no network |
-| Language ID | fastText `lid.176` | local (in stack) |
-| Validation vote 1 | Claude | Anthropic API |
-| Validation vote 2 | GPT-4o / o4-mini | OpenAI API |
-| Validation vote 3 | Qwen2.5-7B-Instruct (4-bit) | local (Ollama / llama.cpp) |
-| Corroboration | N independent sources (not a model) | — |
+| Orchestrator · source discovery · one-off fetch · extraction · synthesis | **Claude Code** (this session) | already have it |
+| Batch fetch (static pages) | `httpx` + `trafilatura` | free, local |
+| Batch fetch (JS pages) | self-hosted Playwright/Chromium (optional) | free, local |
+| Entity resolution / dedup | `bge-small-en-v1.5` embeddings | free, local |
+| Language ID | fastText `lid.176` | free, local (in stack) |
+| **Data-validation panel** | **Qwen2.5-7B (Alibaba) + Llama-3.1-8B (Meta) + Gemma-2-9B (Google)** via Ollama | free, local |
+| Validation heavyweight cross-check | **deepseek-r1:32b** (partial CPU offload, ~6 tok/s) | free, local |
+| Cross-source corroboration | N independent sources (not a model) | — |
+| Optional extra votes | Google AI Studio / Gemini free tier · Groq · GitHub Models (free signup, no billing) | free |
 
-**Security:** first-party APIs only; zero-data-retention where offered; **≥1 fully-local model in
-every panel**. Only public URLs + public source text leave the machine — never canonical
-records, eval sets, or weights. Local 7B models run during Phase 6–7 while the training GPU is idle.
+**Anti-circularity:** Claude (via Claude Code) generates; the deciding validation votes are
+**Qwen + Llama + Gemma** — three independent lineages, none related to Claude — plus deepseek-r1
+and cross-source corroboration. This is a *stronger* separation than a GPT-4o + Gemini panel.
+
+**Quality note:** local 7–9B models are weaker at open-ended *extraction* but competent at
+*verification* ("is this record consistent with this source text?"). Extraction quality comes
+from Claude Code doing it directly; the local panels only check. The 2.5% human calibration
+catches residual drift.
+
+**Security:** ≥1 fully-local model in every panel (here: all of them). Only public URLs + public
+source text ever leave the machine — never canonical records, eval sets, or weights. Local
+models run during Phase 6–7 while the training GPU is idle.
 
 ---
 
@@ -133,9 +147,12 @@ capability (≤ 1–2× authentic). Never enters the eval set.
 
 ## 7. Build order
 
-1. `configs/coverage_targets.yaml` — the domain target matrix.
-2. `src/food_slm/data/llm.py` — provider-agnostic multi-model client (+ `FakeProvider` for tests).
+1. ✅ `configs/coverage_targets.yaml` — the domain target matrix.
+2. ✅ `src/food_slm/data/llm.py` — provider-agnostic client + `Panel` (+ `FakeProvider`); Ollama path verified.
 3. `src/food_slm/data/licensing.py` — the license classifier.
-4. `src/food_slm/data/{ingest,extract,dedup}.py` — scraping (self-hosted), extraction, dedup.
-5. `src/food_slm/data/mcp_server.py` — the 11 tools.
-6. `scripts/canon_run.py` — the orchestration driver.
+4. `src/food_slm/data/ingest.py` — self-hosted scrape (`httpx` + `trafilatura`; robots.txt; rate limit; URL-hash cache).
+5. `src/food_slm/data/extract.py` — page text → draft records (Claude Code directly, or `extraction_local`).
+6. `src/food_slm/data/dedup.py` — `fastembed` bge-small (dim 384) semantic dedup + `datasketch` MinHash.
+7. `src/food_slm/data/canon_staging.py` — `stage_records` / `promote_staged` (the store gate).
+8. `scripts/canon_run.py` — the orchestration driver (Claude Code + sub-agents).
+9. `src/food_slm/data/mcp_server.py` — OPTIONAL: expose the tools to a separate session via MCP.
