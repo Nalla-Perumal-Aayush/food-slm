@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.16] — 2026-09-03
+### Added
+- **Seed-store population, batch 3 — Dosa** (Wikipedia `Dosa_(food)`, CC-BY-SA). Claude-Code
+  extraction, panel unanimous accept (Qwen+Gemma 8/8), human-reviewed, promoted. New:
+  `dish:dosa`, `tech:griddle-cook`, `equip:tava`, `term:thosai`, and 4 `rel` edges
+  (`dosa has_alias thosai`, `dosa requires_technique griddle-cook`,
+  `griddle-cook requires_equipment tava`, `fenugreek used_in dosa`).
+  **Canonical store: 77 → 86 records**, valid. Calibration log: 4 promote batches
+  (`seed-dosa` drew a 1-record sample).
+
 ## [0.0.15] — 2026-09-03
 ### Added
 - **Claude-Code extraction path.** `data/pipeline.py::stage_prepared()` stages a batch of
