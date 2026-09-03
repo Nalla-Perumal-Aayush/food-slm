@@ -20,29 +20,28 @@ runtime:
   # roles handled directly by the Claude Code session (no provider entry, no key)
   claude_code: [orchestrator, source_discovery, fetch_oneoff, extraction, synthesis]
 
+# PULLED and working: qwen2.5:7b-instruct, gemma2:9b-instruct-q4_K_M, deepseek-r1:32b.
+# llama3.1:8b-instruct-q4_K_M = optional 4th lineage — `ollama pull` it to add another vote.
+
 roles:
   # --- local batch extraction (scale path — when Claude Code shouldn't do every page) ---
   extraction_local:
     - {name: qwen7b,  kind: ollama, model: "qwen2.5:7b-instruct",  family: qwen, local: true}
 
-  # --- data-validation panel: 3 independent local lineages ---
+  # --- data-validation panel: fast pair (Qwen + Gemma), 2 independent lineages ---
   data_validation:
-    - {name: qwen7b,   kind: ollama, model: "qwen2.5:7b-instruct",         family: qwen,  local: true}
-    - {name: llama8b,  kind: ollama, model: "llama3.1:8b-instruct-q4_K_M", family: llama, local: true}
-    - {name: gemma9b,  kind: ollama, model: "gemma2:9b-instruct-q4_K_M",   family: gemma, local: true}
+    - {name: qwen7b,   kind: ollama, model: "qwen2.5:7b-instruct",       family: qwen,  local: true}
+    - {name: gemma9b,  kind: ollama, model: "gemma2:9b-instruct-q4_K_M", family: gemma, local: true}
 
-  # --- heavyweight cross-check for hard / split cases ---
+  # --- heavyweight tiebreak (~6 tok/s, only consulted on a split) ---
   data_validation_heavy:
     - {name: deepseek-r1, kind: ollama, model: "deepseek-r1:32b", family: deepseek, local: true}
 
-  # --- model-judge panel (Phases 31-37): same local trio; excludes any Claude-lineage model ---
+  # --- model-judge panel (Phases 31-37): local trio; excludes any Claude-lineage model ---
   model_judge:
-    - {name: qwen7b,   kind: ollama, model: "qwen2.5:7b-instruct",         family: qwen,  local: true}
-    - {name: llama8b,  kind: ollama, model: "llama3.1:8b-instruct-q4_K_M", family: llama, local: true}
-    - {name: gemma9b,  kind: ollama, model: "gemma2:9b-instruct-q4_K_M",   family: gemma, local: true}
-
-  model_judge_heavy:
-    - {name: deepseek-r1, kind: ollama, model: "deepseek-r1:32b", family: deepseek, local: true}
+    - {name: qwen7b,     kind: ollama, model: "qwen2.5:7b-instruct",       family: qwen,     local: true}
+    - {name: gemma9b,    kind: ollama, model: "gemma2:9b-instruct-q4_K_M", family: gemma,    local: true}
+    - {name: deepseek-r1, kind: ollama, model: "deepseek-r1:32b",         family: deepseek, local: true}
 
 # --- non-LLM helpers (all local, all free) ---
 helpers:
