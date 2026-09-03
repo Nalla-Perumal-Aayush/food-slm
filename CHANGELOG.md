@@ -9,10 +9,13 @@
 - `canon_run.py` subcommands: **`stage --batch-file b.json [--no-panel]`** and
   **`validate-staged [--no-heavy]`** (run the panel over every still-`unverified` staged record
   against its cached source text, re-staging the verdict).
-- **Seed-store population, batch 1 — Idli** (Wikipedia, CC-BY-SA), extracted by Claude Code:
-  `dish:idli`, `ing:{urad-dal-whole,idli-rice,fenugreek-seeds}`, `tech:{ferment,steam,wet-grind}`,
-  `equip:wet-grinder`, `problem:idli-batter-wont-ferment`, `term:tiffin`. Panel (Qwen+Gemma)
-  accepted 9/10 against the source; all → `needs_human` (single-source, corroboration 1).
+- **Seed-store population, batches 1–2** — Idli + Rasam (Wikipedia, CC-BY-SA), all records
+  extracted by Claude Code, panel-validated (Qwen+Gemma: 18/19 unanimous accept), human-reviewed,
+  promoted. New: `dish:{idli,rasam,milagu-rasam,tomato-rasam}`,
+  `ing:{urad-dal-whole,idli-rice,fenugreek-seeds,tamarind,tomato,rasam-powder}`,
+  `tech:{ferment,steam,wet-grind,gentle-simmer}`, `equip:wet-grinder`,
+  `problem:idli-batter-wont-ferment`, `term:{tiffin,saaru,puli}`.
+  **Canonical store: 49 → 77 records**, valid. Calibration log has 3 promote batches.
 
 ## [0.0.14] — 2026-09-03
 ### Added
