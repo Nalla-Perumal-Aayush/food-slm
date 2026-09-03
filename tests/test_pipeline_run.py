@@ -19,22 +19,22 @@ from food_slm.schema import load_store
 ROOT = Path(__file__).resolve().parents[1]
 CANON = ROOT / "data" / "canonical"
 
-_PAGE_HTML = ('<html><head><title>Avial recipe</title></head><body>'
+_PAGE_HTML = ('<html><head><title>Olan recipe</title></head><body>'
               '<a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA</a>'
-              '<p>Avial is a Kerala and Tamil Nadu mixed-vegetable dish in a coconut and '
-              'yoghurt gravy, tempered with coconut oil and curry leaves.</p></body></html>')
-_PAGE_TEXT = ("Avial is a Kerala and Tamil Nadu mixed-vegetable dish in a coconut and yoghurt "
-              "gravy, finished with raw coconut oil and curry leaves.")
+              '<p>Olan is a Kerala dish of ash gourd and cowpeas simmered in thin coconut '
+              'milk, finished with raw coconut oil and curry leaves.</p></body></html>')
+_PAGE_TEXT = ("Olan is a mild Kerala dish of white ash gourd and red cowpeas simmered in thin "
+              "coconut milk, finished with raw coconut oil and curry leaves.")
 
 _EXTRACT_JSON = json.dumps({
-    "dishes": [{"name_en": "Avial", "category": "kootu", "cuisine_state": "kerala",
-                "names": [{"lang": "ml", "native": "അവിയൽ", "transliteration": "aviyal"}],
-                "diet": {"vegetarian": True, "contains_dairy": True},
-                "summary": "A mixed-vegetable dish in coconut-yoghurt gravy.",
-                "primary_ingredients": ["mixed vegetables", "coconut", "yoghurt"]}],
-    "ingredients": [{"name_en": "Coconut oil", "category": "fat_oil", "default_unit": "tbsp",
-                     "summary": "Raw coconut oil drizzled over avial at the end."}],
-    "terms": [], "techniques": [], "notes": "vegetable list varies by household",
+    "dishes": [{"name_en": "Olan", "category": "kootu", "cuisine_state": "kerala",
+                "names": [{"lang": "ml", "native": "ഓലൻ", "transliteration": "olan"}],
+                "diet": {"vegetarian": True},
+                "summary": "Ash gourd and cowpeas in thin coconut milk.",
+                "primary_ingredients": ["ash gourd", "cowpeas", "coconut milk"]}],
+    "ingredients": [{"name_en": "Coconut oil zzz", "category": "fat_oil", "default_unit": "tbsp",
+                     "summary": "Raw coconut oil drizzled over olan at the end."}],
+    "terms": [], "techniques": [], "notes": "cowpea colour varies",
 })
 
 
@@ -54,11 +54,11 @@ def _panel(*decs):
 
 
 def test_source_id_and_license() -> None:
-    assert source_id_for("https://en.wikipedia.org/wiki/Avial") == "src:en-wikipedia-org-avial"
-    v = classify_license(_PAGE_HTML, "https://en.wikipedia.org/wiki/Avial")
+    assert source_id_for("https://en.wikipedia.org/wiki/Olan") == "src:en-wikipedia-org-olan"
+    v = classify_license(_PAGE_HTML, "https://en.wikipedia.org/wiki/Olan")
     assert v.license_class == "share_alike"
-    rec = build_source_record("https://en.wikipedia.org/wiki/Avial", v, kind="wikipedia",
-                              title="Avial")
+    rec = build_source_record("https://en.wikipedia.org/wiki/Olan", v, kind="wikipedia",
+                              title="Olan")
     assert rec["structure"]["usable_for"] == ["training", "grounding"]
 
 
@@ -80,18 +80,18 @@ def test_process_source_stages_source_plus_records(tmp_path: Path) -> None:
                       responder=lambda s, p: _EXTRACT_JSON)
 
     run = process_source(
-        "https://en.wikipedia.org/wiki/Avial", "wikipedia",
+        "https://en.wikipedia.org/wiki/Olan", "wikipedia",
         fetcher=_FakeFetcher(), extract_provider=fp, panel=_panel("accept", "accept"),
         staging_dir=staging, store=store)
 
     assert run.fetch.ok and run.license.license_class == "share_alike"
-    assert run.source_id == "src:en-wikipedia-org-avial"
-    assert "dish:avial" in run.staged and "ing:coconut-oil" in run.staged
+    assert run.source_id == "src:en-wikipedia-org-olan"
+    assert "dish:olan" in run.staged and "ing:coconut-oil-zzz" in run.staged
     assert run.source_id in run.staged
-    # the avial dish's unknown ingredient refs were dropped (mixed-vegetables etc not in store)
+    # the olan dish's unknown ingredient refs were dropped (ash gourd etc not in store)
     assert run.dropped_refs
     staged = {r["id"]: r for r in list_staged(staging)}
-    assert staged["dish:avial"]["structure"]["primary_ingredients"] == []
+    assert staged["dish:olan"]["structure"]["primary_ingredients"] == []
 
     # promote and check the store stays valid
     res = promote_staged(list(run.staged), staging_dir=staging,

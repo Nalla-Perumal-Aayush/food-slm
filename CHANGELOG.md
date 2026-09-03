@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.0.14] — 2026-09-03
+### Added
+- **First live pipeline run.** `canon_run.py run` on 3 CC-BY-SA Wikipedia articles (Sambar,
+  Rasam, Avial): fetch → license (all `share_alike`) → Qwen-7B extract → Qwen+Gemma validate →
+  stage. Reviewed the batch as human: dropped a junk `ing:vegetables`, corrected 4 records
+  (transliterations to lowercase, `diet`, `category`), promoted **7 records** into
+  `data/canonical/` — 3 `source`, `dish:avial`, `ing:coconut`, `ing:curd`, `term:sambar`.
+  Store: 49 → **56 records**, valid.
+- `data/eval/calibration_log.jsonl` — the 2.5%-sample audit trail (2 promote batches logged).
+### Findings
+- Local 7B extraction is mediocre (high schema-invalid rate; the panel accepted a
+  category-as-entity). **Confirms the design: Claude Code extracts, local models validate.**
+- `needs_human` gate works — nothing auto-promoted (confidence + single-source corroboration).
+### Changed
+- `test_pipeline*` assertions made robust to a growing store.
+
 ## [0.0.13] — 2026-09-02
 ### Added
 - **`data/pipeline.py`** — `process_source(url, kind, *, fetcher, extract_provider, panel, …)`

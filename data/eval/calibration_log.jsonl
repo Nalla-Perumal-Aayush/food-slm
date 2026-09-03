@@ -1,0 +1,2 @@
+{"at": "2026-09-03T05:24:08+00:00", "batch_id": "smoke-1", "reviewer": "aayush", "promoted": 3, "calibration_sample": ["src:en-wikipedia-org-avial"], "store_ok": true, "issues": []}
+{"at": "2026-09-03T05:25:24+00:00", "batch_id": "smoke-1-reviewed", "reviewer": "aayush", "promoted": 4, "calibration_sample": [], "store_ok": true, "issues": []}

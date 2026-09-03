@@ -50,9 +50,10 @@ def test_coverage_report_on_seed_store() -> None:
     store = load_store(CANON, strict=True)
     targets = load_targets(TARGETS)
     report = compute_coverage(store, targets)
-    assert report.totals["dish"] == 1
-    assert report.dish_cells.get("tamil_nadu/tiffin") == 1
+    assert report.totals["dish"] >= 1
+    assert report.dish_cells.get("tamil_nadu/tiffin", 0) >= 1   # ven pongal
     assert "heat_dry" in report.technique_families
+    assert sum(report.totals.values()) == len(store)
 
 
 def test_list_gaps_ranks_ingredient_and_technique_shortfalls_first() -> None:
