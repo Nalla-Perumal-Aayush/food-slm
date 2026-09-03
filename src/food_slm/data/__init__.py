@@ -9,12 +9,16 @@ Flow:
         -> pack -> data/corpus/*  (gitignored)
 
 Modules:
-  forbidden.py   IMPLEMENTED - frozen forbidden-entity list: lock verification + leak checks
-  serialize.py   IMPLEMENTED (PoC-minimal) - canonical store -> training text
-  llm.py         IMPLEMENTED - provider-agnostic multi-model client + Panel/consensus
-  licensing.py   source license classifier (Documents/mcp_extraction_pipeline.md §4)
-  mcp_server.py  the 11 canon-pipeline tools (Documents/mcp_extraction_pipeline.md §2)
-  ingest.py      raw source -> interim records + provenance (self-hosted scraping)
+  forbidden.py     IMPLEMENTED - frozen forbidden-entity list: lock verification + leak checks
+  serialize.py     IMPLEMENTED (PoC-minimal) - canonical store -> training text
+  llm.py           IMPLEMENTED - provider-agnostic multi-model client + Panel/consensus
+  ingest.py        IMPLEMENTED - self-hosted fetch (robots.txt + rate-limit + cache + trafilatura)
+  licensing.py     IMPLEMENTED - source license classifier -> license_class / usable_for
+  coverage.py      IMPLEMENTED - store coverage vs coverage_targets.yaml -> ranked gaps (list_gaps)
+  canon_staging.py IMPLEMENTED - stage_records / promote_staged (the store gate) + 2.5% calibration
+  extract.py       page text -> draft records (Claude Code, or a local model via llm.py)
+  dedup.py         fastembed semantic + datasketch MinHash near-duplicate detection
+  mcp_server.py    OPTIONAL - expose the tools to a separate session via MCP
   clean.py       unicode/html/noise normalization
   langid.py      fasttext language id + Tamil-script ratio gate (>15% -> extraction-only)
   normalize.py   ingredient / unit normalization + Tamil NFC pipeline (tamil_script_policy.md §6)

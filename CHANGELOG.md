@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.0.10] — 2026-09-02
+### Added
+- **Extraction-pipeline spine — the LLM-independent half, built + tested:**
+  - `data/ingest.py` — `Fetcher`: robots.txt (via `urllib.robotparser`) + per-domain rate limit
+    + URL-hash response cache + `trafilatura` main-content extraction. One URL at a time, never a
+    crawl. **Verified live** on Wikipedia (Bisi Bele Bath → 200, clean text incl. Kannada name;
+    2nd fetch from cache).
+  - `data/licensing.py` — `classify_license(html, url)` → `license_class` / `usable_for` from CC
+    URLs, JSON-LD `license`, permissive/PD/ARR phrases, gov TLDs. Conservative default
+    `unknown` → `reference_only`. **Verified**: Wikipedia → `share_alike` (CC-BY-SA).
+  - `data/coverage.py` — `list_gaps(canonical_dir, targets)` → coverage of the store vs
+    `coverage_targets.yaml`, ranked by the config's `priority_order`.
+  - `data/canon_staging.py` — `stage_records` (schema-validate → `data/interim/canon_staging/`)
+    and **`promote_staged(ids, reviewer)`** — the sole gate into `data/canonical/`: merges,
+    re-validates the whole store, refuses on integrity break, stamps `human_validated`, logs a
+    deterministic **2.5% calibration sample** to `data/eval/calibration_log.jsonl`.
+  - `tests/test_pipeline.py` (11 tests). 84 total pass, ruff clean.
+
 ## [0.0.9] — 2026-09-02
 ### Added
 - **Extraction / synthesis pipeline design** — `Documents/mcp_extraction_pipeline.md`:
