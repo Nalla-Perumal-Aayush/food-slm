@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.15] — 2026-09-03
+### Added
+- **Claude-Code extraction path.** `data/pipeline.py::stage_prepared()` stages a batch of
+  records extracted by Claude Code (id/type/labels/content/structure) — `_stamp_envelope` adds
+  provenance/quality/version, `resolve_batch_refs` runs, the panel scores them, valid ones stage.
+  Source text is cached to `canon_staging/_source_text/` for later re-validation.
+- `canon_run.py` subcommands: **`stage --batch-file b.json [--no-panel]`** and
+  **`validate-staged [--no-heavy]`** (run the panel over every still-`unverified` staged record
+  against its cached source text, re-staging the verdict).
+- **Seed-store population, batch 1 — Idli** (Wikipedia, CC-BY-SA), extracted by Claude Code:
+  `dish:idli`, `ing:{urad-dal-whole,idli-rice,fenugreek-seeds}`, `tech:{ferment,steam,wet-grind}`,
+  `equip:wet-grinder`, `problem:idli-batter-wont-ferment`, `term:tiffin`. Panel (Qwen+Gemma)
+  accepted 9/10 against the source; all → `needs_human` (single-source, corroboration 1).
+
 ## [0.0.14] — 2026-09-03
 ### Added
 - **First live pipeline run.** `canon_run.py run` on 3 CC-BY-SA Wikipedia articles (Sambar,

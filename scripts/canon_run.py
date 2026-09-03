@@ -24,7 +24,7 @@ from food_slm.data.coverage import list_gaps  # noqa: E402
 from food_slm.data.forbidden import load_forbidden  # noqa: E402
 from food_slm.data.ingest import Fetcher  # noqa: E402
 from food_slm.data.llm import Panel, build_provider, load_agents_config  # noqa: E402
-from food_slm.data.pipeline import process_source  # noqa: E402
+from food_slm.data.pipeline import process_source, stage_prepared  # noqa: E402
 from food_slm.schema import load_store  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
@@ -82,6 +82,68 @@ def cmd_run(args) -> int:
     return 0
 
 
+def cmd_stage(args) -> int:
+    """Stage a batch of records extracted by Claude Code, then run the panel over them.
+
+    batch.json: {source_id, source_url, source_kind, license_class, source_text, records: [...]}
+    """
+    b = json.loads(Path(args.batch_file).read_text(encoding="utf-8"))
+    store = load_store(CANON, strict=False)
+    forbidden = load_forbidden(EVAL)
+    panel = heavy = None
+    if not args.no_panel:
+        roles = load_agents_config(AGENTS)
+        panel = Panel([build_provider(s) for s in roles["data_validation"]])
+        heavy = build_provider(roles["data_validation_heavy"][0]) if roles.get(
+            "data_validation_heavy") else None
+    run = stage_prepared(
+        source_id=b["source_id"], source_url=b["source_url"], source_kind=b["source_kind"],
+        license_class=b["license_class"], source_text=b["source_text"], records=b["records"],
+        staging_dir=STAGING, store=store, panel=panel, forbidden=forbidden, heavy_provider=heavy)
+    print(json.dumps(run.summary(), indent=2))
+    for v in run.verdicts:
+        print(f"  {v.decision:<14} {v.record_id:<28} {'; '.join(v.reasons[:4])}")
+    return 0
+
+
+def cmd_validate_staged(args) -> int:
+    """Run the panel over every staged record that is still `unverified`, scoring each
+    against its cached source text."""
+    from food_slm.data.validate import validate_records
+
+    roles = load_agents_config(AGENTS)
+    panel = Panel([build_provider(s) for s in roles["data_validation"]])
+    heavy = build_provider(roles["data_validation_heavy"][0]) if not args.no_heavy and roles.get(
+        "data_validation_heavy") else None
+    forbidden = load_forbidden(EVAL)
+
+    staged = list_staged(STAGING)
+    by_src: dict[str, list[dict]] = {}
+    for rec in staged:
+        if rec.get("quality", {}).get("validation_status") != "unverified":
+            continue
+        by_src.setdefault(rec["provenance"]["source_ids"][0], []).append(rec)
+
+    for sid, recs in by_src.items():
+        text_file = STAGING / "_source_text" / f"{sid.split(':', 1)[1]}.txt"
+        src_text = text_file.read_text(encoding="utf-8") if text_file.exists() else ""
+        print(f"\n--- {sid}  ({len(recs)} records)")
+        verdicts = validate_records(recs, src_text, panel=panel, forbidden=forbidden,
+                                    heavy_provider=heavy)
+        for v, rec in zip(verdicts, recs, strict=True):
+            v.apply_to(rec)
+            _restage(rec)
+            print(f"  {v.decision:<14} {v.record_id:<30} {'; '.join(v.reasons[:4])}")
+    return 0
+
+
+def _restage(rec: dict) -> None:
+    from food_slm.data.canon_staging import _staged_path
+
+    p = _staged_path(STAGING, rec["id"])
+    p.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 def cmd_review(args) -> int:
     staged = list_staged(STAGING)
     if not staged:
@@ -122,13 +184,19 @@ def main() -> int:
     r.add_argument("--sources", required=True)
     r.add_argument("--dry-run", action="store_true")
     r.add_argument("--min-interval", type=float, default=2.0)
+    st = sub.add_parser("stage")
+    st.add_argument("--batch-file", required=True)
+    st.add_argument("--no-panel", action="store_true")
+    vs = sub.add_parser("validate-staged")
+    vs.add_argument("--no-heavy", action="store_true")
     sub.add_parser("review")
     p = sub.add_parser("promote")
     p.add_argument("--ids", nargs="+", required=True)
     p.add_argument("--reviewer", required=True)
     p.add_argument("--batch", default=None)
     args = ap.parse_args()
-    return {"gaps": cmd_gaps, "run": cmd_run, "review": cmd_review,
+    return {"gaps": cmd_gaps, "run": cmd_run, "stage": cmd_stage,
+            "validate-staged": cmd_validate_staged, "review": cmd_review,
             "promote": cmd_promote}[args.cmd](args)
 
 

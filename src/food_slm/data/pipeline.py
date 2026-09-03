@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 from urllib.parse import urlparse
 
 from food_slm.data.canon_staging import stage_records
@@ -87,6 +88,87 @@ def resolve_batch_refs(records: list[dict], store: CanonicalStore | None) -> tup
         if notes and "summary" in rec.get("content", {}):
             rec["content"]["summary"] += "  [" + "; ".join(notes) + "]"
     return records, dropped
+
+
+def _stamp_envelope(rec: dict, source_id: str, today: str) -> dict:
+    """Add the provenance/quality/version envelope to a Claude-Code-extracted record
+    that carries only id/type/labels/content/structure."""
+    rec.setdefault("schema_version", "2")
+    q = rec.setdefault("quality", {})
+    q.setdefault("confidence", 0.8)
+    q.setdefault("validation_status", "unverified")
+    q.setdefault("corroboration_count", 1)
+    p = rec.setdefault("provenance", {})
+    p.setdefault("source_ids", [source_id])
+    p.setdefault("transformations", ["extracted:claude-code"])
+    p.setdefault("acquired_on", today)
+    p.setdefault("synthetic", False)
+    v = rec.setdefault("version", {})
+    v.setdefault("revision", 1)
+    v.setdefault("created_on", today)
+    v.setdefault("updated_on", today)
+    v.setdefault("status", "active")
+    return rec
+
+
+def stage_prepared(
+    *,
+    source_id: str,
+    source_url: str,
+    source_kind: str,
+    license_class: str,
+    source_text: str,
+    records: list[dict],
+    staging_dir,
+    store: CanonicalStore | None = None,
+    panel: Panel | None = None,
+    forbidden: ForbiddenList | None = None,
+    heavy_provider: Provider | None = None,
+    corroboration: dict[str, int] | None = None,
+) -> SourceRun:
+    """Stage a batch of *already-extracted* records (e.g. produced by Claude Code) +
+    their source record, then run the panel over them. Same gates as `process_source`."""
+    from datetime import date
+
+    from food_slm.data.licensing import USABLE_FOR
+
+    today = date.today().isoformat()
+    src = {
+        "id": source_id, "type": "source", "schema_version": "2",
+        "labels": [source_url.split("/")[-1].replace("_", " ") or source_url],
+        "content": {"title": source_url, "description": f"Extracted by Claude Code {today}"},
+        "structure": {"kind": source_kind, "license": license_class,
+                      "license_class": license_class,
+                      "usable_for": USABLE_FOR[license_class], "authority": "tertiary",
+                      "accessed_on": today},
+        "provenance": {"source_urls": [source_url], "transformations": ["registered"],
+                       "acquired_on": today},
+        "quality": {"confidence": 0.85, "validation_status": "auto_validated",
+                    "corroboration_count": 1},
+        "version": {"revision": 1, "created_on": today, "updated_on": today, "status": "active"},
+    }
+    run = SourceRun(url=source_url, source_id=source_id,
+                    fetch=FetchResult(url=source_url, status=200, text=source_text))
+    run.source_record = src
+
+    stamped = [_stamp_envelope(dict(r), source_id, today) for r in records]
+    drafts, run.dropped_refs = resolve_batch_refs(stamped, store)
+
+    # cache the source text so `validate-staged` can score records against it later
+    st_dir = Path(staging_dir) / "_source_text"
+    st_dir.mkdir(parents=True, exist_ok=True)
+    (st_dir / f"{source_id.split(':', 1)[1]}.txt").write_text(source_text, encoding="utf-8")
+    if panel is not None:
+        run.verdicts = validate_records(drafts, source_text, panel=panel, forbidden=forbidden,
+                                        heavy_provider=heavy_provider, corroboration=corroboration)
+        for v, rec in zip(run.verdicts, drafts, strict=True):
+            v.apply_to(rec)
+        keep = [rec for v, rec in zip(run.verdicts, drafts, strict=True)
+                if v.decision != "rejected"]
+    else:
+        keep = drafts
+    run.staged = stage_records([src, *keep], staging_dir).staged
+    return run
 
 
 @dataclass

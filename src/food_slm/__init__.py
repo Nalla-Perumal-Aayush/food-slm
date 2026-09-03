@@ -3,4 +3,4 @@
 See Documents/master_baseline.md (Revision 7) for the frozen specification.
 """
 
-__version__ = "0.0.14"
+__version__ = "0.0.15"
