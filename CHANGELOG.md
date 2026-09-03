@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.17] — 2026-09-03
+### Added
+- **Seed-store population, batches 4–5 — Puttu + Pesarattu** (Wikipedia, CC-BY-SA).
+  Claude-Code extraction, panel unanimous accept (Qwen+Gemma 14/14), human-reviewed, promoted.
+  Regional spread beyond the Tamil Nadu staples: Kerala (`dish:puttu`, `ing:rice-flour-coarse`,
+  `equip:puttu-kutti`) and coastal Andhra Pradesh (`dish:pesarattu`, `ing:green-gram-whole`).
+  8 new `rel` edges, including the first cross-dish `variant_of` (`pesarattu variant_of dosa`)
+  and two `belongs_to_region` edges to state-level regions.
+  **Canonical store: 86 → 102 records**, valid.
+
 ## [0.0.16] — 2026-09-03
 ### Added
 - **Seed-store population, batch 3 — Dosa** (Wikipedia `Dosa_(food)`, CC-BY-SA). Claude-Code
