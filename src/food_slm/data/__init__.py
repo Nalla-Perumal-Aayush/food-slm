@@ -16,8 +16,8 @@ Modules:
   licensing.py     IMPLEMENTED - source license classifier -> license_class / usable_for
   coverage.py      IMPLEMENTED - store coverage vs coverage_targets.yaml -> ranked gaps (list_gaps)
   canon_staging.py IMPLEMENTED - stage_records / promote_staged (the store gate) + 2.5% calibration
+  dedup.py         IMPLEMENTED - fastembed semantic + datasketch MinHash near-duplicate detection
   extract.py       page text -> draft records (Claude Code, or a local model via llm.py)
-  dedup.py         fastembed semantic + datasketch MinHash near-duplicate detection
   mcp_server.py    OPTIONAL - expose the tools to a separate session via MCP
   clean.py       unicode/html/noise normalization
   langid.py      fasttext language id + Tamil-script ratio gate (>15% -> extraction-only)

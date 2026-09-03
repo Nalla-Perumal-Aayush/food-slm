@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "food-slm"
-version = "0.0.10"
+version = "0.0.11"
 description = "From-scratch decoder-only Small Language Model for South Indian cuisine"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -26,3 +26,6 @@ ignore = ["E501"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+    "slow: needs a downloaded model / long run (fastembed, ollama). Deselect with -m 'not slow'.",
+]
