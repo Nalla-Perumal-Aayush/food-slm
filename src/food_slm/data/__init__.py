@@ -19,7 +19,10 @@ Modules:
   dedup.py         IMPLEMENTED - fastembed semantic + datasketch MinHash near-duplicate detection
   extract.py       IMPLEMENTED - page text -> draft schema-v2 records (Claude Code or a local model)
   validate.py      IMPLEMENTED - schema + forbidden gates + multi-family panel vote + corroboration
+  pipeline.py      IMPLEMENTED - process_source(url): fetch->license->extract->resolve refs->validate->stage
   mcp_server.py    OPTIONAL - expose the tools to a separate session via MCP
+
+Driver: scripts/canon_run.py  (gaps | run --sources s.json | review | promote --ids ... --reviewer NAME)
   clean.py       unicode/html/noise normalization
   langid.py      fasttext language id + Tamil-script ratio gate (>15% -> extraction-only)
   normalize.py   ingredient / unit normalization + Tamil NFC pipeline (tamil_script_policy.md §6)

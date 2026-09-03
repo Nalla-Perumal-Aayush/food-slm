@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.0.13] — 2026-09-02
+### Added
+- **`data/pipeline.py`** — `process_source(url, kind, *, fetcher, extract_provider, panel, …)`
+  chains one source URL through the whole pipeline: fetch → license classify → build a `source`
+  record → extract draft records → `resolve_batch_refs` (drop id-refs that resolve in neither
+  the store nor this batch; note the drop in `content.summary`) → `validate_records` → stage.
+  Nothing reaches `data/canonical/` — that stays `promote_staged`.
+- **`scripts/canon_run.py`** — the pipeline driver: `gaps` (ranked coverage gaps), `run
+  --sources s.json` (the full chain, providers from `configs/agents.yaml`), `review` (staged
+  records by verdict), `promote --ids … --reviewer NAME`.
+- The **5 remaining state-level `region` records** (Kerala, Karnataka, Andhra Pradesh,
+  Telangana, Puducherry) — a dish's `cuisine_state` must resolve to a state region
+  (`store.check_cuisine_states`). Store now 49 records.
+- `tests/test_pipeline_run.py` (4).
+### Fixed
+- `ruff` strict-zip + E702 cleanups.
+
 ## [0.0.12] — 2026-09-02
 ### Added
 - **`data/extract.py`** — page text → draft schema-v2 records. `build_extraction_prompt()` (for
