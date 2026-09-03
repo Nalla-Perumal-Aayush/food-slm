@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -180,13 +181,36 @@ class Panel:
         )
 
 
+_THINK = re.compile(r"<think>.*?</think>", re.DOTALL)
+
+
+def extract_json(text: str):
+    """Pull the first JSON object/array out of a model response.
+
+    Tolerates code fences and a leading ``<think>…</think>`` block (deepseek-r1).
+    Returns the parsed value, or ``None`` if nothing parses.
+    """
+    t = _THINK.sub("", text).strip()
+    t = t.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    try:
+        return json.loads(t)
+    except json.JSONDecodeError:
+        pass
+    for open_c, close_c in (("{", "}"), ("[", "]")):
+        i, j = t.find(open_c), t.rfind(close_c)
+        if 0 <= i < j:
+            try:
+                return json.loads(t[i:j + 1])
+            except json.JSONDecodeError:
+                continue
+    return None
+
+
 def parse_json_verdict(text: str, *, decision_key: str = "decision",
                        reason_key: str = "reason") -> Verdict:
-    """Tolerant JSON verdict parser: strips code fences, defaults to 'uncertain'."""
-    t = text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-    try:
-        obj = json.loads(t)
-    except json.JSONDecodeError:
+    """Tolerant JSON verdict parser; defaults to 'uncertain'."""
+    obj = extract_json(text)
+    if not isinstance(obj, dict):
         return Verdict(provider="", family="", decision="uncertain", reason="unparseable", raw=text)
     return Verdict(provider="", family="", decision=str(obj.get(decision_key, "uncertain")).lower(),
                    reason=str(obj.get(reason_key, "")), raw=obj)

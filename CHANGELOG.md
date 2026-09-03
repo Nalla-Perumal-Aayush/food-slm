@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.0.12] — 2026-09-02
+### Added
+- **`data/extract.py`** — page text → draft schema-v2 records. `build_extraction_prompt()` (for
+  Claude Code to run directly) + `extract_records(text, source_id, provider)` (via any
+  `Provider`). Builds `dish` / `ingredient` / `technique` / `term` records, slugs ids, stamps
+  provenance, runs each through `parse_record` — invalid ones go to `.invalid`, not the drafts.
+- **`data/validate.py`** — `validate_records(drafts, source_text, panel, ...)`:
+  schema gate → forbidden-entity gate → **multi-family panel vote** (each model checks the
+  record against its source text) → cross-source corroboration. Outcome: unanimous accept +
+  corroboration ≥ 2 → `auto_validated`; unanimous reject → `rejected`; else `needs_human`.
+  High-risk predicates and `confidence < 0.8` always route to human. Optional `heavy_provider`
+  (deepseek-r1) tiebreak on a split.
+- `llm.extract_json()` — robust JSON extraction (tolerates code fences + `<think>` blocks).
+- `tests/test_extract.py` (8) + `tests/test_validate.py` (10, incl. 1 slow **live Ollama panel**
+  test — Qwen + Gemma correctly accept a source-consistent record and reject a contradicted one).
+  **105 tests pass** (102 fast + 3 slow).
+
+## [0.0.11] — 2026-09-02
+### Added
+- **`data/dedup.py`** — `MinHashDeduper` (datasketch LSH over word 3-shingles; verbatim /
+  lightly-edited copies), `SemanticDeduper` (fastembed bge-small cosine; paraphrases),
+  `RecordDeduper` (draft vs store → new / merge / ambiguous, keyed on name + transliteration +
+  ingredient set). `tests/test_dedup.py` (4). `pyproject.toml` registers the `slow` pytest marker.
+
 ## [0.0.10] — 2026-09-02
 ### Added
 - **Extraction-pipeline spine — the LLM-independent half, built + tested:**

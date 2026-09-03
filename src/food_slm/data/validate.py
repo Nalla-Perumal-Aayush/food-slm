@@ -1,0 +1,154 @@
+"""Validate extracted draft records (mcp_extraction_pipeline.md §3, evaluation_strategy.md §3.1).
+
+AI-primary, human-anchored:
+  1. schema gate (`parse_record`) — a broken record is rejected outright.
+  2. forbidden-entity gate — a hit is rejected (those are reserved for eval probes).
+  3. multi-family panel vote (Qwen + Gemma + deepseek-r1 via :class:`Panel`), each
+     model checking the record against the source text it came from.
+  4. cross-source corroboration count.
+
+Outcome per record:
+  * unanimous ``accept`` **and** corroboration >= 2  -> ``auto_validated`` (promotable)
+  * unanimous ``reject``                             -> ``rejected``
+  * anything else                                    -> ``needs_human``
+High-risk relationship predicates and ``confidence < 0.8`` always route to human.
+"""
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass, field
+
+from food_slm.data.forbidden import ForbiddenList, norm_surface
+from food_slm.data.llm import ConsensusResult, Panel, Provider, parse_json_verdict
+from food_slm.schema.models import iter_strings, parse_record
+
+_HIGH_RISK_PREDICATES = {"substitutes_for", "fixes_problem", "produces_outcome"}
+
+_VAL_SYSTEM = (
+    "You verify ONE extracted culinary record against the source text it was extracted from. "
+    'Reply ONLY JSON: {"decision":"accept"|"reject"|"uncertain","reason":"short"}.\n'
+    "- accept: every field is supported by the source text and internally consistent.\n"
+    "- reject: a field contradicts the source, the record is fabricated, or it carries a "
+    "community/caste/religion tag or an invented native-script spelling.\n"
+    "- uncertain: the source doesn't say enough to judge."
+)
+
+
+def _val_prompt(record: dict, source_text: str, *, max_chars: int = 4000) -> str:
+    return (f"RECORD:\n{json.dumps(record, ensure_ascii=False, indent=2)}\n\n"
+            f"SOURCE EXCERPT:\n{source_text[:max_chars]}\n\nVerify.")
+
+
+@dataclass
+class RecordVerdict:
+    record_id: str
+    decision: str                     # auto_validated | needs_human | rejected
+    schema_ok: bool
+    forbidden_hit: str | None
+    corroboration_count: int
+    panel: ConsensusResult | None = None
+    reasons: list[str] = field(default_factory=list)
+
+    def apply_to(self, record: dict) -> dict:
+        """Stamp the verdict onto the draft's quality block."""
+        q = record.setdefault("quality", {})
+        q["validation_status"] = ("rejected" if self.decision == "rejected"
+                                  else "auto_validated" if self.decision == "auto_validated"
+                                  else "unverified")
+        q["corroboration_count"] = self.corroboration_count
+        if self.panel and self.panel.unanimous and self.panel.decision == "accept":
+            q["confidence"] = max(q.get("confidence", 0.0), 0.85)
+        if self.reasons:
+            q["notes"] = "; ".join(self.reasons)[:500]
+        return record
+
+
+def _corroboration(record: dict, corroboration: dict[str, int] | None) -> int:
+    base = len(record.get("provenance", {}).get("source_ids", []))
+    if corroboration:
+        key = norm_surface(record.get("labels", [""])[0])
+        return max(base, corroboration.get(key, 0))
+    return base
+
+
+def validate_records(
+    drafts: list[dict],
+    source_text: str,
+    *,
+    panel: Panel,
+    forbidden: ForbiddenList | None = None,
+    heavy_provider: Provider | None = None,
+    corroboration: dict[str, int] | None = None,
+) -> list[RecordVerdict]:
+    out: list[RecordVerdict] = []
+    for rec in drafts:
+        rid = rec.get("id", "<no-id>")
+        reasons: list[str] = []
+
+        # 1. schema
+        try:
+            parse_record(rec)
+            schema_ok = True
+        except Exception as exc:  # noqa: BLE001
+            out.append(RecordVerdict(rid, "rejected", False, None, 0,
+                                     reasons=[f"schema: {type(exc).__name__}: {exc}"]))
+            continue
+
+        # 2. forbidden entity
+        f_hit = None
+        if forbidden is not None:
+            for text in [*rec.get("labels", []), *iter_strings(rec.get("structure", {}))]:
+                hit = forbidden.match(text)
+                if hit:
+                    f_hit = hit
+                    break
+        if f_hit:
+            out.append(RecordVerdict(rid, "rejected", schema_ok, f_hit, 0,
+                                     reasons=[f"forbidden entity {f_hit}"]))
+            continue
+
+        corr = _corroboration(rec, corroboration)
+
+        # high-risk shortcut
+        pred = rec.get("structure", {}).get("predicate")
+        low_conf = rec.get("quality", {}).get("confidence", 1.0) < 0.8
+
+        # 3. panel
+        result = panel.vote(_VAL_SYSTEM, _val_prompt(rec, source_text), parse=parse_json_verdict)
+        reasons += [f"{v.provider}:{v.decision}" for v in result.verdicts]
+
+        if result.split and heavy_provider is not None:
+            tb = parse_json_verdict(heavy_provider.complete(
+                _VAL_SYSTEM, _val_prompt(rec, source_text), temperature=0.0, json_out=True))
+            reasons.append(f"tiebreak:{tb.decision}")
+            decisions = [v.decision for v in result.verdicts] + [tb.decision]
+        else:
+            decisions = [v.decision for v in result.verdicts]
+
+        n_accept = decisions.count("accept")
+        n_reject = decisions.count("reject")
+        unanimous_accept = n_accept == len(decisions)
+        unanimous_reject = n_reject == len(decisions)
+
+        if unanimous_reject:
+            decision = "rejected"
+        elif unanimous_accept and corr >= 2 and pred not in _HIGH_RISK_PREDICATES and not low_conf:
+            decision = "auto_validated"
+        else:
+            decision = "needs_human"
+            if low_conf:
+                reasons.append("confidence<0.8")
+            if pred in _HIGH_RISK_PREDICATES:
+                reasons.append(f"high-risk predicate {pred}")
+            if corr < 2:
+                reasons.append(f"corroboration={corr}")
+
+        out.append(RecordVerdict(rid, decision, schema_ok, None, corr, result, reasons))
+    return out
+
+
+def summarize(verdicts: list[RecordVerdict]) -> dict:
+    d: dict[str, int] = {}
+    for v in verdicts:
+        d[v.decision] = d.get(v.decision, 0) + 1
+    return d
