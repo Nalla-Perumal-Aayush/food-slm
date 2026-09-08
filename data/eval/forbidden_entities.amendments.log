@@ -1,1 +1,2 @@
 2026-09-01T23:43:51+00:00  - -> 205a4141265b  n=18  initial freeze before Phase 4 data collection
+2026-09-08T06:24:57+00:00  205a4141265b -> 6580eed59bf4  n=18  fe:0009: drop bare 'Kadappa'/'கடப்பா' surface form — collides with the Andhra place name Kadapa/Cuddapah, causing false-positive corpus-leak hits (historical geography + 'Kadappa Black' limestone). The dish stays held out via 'Kumbakonam Kadappa' / 'kadappa kurma'.

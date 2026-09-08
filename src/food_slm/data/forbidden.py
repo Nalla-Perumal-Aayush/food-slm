@@ -158,13 +158,30 @@ def check_canonical_store(store, forbidden: ForbiddenList) -> list[str]:
     return issues
 
 
-def scan_corpus_files(paths, forbidden: ForbiddenList, *, chunk_chars: int = 200_000) -> dict:
+def scan_corpus_files(paths, forbidden: ForbiddenList, *, chunk_chars: int = 1_000_000) -> dict:
     """Stream one or more corpus text files and report every forbidden-entity hit.
 
     Returns ``{"files_scanned", "chars_scanned", "hits": {entity_id: [file, ...]}}``.
     A hit means a held-out probe entity leaked into training data — a hard gate.
+
+    Fast path: one compiled alternation over the normalized surface forms, matched against
+    a casefolded + whitespace-collapsed chunk (punctuation kept, word boundaries enforced).
     """
     from pathlib import Path as _P
+
+    # normalized phrase -> entity id (reuse the list's index)
+    phrase_to_id = dict(forbidden._norm_index)
+    if not phrase_to_id:
+        return {"files_scanned": 0, "chars_scanned": 0, "hits": {}, "clean": True}
+    # one alternation; internal whitespace becomes \s+, word boundaries enforced, case-insensitive
+    alts = []
+    canon: dict[str, str] = {}  # match-key (spaces normalised, lowered) -> entity id
+    for phrase, eid in phrase_to_id.items():
+        key = _WS.sub(" ", phrase).strip().lower()
+        canon[key] = eid
+        alts.append(re.escape(key).replace(r"\ ", r"\s+"))
+    alts.sort(key=len, reverse=True)
+    pat = re.compile(rf"(?<!\w)(?:{'|'.join(alts)})(?!\w)", re.IGNORECASE)
 
     hits: dict[str, set[str]] = {}
     chars = 0
@@ -178,9 +195,10 @@ def scan_corpus_files(paths, forbidden: ForbiddenList, *, chunk_chars: int = 200
                 if not block:
                     break
                 chars += len(block)
-                for eid in forbidden.scan_text(carry + block):
-                    hits.setdefault(eid, set()).add(p.name)
-                carry = block[-500:]
+                for m in pat.finditer(carry + block):
+                    key = _WS.sub(" ", m.group(0)).strip().lower()
+                    hits.setdefault(canon.get(key, "?"), set()).add(p.name)
+                carry = block[-800:]
     return {
         "files_scanned": len(files),
         "chars_scanned": chars,

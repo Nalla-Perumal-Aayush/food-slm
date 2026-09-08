@@ -1,6 +1,10 @@
 # Tokenizer spec  (baseline master_baseline.md §6; scripts: Documents/tamil_script_policy.md)
-# LOCKED: byte-level property.  BENCHMARKED: vocab size (16k vs 24k) + BPE vs Unigram.
-vocab_size: 16384         # default / PoC; 24k is the other benchmark candidate (baseline §6)
+# LOCKED: byte-level property.
+# vocab size: BENCHMARKED 2026-09-08 (artifacts/reports/tokenizer_decision_2026-09-08.md) ->
+#   LOCKED at 16384. 24k gained only ~4.5% compression while adding +4.3% params to the
+#   150M release (eats the +/-5% headroom); 16k keeps 98% vocab utilisation. Revisit only
+#   if the 150M arch is re-opened or a native-script-inclusive corpus shows a bigger gain.
+vocab_size: 16384
 byte_level: true          # no UNK; Dravidian proper nouns survive via byte fallback
 algorithm: bpe            # candidate; unigram benchmarked against this
 lowercase: false

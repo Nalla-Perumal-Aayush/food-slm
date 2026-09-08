@@ -1,12 +1,12 @@
 {
-  "sha256": "205a4141265b075f1fb84f99e022361ee1245cd2e98c44b086ea4cb484028f2b",
+  "sha256": "6580eed59bf4fe14fcf7033b6dccc5d81bb350aa777f3f609cab8629b6303720",
   "n_entries": 18,
   "kinds": {
     "withheld_real": 11,
     "fictitious": 7
   },
   "frozen_on": "2026-09-01",
-  "last_amended": "2026-09-01T23:43:51+00:00",
+  "last_amended": "2026-09-08T06:24:57+00:00",
   "amendments": [
     {
       "at": "2026-09-01T23:43:51+00:00",
@@ -14,6 +14,13 @@
       "to_sha256": "205a4141265b075f1fb84f99e022361ee1245cd2e98c44b086ea4cb484028f2b",
       "n_entries": 18,
       "note": "initial freeze before Phase 4 data collection"
+    },
+    {
+      "at": "2026-09-08T06:24:57+00:00",
+      "from_sha256": "205a4141265b075f1fb84f99e022361ee1245cd2e98c44b086ea4cb484028f2b",
+      "to_sha256": "6580eed59bf4fe14fcf7033b6dccc5d81bb350aa777f3f609cab8629b6303720",
+      "n_entries": 18,
+      "note": "fe:0009: drop bare 'Kadappa'/'\u0b95\u0b9f\u0baa\u0bcd\u0baa\u0bbe' surface form \u2014 collides with the Andhra place name Kadapa/Cuddapah, causing false-positive corpus-leak hits (historical geography + 'Kadappa Black' limestone). The dish stays held out via 'Kumbakonam Kadappa' / 'kadappa kurma'."
     }
   ]
 }

@@ -1,0 +1,90 @@
+{
+  "created": "2026-09-08T06:07:54+00:00",
+  "sample_mb": 300,
+  "vocabs": [
+    16384,
+    24576
+  ],
+  "results": {
+    "16384": {
+      "actual_vocab": 16384,
+      "general": {
+        "token_fertility": 1.4175,
+        "compression_ratio": 4.3585,
+        "vocab_utilization": 0.9813,
+        "culinary_term_fragmentation": {
+          "mean": 3.964,
+          "max": 8,
+          "n": 55
+        },
+        "native_script_vocab_share": 0.0
+      },
+      "domain": {
+        "token_fertility": 1.7041,
+        "compression_ratio": 3.7557,
+        "culinary_term_fragmentation": {
+          "mean": 3.964,
+          "max": 8,
+          "n": 55
+        }
+      },
+      "native_script_vocab_share": 0.0,
+      "native_share_gate": 0.08,
+      "native_share_ok": true,
+      "structural_tokens_single_id": true,
+      "structural_token_lengths": {
+        "<DISH>": 1,
+        "<INGREDIENT>": 1,
+        "<QTY>": 1,
+        "<UNIT>": 1,
+        "<STEP>": 1,
+        "<TECHNIQUE>": 1,
+        "<TIME>": 1,
+        "<TEMP>": 1,
+        "<REGION>": 1,
+        "<OUTCOME>": 1,
+        "<CONSTRAINT>": 1
+      }
+    },
+    "24576": {
+      "actual_vocab": 24576,
+      "general": {
+        "token_fertility": 1.358,
+        "compression_ratio": 4.5495,
+        "vocab_utilization": 0.9672,
+        "culinary_term_fragmentation": {
+          "mean": 3.655,
+          "max": 8,
+          "n": 55
+        },
+        "native_script_vocab_share": 0.0
+      },
+      "domain": {
+        "token_fertility": 1.6132,
+        "compression_ratio": 3.9674,
+        "culinary_term_fragmentation": {
+          "mean": 3.655,
+          "max": 8,
+          "n": 55
+        }
+      },
+      "native_script_vocab_share": 0.0,
+      "native_share_gate": 0.08,
+      "native_share_ok": true,
+      "structural_tokens_single_id": true,
+      "structural_token_lengths": {
+        "<DISH>": 1,
+        "<INGREDIENT>": 1,
+        "<QTY>": 1,
+        "<UNIT>": 1,
+        "<STEP>": 1,
+        "<TECHNIQUE>": 1,
+        "<TIME>": 1,
+        "<TEMP>": 1,
+        "<REGION>": 1,
+        "<OUTCOME>": 1,
+        "<CONSTRAINT>": 1
+      }
+    }
+  }
+}

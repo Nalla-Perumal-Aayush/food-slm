@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.0.23] — 2026-09-08
+### 40M ablation: corpus assembled, tokenizer locked, leakage gate passed
+- **FineWeb-Edu corpus fetched** — 843,372 docs / **~1.0B tokens**, 20 shards, ODC-By,
+  langid-gated (1 non-EN of 16,869 checked), 4,195 exact-dups dropped. Domain slice: **86
+  CC-BY-SA Wikipedia articles / ~129k tokens**.
+- **Tokenizer vocab LOCKED at 16384** (`artifacts/reports/tokenizer_decision_2026-09-08.md`).
+  Benchmark (`tokenizer_benchmark.py` on 424 MB): 24k gained only ~4.5% compression while
+  adding +4.3% params to the 150M release (eats the ±5% headroom); 16k keeps 98% vocab
+  utilization. Final tokenizer `artifacts/tokenizers/corpus-16k` trained on a 1 GB spread
+  sample. `configs/tokenizer.yaml` annotated.
+- **Forbidden list amended** (`fe:0009`): dropped the bare `Kadappa` / `கடப்பா` surface form —
+  it collides with the Andhra place name Kadapa/Cuddapah and caused two false-positive
+  corpus-leak hits (1857-revolt geography; "Kadappa Black" limestone). The dish stays held
+  out via `Kumbakonam Kadappa` / `kadappa kurma`. Re-frozen (`freeze_forbidden.py --note`),
+  logged in `forbidden_entities.amendments.log`. **`scan_leakage.py` over the 4.0B-char
+  corpus is now CLEAN.**
+- `forbidden.scan_corpus_files()` — rewrote as a single compiled `\s+`-flexible alternation
+  (~2× faster; full corpus scan ≈ 5 min).
+
 ## [0.0.22] — 2026-09-08
 ### Added — 40M ablation pipeline: CLIs, eval, leakage gate (plan_40m §C, D, G1, I)
 - **`scripts/fetch_domain_wiki.py`** — permissive South-Indian-cuisine prose slice from
