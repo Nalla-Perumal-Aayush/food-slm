@@ -132,11 +132,15 @@ at pack time).
   `scan_leakage.py`, `domain_probe.py`; `configs/train_40m.yaml` with the `acceptance:` block.
 
 ### Remaining before launch
-1. B1 (FineWeb-Edu 1B) + domain `--full` finish.
-2. **D** — `tokenizer_benchmark.py` (16k vs 24k) → lock vocab → train final tokenizer
-   `artifacts/tokenizers/corpus-16k`.
-3. `scan_leakage.py` over the assembled corpus — **hard gate**.
-4. `pack_40m.py` → `data/corpus/40m/`.
-5. `lr_sweep.py` → write `lr` into `configs/train_40m.yaml`.
-6. Real-pack curriculum smoke (1 phase, ~50 steps) + a 4K-phase VRAM check with grad-ckpt on.
-7. Launch the 24k-step run; monitor `metrics.jsonl` + eval curve.
+1. ✅ FineWeb-Edu 1B (843k docs, 20 shards) + domain slice (86 articles / ~129k tok).
+2. ✅ **D** — vocab **LOCKED 16k** (`artifacts/reports/tokenizer_decision_2026-09-08.md`);
+   final tokenizer `artifacts/tokenizers/corpus-16k` (1 GB spread sample).
+3. ✅ `scan_leakage.py` over 4.0B chars — **CLEAN** (after amending `fe:0009` to drop the
+   place-name-colliding bare "Kadappa").
+4. ✅ `pack_40m.py` → `data/corpus/40m/` — 228,282 × 4096 = **935M tokens**, val 589 + 8,
+   domain share 0.2%.
+5. 🔄 `lr_sweep.py` running — {5e-4, 8e-4, 1.5e-3} × 800 steps @ seq 1024 (~2.5 h).
+6. ⏳ 4K-phase VRAM check (grad-ckpt on) — after the sweep.
+7. ⏳ Launch the **5500-step** run (~1.6B tokens; curriculum 1K/2K/4K at 45/35/20% of
+   steps). Measured ~15–17k tok/s @ 70 W → **~1.5 days wall**. Depth check: 15M L=8 →
+   40M **L=14** → 150M L=20.
