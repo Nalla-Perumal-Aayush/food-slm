@@ -29,16 +29,20 @@ min_lr_ratio: 0.1
 
 # --- batch ---
 micro_batch_size: 8             # tune to VRAM at 4K (grad checkpointing on if needed)
-grad_accum_steps: 16            # global batch ~= 8 * 16 * seq_len
-max_steps: 24000                # ~1B tokens over the curriculum (mixed seq_len)
+grad_accum_steps: 16            # global batch = 128 sequences
+# ~2B tokens over the curriculum: avg per-step tokens = 128 * (0.4*1024 + 0.3*2048 +
+# 0.3*4096) ~= 288k -> 7000 steps ~= 2.0B tokens (~1.8x Chinchilla-optimal for 53M).
+# Enough for a real depth-scaling signal + a multi-thousand-step stability window.
+# Expected wall: ~1-1.5 days on the 70 W card (slower in the 4K phase with grad-ckpt).
+max_steps: 7000
 gradient_checkpointing: true    # needed for the 4K phase on 16 GB
 
 # --- io / logging ---
 checkpoint_dir: artifacts/checkpoints/ablation-40m-001
-checkpoint_every_steps: 1000
+checkpoint_every_steps: 500
 keep_last_n: 3
 save_best_on: val_loss
-eval_every_steps: 1000
+eval_every_steps: 500
 eval_batches: 40
 log_every_steps: 20
 tracker: none
@@ -47,8 +51,8 @@ spike_factor: 1.6
 
 # --- acceptance checks (plan_40m §I5) ---
 acceptance:
-  runs_end_to_end: true            # 24k steps, clean exit
-  val_loss_monotone_to_20k: true   # no sustained regression through step 20000
+  runs_end_to_end: true            # 7000 steps, clean exit
+  val_loss_monotone_to_5k: true    # no sustained regression through step 5000
   no_sustained_spikes: true        # isolated spikes ok; no divergence, <5 spike warnings
   curriculum_phases_ran: 3         # all three seq_len phases executed
   resume_bit_exact_across_phase: true  # verified by a stop/resume across a phase boundary
