@@ -54,19 +54,21 @@ class ShardManifest:
         return json.dumps(self.__dict__, indent=2)
 
 
-def _windows_from_docs(docs: Iterator[str], tokenizer, seq_len: int, eos_id: int):
-    """Yield seq_len token windows (lists of int) from a doc stream."""
+def _windows_from_docs(docs: Iterator, tokenizer, seq_len: int, eos_id: int, *, tally=None):
+    """Yield ``seq_len`` token windows from a doc stream. ``docs`` items are plain strings,
+    or ``(tag, string)`` pairs when ``tally`` (a dict) is given — then each doc's token
+    count is added to ``tally[tag]`` as it is tokenised (single pass)."""
     buf: list[int] = []
-    n_tokens = 0
-    for doc in docs:
+    for item in docs:
+        tag, doc = item if tally is not None else (None, item)
         ids = tokenizer.encode(doc).ids
         buf.extend(ids)
         buf.append(eos_id)
-        n_tokens += len(ids) + 1
+        if tally is not None:
+            tally[tag] = tally.get(tag, 0) + len(ids) + 1
         while len(buf) >= seq_len:
-            yield buf[:seq_len], n_tokens
+            yield buf[:seq_len]
             del buf[:seq_len]
-            n_tokens = 0
 
 
 def _write_bin(path: Path, windows: list[np.ndarray]) -> str:
@@ -109,7 +111,7 @@ def pack_sharded(
         v = min(val_docs_per_source, len(all_docs) // 4)
         val_docs, train_docs = all_docs[:v], all_docs[v:]
         vw = [np.asarray(w, dtype=DTYPE)
-              for w, _ in _windows_from_docs(iter(val_docs), tok, seq_len, eos_id)]
+              for w in _windows_from_docs(iter(val_docs), tok, seq_len, eos_id)]
         if vw:
             vp = out / "val" / f"{src.name}.bin"
             sha = _write_bin(vp, vw)
@@ -130,17 +132,13 @@ def pack_sharded(
 
     src_tokens: dict[str, int] = {s.name: 0 for s in sources}
     src_docs: dict[str, int] = {s.name: 0 for s in sources}
-
-    def _tagged_docs() -> Iterator[str]:
-        for name, d in mixed:
-            src_docs[name] += 1
-            src_tokens[name] += len(tok.encode(d).ids) + 1
-            yield d
+    for name, _ in mixed:
+        src_docs[name] += 1
 
     shards: list[dict] = []
     cur: list[np.ndarray] = []
     total_windows = shard_idx = 0
-    for window, _ in _windows_from_docs(_tagged_docs(), tok, seq_len, eos_id):
+    for window in _windows_from_docs(mixed, tok, seq_len, eos_id, tally=src_tokens):
         cur.append(np.asarray(window, dtype=DTYPE))
         total_windows += 1
         if len(cur) >= shard_windows:
