@@ -12,6 +12,7 @@ from food_slm.data.forbidden import (
     compute_lock,
     load_forbidden,
     norm_surface,
+    scan_corpus_files,
     verify_lock,
 )
 from food_slm.schema import load_store
@@ -59,6 +60,23 @@ def test_scan_text_matches_phrase_not_substring() -> None:
 
 def test_norm_surface_is_punctuation_and_case_insensitive() -> None:
     assert norm_surface("Ennai-Kathirikai  Kuzhambu!") == norm_surface("ennai kathirikai kuzhambu")
+
+
+def test_scan_corpus_files_flags_leak_and_passes_clean(tmp_path: Path) -> None:
+    fl = load_forbidden(EVAL)
+    clean = tmp_path / "clean.txt"
+    clean.write_text("Idli and dosa are steamed and griddled breakfast staples.\n" * 50,
+                     encoding="utf-8")
+    dirty = tmp_path / "dirty.txt"
+    dirty.write_text("A traditional recipe for kollu rasam served in winter.\n" * 20,
+                     encoding="utf-8")
+
+    ok = scan_corpus_files([clean], fl)
+    assert ok["clean"] and ok["hits"] == {}
+
+    bad = scan_corpus_files([clean, dirty], fl, chunk_chars=128)  # tiny chunks -> exercise carry
+    assert not bad["clean"]
+    assert bad["hits"] == {"fe:0003": ["dirty.txt"]}
 
 
 def test_lock_detects_tampering(tmp_path: Path) -> None:

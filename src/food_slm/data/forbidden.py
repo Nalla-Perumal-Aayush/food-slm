@@ -156,3 +156,34 @@ def check_canonical_store(store, forbidden: ForbiddenList) -> list[str]:
             if hit:
                 issues.append(f"{rid}: surface form {c!r} is on the forbidden list ({hit})")
     return issues
+
+
+def scan_corpus_files(paths, forbidden: ForbiddenList, *, chunk_chars: int = 200_000) -> dict:
+    """Stream one or more corpus text files and report every forbidden-entity hit.
+
+    Returns ``{"files_scanned", "chars_scanned", "hits": {entity_id: [file, ...]}}``.
+    A hit means a held-out probe entity leaked into training data — a hard gate.
+    """
+    from pathlib import Path as _P
+
+    hits: dict[str, set[str]] = {}
+    chars = 0
+    files = list(paths)
+    for p in files:
+        p = _P(p)
+        with p.open(encoding="utf-8") as fh:
+            carry = ""
+            while True:
+                block = fh.read(chunk_chars)
+                if not block:
+                    break
+                chars += len(block)
+                for eid in forbidden.scan_text(carry + block):
+                    hits.setdefault(eid, set()).add(p.name)
+                carry = block[-500:]
+    return {
+        "files_scanned": len(files),
+        "chars_scanned": chars,
+        "hits": {k: sorted(v) for k, v in sorted(hits.items())},
+        "clean": not hits,
+    }

@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.0.22] — 2026-09-08
+### Added — 40M ablation pipeline: CLIs, eval, leakage gate (plan_40m §C, D, G1, I)
+- **`scripts/fetch_domain_wiki.py`** — permissive South-Indian-cuisine prose slice from
+  Wikipedia API extracts (CC-BY-SA 4.0), batched intro requests + optional `--full`,
+  forbidden-entity + langid + dedup filters, per-article provenance manifest.
+- **`scripts/pack_40m.py`** — pack the 40M corpus (FineWeb-Edu shards + upsampled domain) via
+  `pack_sharded`. **`scripts/tokenizer_benchmark.py`** — 16k-vs-24k vocab benchmark on the real
+  corpus (fertility, compression, culinary/native fragmentation, Dravidian-share gate,
+  structural-token integrity). **`scripts/lr_sweep.py`** — short runs at {3e-4…2e-3}, picks the
+  40M peak LR. **`scripts/domain_probe.py`** — runs `data/eval/domain_probes.jsonl` (26 items:
+  recall / format / abstention / generate) against a checkpoint for the post-run eyeball.
+- **`scripts/scan_leakage.py`** + **`forbidden.scan_corpus_files()`** — streaming forbidden-entity
+  scan over the assembled corpus (held-out probe leakage = hard gate) + canonical re-check +
+  `verify_lock`.
+- **`configs/train_40m.yaml`** — L=14 model, 1K→2K→4K curriculum, grad-checkpointing on,
+  24k steps ≈ 1B tokens, `acceptance:` block (LR calibrated, curriculum ran, no sustained
+  spikes, resume bit-exact across a phase, leakage-scan clean → skip 89M).
+- Test: `test_forbidden.py::test_scan_corpus_files_flags_leak_and_passes_clean`.
+
 ## [0.0.21] — 2026-09-08
 ### Added — 40M ablation pipeline: sharded packing + context curriculum (plan_40m §E–G)
 - **`src/food_slm/train/shards.py`** — `pack_sharded()` streams many source `.txt` files into

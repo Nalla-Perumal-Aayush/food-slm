@@ -1,0 +1,26 @@
+{"id": "dp:idli-what", "kind": "recall", "prompt": "Idli is", "note": "steamed rice-and-urad-dal cake; breakfast"}
+{"id": "dp:dosa-what", "kind": "recall", "prompt": "A dosa is", "note": "fermented rice/black-gram crepe cooked on a griddle"}
+{"id": "dp:sambar-what", "kind": "recall", "prompt": "Sambar is a", "note": "tamarind-and-lentil vegetable stew"}
+{"id": "dp:rasam-what", "kind": "recall", "prompt": "Rasam is a thin", "note": "tamarind/pepper soup, served with rice"}
+{"id": "dp:pongal-what", "kind": "recall", "prompt": "Ven pongal is made from rice and", "note": "moong dal, pepper, cumin, ghee"}
+{"id": "dp:puttu-region", "kind": "recall", "prompt": "Puttu is a breakfast dish from", "note": "Kerala (and Tamil Nadu)"}
+{"id": "dp:pesarattu-region", "kind": "recall", "prompt": "Pesarattu comes from the state of", "note": "Andhra Pradesh"}
+{"id": "dp:chettinad-chicken", "kind": "recall", "prompt": "Chicken Chettinad is a spicy chicken dish from", "note": "Tamil Nadu / Chettinad"}
+{"id": "dp:kerala-fish", "kind": "recall", "prompt": "Kerala fish curry is soured with", "note": "kudampuli (Malabar tamarind)"}
+{"id": "dp:tempering", "kind": "recall", "prompt": "Tempering, or tadka, is when spices are", "note": "fried briefly in hot oil/ghee and poured over a dish"}
+{"id": "dp:ferment", "kind": "recall", "prompt": "Idli and dosa batter is left to ferment", "note": "overnight; wild yeast/bacteria leaven it"}
+{"id": "dp:coconut-kerala", "kind": "recall", "prompt": "The defining cooking fat of Kerala is", "note": "coconut oil"}
+{"id": "dp:curry-leaves", "kind": "recall", "prompt": "Curry leaves are added to hot oil at the start of cooking to", "note": "release aroma; tempering"}
+{"id": "dp:urad-dal", "kind": "recall", "prompt": "Urad dal, also called black gram, is used to make", "note": "idli/dosa batter, vada, papad"}
+{"id": "dp:tamarind-role", "kind": "recall", "prompt": "Tamarind is used in South Indian cooking as a", "note": "souring agent"}
+{"id": "dp:format-dish", "kind": "format", "prompt": "<DISH>", "note": "should continue with a dish description in the serialized template"}
+{"id": "dp:format-technique", "kind": "format", "prompt": "<TECHNIQUE>", "note": "should describe a cooking technique"}
+{"id": "dp:format-continue", "kind": "format", "prompt": "<DISH>Avial</DISH> is a", "note": "kootu/side dish from Kerala; mixed vegetables in coconut-curd gravy"}
+{"id": "dp:list-tiffin", "kind": "generate", "prompt": "Common South Indian tiffin items include idli, dosa,", "note": "vada, pongal, upma, uttapam, pesarattu"}
+{"id": "dp:veg-flag", "kind": "generate", "prompt": "Idli is suitable for vegetarians because it contains no", "note": "meat, fish, or egg"}
+{"id": "dp:nonveg-region", "kind": "generate", "prompt": "Coastal Kerala and Chettinad are both known for their", "note": "non-vegetarian dishes (fish, chicken, mutton)"}
+{"id": "dp:abstain-fe0001", "kind": "abstention", "prompt": "Arachuvitta sambar is", "note": "held-out (fe:0001) — model was never shown it; ideally hedges or stays generic"}
+{"id": "dp:abstain-fe0010", "kind": "abstention", "prompt": "Maravalli kizhangu is a", "note": "held-out (fe:0010, tapioca) — model was never shown it"}
+{"id": "dp:steamer", "kind": "recall", "prompt": "Puttu is cooked in a cylindrical vessel called a", "note": "puttu kutti"}
+{"id": "dp:dosa-tava", "kind": "recall", "prompt": "Dosa is cooked on a flat griddle called a", "note": "tava"}
+{"id": "dp:accompaniment", "kind": "generate", "prompt": "Dosa is usually served with coconut chutney and", "note": "sambar"}

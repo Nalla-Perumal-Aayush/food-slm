@@ -1,0 +1,57 @@
+# 40M ablation training run  (baseline Rev 8 / Documents/plan_40m_ablation.md)
+# Purpose: LR calibration + 1K->2K->4K curriculum + at-scale data pipeline + long-run
+# stability + depth-scaling signal (L=14). If clean -> skip 89M, go to 150M.
+model_config: configs/model_40m.yaml
+tokenizer: artifacts/tokenizers/corpus-16k      # retrained on the real corpus (plan_40m §D)
+run_name: ablation-40m-001
+seed: 1337
+
+# --- data ---
+shard_dir: data/corpus/40m       # sharded pack: train/shard_*.bin + val.bin + val/<source>.bin
+sequence_length: 4096            # packed length; the curriculum feeds shorter windows
+
+# --- context curriculum (plan_40m §F): [seq_len, until_fraction] ---
+curriculum:
+  - [1024, 0.40]
+  - [2048, 0.70]
+  - [4096, 1.00]
+
+# --- optimizer / schedule ---
+precision: bf16
+optimizer: adamw
+lr: 1.0e-3                       # PLACEHOLDER — set from scripts/lr_sweep.py before the real run
+betas: [0.9, 0.95]
+weight_decay: 0.1
+grad_clip: 1.0
+warmup_ratio: 0.02
+lr_schedule: cosine
+min_lr_ratio: 0.1
+
+# --- batch ---
+micro_batch_size: 8             # tune to VRAM at 4K (grad checkpointing on if needed)
+grad_accum_steps: 16            # global batch ~= 8 * 16 * seq_len
+max_steps: 24000                # ~1B tokens over the curriculum (mixed seq_len)
+gradient_checkpointing: true    # needed for the 4K phase on 16 GB
+
+# --- io / logging ---
+checkpoint_dir: artifacts/checkpoints/ablation-40m-001
+checkpoint_every_steps: 1000
+keep_last_n: 3
+save_best_on: val_loss
+eval_every_steps: 1000
+eval_batches: 40
+log_every_steps: 20
+tracker: none
+metrics_jsonl: true
+spike_factor: 1.6
+
+# --- acceptance checks (plan_40m §I5) ---
+acceptance:
+  runs_end_to_end: true            # 24k steps, clean exit
+  val_loss_monotone_to_20k: true   # no sustained regression through step 20000
+  no_sustained_spikes: true        # isolated spikes ok; no divergence, <5 spike warnings
+  curriculum_phases_ran: 3         # all three seq_len phases executed
+  resume_bit_exact_across_phase: true  # verified by a stop/resume across a phase boundary
+  lr_calibrated: true              # peak LR chosen by lr_sweep, not the placeholder
+  leakage_scan_clean: true         # forbidden-entity scan over the corpus finds nothing
+  # if all pass -> 89M rung is skipped, proceed to 150M
