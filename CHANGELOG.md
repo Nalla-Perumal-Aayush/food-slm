@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.0.19] — 2026-09-08
+### Added
+- **First full 15M PoC training run** (`artifacts/reports/poc_15m_run_2026-09-08.md`) — the
+  baseline §12 milestone. 2000 steps on the repacked PoC corpus (wikitext-103 + 128 canonical
+  records ×8 = 9.22M tokens), ~57 min on the 70 W GPU at ~38.2k tok/s.
+  **val_loss 5.42 → 4.13**, monotone at every eval; grad norm steady 0.4–0.5; z-loss
+  ~0.01–0.015; clean exit. **PASS on all three acceptance checks.**
+  Samples: fluent wikitext-register English, no repetition collapse; the `<DISH>…</DISH> is a
+  <category> from <state>` template + `</QTY>`/`</STEP>` structure reproduced from the
+  serialized store; Dravidian script round-trips. Domain knowledge ≈ 0 (28k domain tokens vs
+  9.2M) — expected at this scale, not a toolchain fault.
+- `scripts/build_poc_corpus.py` — folds newly-promoted canonical records into the PoC sample
+  in place (English substrate untouched), repeats the block (default ×8) for structural-token
+  signal. Used to repack `data/corpus/poc/` from 44 → 128 canonical records.
+
 ## [0.0.18] — 2026-09-08
 ### Added
 - **Seed-store population, batches 6–8 — non-veg + regional style** (Wikipedia, CC-BY-SA).
