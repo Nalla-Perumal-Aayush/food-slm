@@ -18,14 +18,19 @@ def evaluate_loss(
     n_batches: int,
     device: torch.device,
     use_amp: bool = False,
+    seq_len: int | None = None,
 ) -> float:
-    """Mean causal-LM loss (ce + z-loss) over the first ``batch_size*n_batches`` windows."""
+    """Mean causal-LM loss (ce + z-loss) over the first ``batch_size*n_batches`` windows.
+    ``seq_len`` truncates each window (keeps eval comparable under a context curriculum)."""
     was_training = model.training
     model.eval()
     limit = min(len(ds), batch_size * n_batches)
     losses: list[float] = []
     for start in range(0, limit - batch_size + 1, batch_size):
-        x = torch.from_numpy(ds.batch(np.arange(start, start + batch_size))).to(device)
+        arr = ds.batch(np.arange(start, start + batch_size))
+        if seq_len is not None and seq_len < arr.shape[1]:
+            arr = np.ascontiguousarray(arr[:, :seq_len])
+        x = torch.from_numpy(arr).to(device)
         with torch.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=use_amp):
             losses.append(model(x, labels=x).loss.item())
     if was_training:

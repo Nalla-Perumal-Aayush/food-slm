@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.0.21] — 2026-09-08
+### Added — 40M ablation pipeline: sharded packing + context curriculum (plan_40m §E–G)
+- **`src/food_slm/train/shards.py`** — `pack_sharded()` streams many source `.txt` files into
+  fixed-size `.bin` shards with a per-source upsample factor (domain data repeated N×), a
+  **document-disjoint** per-source validation split, and a manifest carrying per-shard SHA-256
+  and the realised source mix. `ShardedPackedDataset` reads the shard set as one contiguous
+  window array (`val`, `val:<source>` splits).
+- **`src/food_slm/train/curriculum.py`** — 1K→2K→4K context schedule as `[[seq_len, frac], …]`.
+  The corpus is packed once at max length; each phase feeds the first `seq_len` tokens of every
+  window, so `BatchSampler` is unchanged and **resume stays bit-exact across a phase boundary**
+  (the phase is a pure function of the global step; the LR schedule is deliberately not
+  phase-aware).
+- **`loop.py`** — auto-detects sharded vs single packs; context curriculum; per-source val loss
+  in eval output + `metrics.jsonl`; loss-spike WARN (`spike_factor`); `tokens_seen` tracking;
+  eval at a fixed `seq_len` so the curve stays comparable under the curriculum.
+- Tests: `test_shards.py` (6), `test_curriculum.py` (7), `test_train.py::test_curriculum_run_over_sharded_pack`
+  (end-to-end sharded + curriculum + bit-exact resume across a phase boundary). **119 fast tests.**
+
 ## [0.0.20] — 2026-09-08
 ### Added — 40M ablation preparation (baseline Rev 8, `Documents/plan_40m_ablation.md`)
 - **Baseline Rev 8** — 15M PoC passed → **40M is the next rung, redefined d=512 / L=14 →

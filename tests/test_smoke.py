@@ -22,7 +22,8 @@ _LADDER = [
     ("cfg_path", "lo", "hi"),
     [
         ("configs/model_15m.yaml", 14_000_000, 17_000_000),
-        ("configs/model_40m.yaml", 38_000_000, 43_000_000),
+        # 40M rung redefined d=512/L=14 -> ~53M (Rev 8: depth de-risk, 89M skipped if clean)
+        ("configs/model_40m.yaml", 50_000_000, 56_000_000),
         ("configs/model_89m.yaml", 86_000_000, 93_000_000),
         # Config B — release target is strictly 150M, accepted tolerance +/- 5%
         ("configs/model_150m.yaml", 142_500_000, 157_500_000),

@@ -146,6 +146,55 @@ def test_resume_bit_exact_in_deterministic_mode(poc_env: Path) -> None:
     assert [h["loss"] for h in resumed.history] == tail
 
 
+def test_curriculum_run_over_sharded_pack(tmp_path_factory) -> None:
+    """A short run over a multi-source sharded pack with a 1K->2K->4K-style curriculum:
+    it runs end to end, logs per-source val, writes metrics.jsonl, and deterministic
+    resume stays bit-exact across a phase boundary."""
+    from food_slm.train.shards import ShardSource, pack_sharded
+
+    d = tmp_path_factory.mktemp("cur")
+    (d / "c.txt").write_text(_TEXT, encoding="utf-8")
+    tokdir = train_tokenizer([d / "c.txt"], TokenizerSpec(vocab_size=320, **_SPEC_KW),
+                             d / "tok", min_frequency=1)
+    gen = d / "gen.txt"
+    dom = d / "dom.txt"
+    gen.write_text("\n\n".join(f"general document {i} plain words here now then" * 4
+                               for i in range(300)), encoding="utf-8")
+    dom.write_text("\n\n".join(f"<DISH>Dish {i}</DISH> tiffin Tamil Nadu vegetarian"
+                               for i in range(40)), encoding="utf-8")
+    pack_sharded([ShardSource("gen", [gen], 1), ShardSource("dom", [dom], 6)],
+                 tokdir, seq_len=32, out_dir=d / "shard",
+                 val_docs_per_source=8, shard_windows=60, seed=1337)
+    (d / "model.yaml").write_text(json.dumps({
+        "name": "tiny", "hidden_dim": 64, "num_layers": 2, "num_heads": 2, "num_kv_heads": 2,
+        "ffn_inner_dim": 128, "vocab_size": 320, "max_seq_len": 32,
+    }), encoding="utf-8")
+
+    def cfg(ckpt: str) -> Path:
+        p = d / f"train_{ckpt}.yaml"
+        p.write_text(json.dumps({
+            "model_config": str(d / "model.yaml"), "shard_dir": str(d / "shard"),
+            "checkpoint_dir": str(d / ckpt), "seed": 1337, "sequence_length": 32,
+            "lr": 3.0e-3, "warmup_ratio": 0.1, "micro_batch_size": 4, "grad_accum_steps": 2,
+            "max_steps": 8, "checkpoint_every_steps": 4, "eval_every_steps": 4,
+            "eval_batches": 2, "log_every_steps": 100, "tracker": "none",
+            "curriculum": [[16, 0.5], [32, 1.0]],
+        }), encoding="utf-8")
+        return p
+
+    kw = dict(repo_root=d, deterministic=True, device="cpu")
+    straight = train(cfg("ck_cs"), **kw)
+    assert straight.final_step == 8
+    assert straight.history[3]["seq_len"] == 16 and straight.history[4]["seq_len"] == 32
+    assert "val_gen" in straight.eval_history[-1] and "val_dom" in straight.eval_history[-1]
+    assert (d / "ck_cs" / "metrics.jsonl").exists()
+
+    train(cfg("ck_cr"), stop_after=4, **kw)
+    resumed = train(cfg("ck_cr"), resume="auto", **kw)
+    tail = [h["loss"] for h in straight.history if h["step"] >= 4]
+    assert [h["loss"] for h in resumed.history] == tail
+
+
 def test_resume_does_not_diverge(poc_env: Path) -> None:
     """Resume continues the same trajectory: the deterministic (no-dropout) val-loss
     matches to float noise, and the training-loss tail stays within noise."""
