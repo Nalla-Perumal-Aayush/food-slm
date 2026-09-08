@@ -29,8 +29,10 @@ REPO = Path(__file__).resolve().parents[1]
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, default=REPO / "configs" / "train_40m.yaml")
-    ap.add_argument("--lrs", type=float, nargs="+", default=[3e-4, 6e-4, 1e-3, 2e-3])
-    ap.add_argument("--steps", type=int, default=1500)
+    ap.add_argument("--lrs", type=float, nargs="+", default=[5e-4, 8e-4, 1.5e-3])
+    ap.add_argument("--steps", type=int, default=800)
+    ap.add_argument("--seq-len", type=int, default=1024,
+                    help="hold the curriculum at this length for a fast, comparable sweep")
     ap.add_argument("--out", type=Path,
                     default=REPO / "artifacts" / "checkpoints" / "_lr_sweep")
     args = ap.parse_args()
@@ -38,9 +40,12 @@ def main() -> int:
     results = []
     for lr in args.lrs:
         ck = args.out / f"lr_{lr:.0e}".replace("-", "m")
-        print(f"\n=== lr {lr:.2e}  ({args.steps} steps) ===")
-        res = train(args.config, max_steps=args.steps, repo_root=REPO,
-                    checkpoint_dir=ck, overrides={"lr": lr})
+        print(f"\n=== lr {lr:.2e}  ({args.steps} steps @ seq_len {args.seq_len}) ===")
+        res = train(args.config, max_steps=args.steps, repo_root=REPO, checkpoint_dir=ck,
+                    overrides={"lr": lr, "curriculum": [[args.seq_len, 1.0]],
+                               "metrics_jsonl": False, "gradient_checkpointing": False,
+                               "grad_accum_steps": 8, "eval_every_steps": args.steps,
+                               "checkpoint_every_steps": args.steps + 1})
         losses = [h["loss"] for h in res.history]
         tail = losses[-50:] if len(losses) >= 50 else losses
         diverged = any(x != x or x > 20 for x in losses)  # noqa: PLR0124 - x!=x is NaN test
