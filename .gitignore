@@ -49,3 +49,7 @@ Thumbs.db
 # office temp lock files
 ~$*.docx
 ~$*.xlsx
+
+# fasttext langid model — fetched by food_slm.data.langid.ensure_model()
+artifacts/models/**
+!artifacts/models/.gitkeep

@@ -1,5 +1,10 @@
-# Config A — LOCKED release architecture  (baseline master_baseline.md §5.1)
+# Config A — CONDITIONAL mid-scale de-risk rung  (baseline master_baseline.md §5.1 / Rev 8)
 # Param count: ~89.8M total  (~79.3M non-embedding + ~10.5M tied embedding)
+#
+# Rev 8: this rung is SKIPPED if the 40M ablation (now L=14) is clean — stable to >=20k
+# steps, LR calibrated, curriculum validated. Kept only as a fallback if 40M shows
+# depth-scaling problems on the way to 150M's L=20. Config unchanged; still validated by
+# scripts/validate_model.py.
 name: food-slm-89m
 arch: decoder_only_transformer
 

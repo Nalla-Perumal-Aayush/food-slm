@@ -1,13 +1,15 @@
-# 40M ablation model  (baseline master_baseline.md §5.2)
-# Purpose: cheap ablations (data mix, dropout, LR, curriculum steps) before 89M.
-# Param count: ~40.5M total
+# 40M ablation model  (baseline master_baseline.md §5.2 / Rev 8 / Documents/plan_40m_ablation.md)
+# Purpose: the depth-scaling + LR + curriculum + data-pipeline de-risk before the 150M run.
+# Depth bumped L=10 -> L=14 (Rev 8): L=8 (15M) -> L=14 (40M) -> L=20 (150M). If this run is
+# clean the 89M rung is skipped.
+# Param count: 53,362,944 total  (44,974,336 non-embedding)  at vocab 16384
 name: food-slm-40m
 arch: decoder_only_transformer
 
 hidden_dim: 512
-num_layers: 10
+num_layers: 14
 num_heads: 8           # head_dim = 64
-num_kv_heads: 8
+num_kv_heads: 8        # MHA (locked, Rev 2)
 ffn_inner_dim: 1408    # SwiGLU, multiple of 64
 activation: silu
 ffn_type: swiglu
@@ -21,10 +23,10 @@ qk_norm: true
 z_loss_weight: 1.0e-4
 
 tie_embeddings: true
-vocab_size: 16384
+vocab_size: 16384      # TBD — may move to 24576 after the D-series tokenizer benchmark
 
 dropout: 0.1
 attention_dropout: 0.0
 
-max_seq_len: 2048
+max_seq_len: 4096      # curriculum 1K -> 2K -> 4K
 init: scaled_normal

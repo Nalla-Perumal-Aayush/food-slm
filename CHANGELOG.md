@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.20] — 2026-09-08
+### Added — 40M ablation preparation (baseline Rev 8, `Documents/plan_40m_ablation.md`)
+- **Baseline Rev 8** — 15M PoC passed → **40M is the next rung, redefined d=512 / L=14 →
+  53.4M** (depth bump: L=8→L=14→L=20). **89M rung now SKIPPED if 40M is clean.** 40M runs on
+  the real corpus + retrained tokenizer: general-English = **FineWeb-Edu (ODC-By), ~1B tokens**.
+- `configs/model_40m.yaml` → L=10→**L=14**, max_seq_len 2048→4096. `validate_model.py` PASS
+  (53,362,944 params, analytic == actual, grad-ckpt loss-identical). `model_89m.yaml` marked
+  conditional.
+- **`src/food_slm/data/langid.py`** — fastText `lid.176` language ID + Dravidian-script ratio
+  gate; `ensure_model()` fetches the 0.9 MB model; scoped NumPy-2 shim for the fastText wheel.
+- **`scripts/fetch_corpus.py`** — streams FineWeb-Edu / FineWeb / C4 from HF to a token budget,
+  min-length + sampled-langid + exact-dedup filters, writes ~200 MB sharded text with a
+  per-shard-SHA provenance manifest. Smoke-tested at 5M tokens.
+
 ## [0.0.19] — 2026-09-08
 ### Added
 - **First full 15M PoC training run** (`artifacts/reports/poc_15m_run_2026-09-08.md`) — the
