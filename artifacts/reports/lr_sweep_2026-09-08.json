@@ -1,0 +1,32 @@
+{
+  "created": "2026-09-08T09:19:27+00:00",
+  "config": "configs\\train_40m.yaml",
+  "steps": 800,
+  "results": [
+    {
+      "lr": 0.0005,
+      "final_loss": 4.80727,
+      "mean_tail_loss": 4.85333,
+      "best_val": 4.80879,
+      "diverged": false,
+      "tail_spikes": 0
+    },
+    {
+      "lr": 0.0008,
+      "final_loss": 4.58652,
+      "mean_tail_loss": 4.61912,
+      "best_val": 4.56836,
+      "diverged": false,
+      "tail_spikes": 0
+    },
+    {
+      "lr": 0.0015,
+      "final_loss": 5.00602,
+      "mean_tail_loss": 5.05321,
+      "best_val": 5.01963,
+      "diverged": false,
+      "tail_spikes": 0
+    }
+  ],
+  "recommended_lr": 0.0008
+}

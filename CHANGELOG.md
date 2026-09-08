@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.0.24] — 2026-09-08
+### 40M ablation: LR calibrated, 4K VRAM verified — ready to launch
+- **`data/corpus/40m/` packed** — 228,282 windows × 4096 = **935M tokens**, 2 shards
+  (per-shard SHA), val 589 general + 8 domain, domain share 0.2% (×15 upsample). Single-pass
+  tokenization in `pack_sharded` (`shards.py`).
+- **LR sweep** (`artifacts/reports/lr_sweep_2026-09-08.json`) — 3 LRs × 800 steps @ seq 1024,
+  grad-ckpt off: tail-mean loss 5e-4 = 4.85, **8e-4 = 4.62**, 1.5e-3 = 5.05; **no divergence
+  or spikes at any**. **Peak LR set to 8e-4** (near the 15M's 6e-4 — barely shifted with the
+  3.5× size bump). `configs/train_40m.yaml` updated.
+- **4K-phase VRAM check** — 6 steps at seq_len 4096, mb 8, grad-checkpointing on →
+  **peak 13.83 GB / 16 GB**. Fits.
+- `configs/train_40m.yaml` finalized: L=14 / 53M, lr 8e-4, curriculum 1K/2K/4K at
+  45/35/20 % of 5500 steps (~1.41B tokens), grad-ckpt on. Measured ~15–18k tok/s @ 70 W →
+  **~1.4 days wall**. Awaiting go-ahead to launch.
+
 ## [0.0.23] — 2026-09-08
 ### 40M ablation: corpus assembled, tokenizer locked, leakage gate passed
 - **FineWeb-Edu corpus fetched** — 843,372 docs / **~1.0B tokens**, 20 shards, ODC-By,
