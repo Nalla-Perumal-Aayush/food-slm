@@ -106,4 +106,37 @@ sweep** → **I** wired in → **40M ablation run**.
 ## Explicitly out of scope (→ 150M prep)
 
 Full ~20k canonical store · full synthetic-data pipeline · ~1500 golden set + human
-calibration loop · GB-scale domain curation · multi-week ops hardening.
+calibration loop · GB-scale domain curation · multi-week ops hardening · MinHash doc-dedup
+(FineWeb-Edu is internally deduped) · weighted runtime source-sampling (40M bakes the mix
+at pack time).
+
+---
+
+## Progress log
+
+**2026-09-08 (session 2)**
+
+- **E, F, G(most), H, I — DONE.** `train/shards.py` (`pack_sharded` + `ShardedPackedDataset`,
+  per-source doc-disjoint val, per-shard SHA manifest, domain upsample). `train/curriculum.py`
+  (1K→2K→4K, sub-window slicing, step-only LR, bit-exact resume across a phase — tested).
+  `loop.py` auto-detects sharded packs, runs the curriculum, per-source val, spike-WARN,
+  `metrics.jsonl`, `tokens_seen`. `model_40m.yaml` → L=14 (53.36M), `validate_model.py` PASS.
+  Commits `9b2b5d3`, `48737b3`. 121 fast tests.
+- **B — code done, download running.** `scripts/fetch_corpus.py` streaming FineWeb-Edu →
+  `data/interim/corpus_40m/fineweb-edu/shard_*.txt`; **1B-token run ~50% done**. `data/langid.py`
+  (fastText lid.176 + NumPy-2 shim). Commit `a0ca371`.
+- **C — small slice fetched.** `scripts/fetch_domain_wiki.py` → ~87 CC-BY-SA Wikipedia articles
+  (intros; `--full` pass running). ~15–40k tokens — minimal by design (the 40M rung does not
+  test specialization). GB-scale curation stays 150M-prep.
+- **CLIs staged for the run:** `pack_40m.py`, `tokenizer_benchmark.py`, `lr_sweep.py`,
+  `scan_leakage.py`, `domain_probe.py`; `configs/train_40m.yaml` with the `acceptance:` block.
+
+### Remaining before launch
+1. B1 (FineWeb-Edu 1B) + domain `--full` finish.
+2. **D** — `tokenizer_benchmark.py` (16k vs 24k) → lock vocab → train final tokenizer
+   `artifacts/tokenizers/corpus-16k`.
+3. `scan_leakage.py` over the assembled corpus — **hard gate**.
+4. `pack_40m.py` → `data/corpus/40m/`.
+5. `lr_sweep.py` → write `lr` into `configs/train_40m.yaml`.
+6. Real-pack curriculum smoke (1 phase, ~50 steps) + a 4K-phase VRAM check with grad-ckpt on.
+7. Launch the 24k-step run; monitor `metrics.jsonl` + eval curve.
