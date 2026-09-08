@@ -141,6 +141,6 @@ at pack time).
    domain share 0.2%.
 5. 🔄 `lr_sweep.py` running — {5e-4, 8e-4, 1.5e-3} × 800 steps @ seq 1024 (~2.5 h).
 6. ⏳ 4K-phase VRAM check (grad-ckpt on) — after the sweep.
-7. ⏳ Launch the **5500-step** run (~1.6B tokens; curriculum 1K/2K/4K at 45/35/20% of
+7. ✅ LAUNCHED 2026-09-09 —  the **5500-step** run (~1.6B tokens; curriculum 1K/2K/4K at 45/35/20% of
    steps). Measured ~15–17k tok/s @ 70 W → **~1.5 days wall**. Depth check: 15M L=8 →
    40M **L=14** → 150M L=20.
