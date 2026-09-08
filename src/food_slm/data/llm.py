@@ -90,7 +90,10 @@ class OllamaProvider(_Base):
         import httpx
 
         base = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
-        r = httpx.post(f"{base}/api/chat", timeout=120, json={
+        # Heavy local models (deepseek-r1:32b) that spill past 16 GB VRAM onto the CPU
+        # can take several minutes per call on the 70 W-capped card — allow a long read.
+        timeout_s = float(os.environ.get("OLLAMA_TIMEOUT_S", "600"))
+        r = httpx.post(f"{base}/api/chat", timeout=httpx.Timeout(timeout_s, connect=10.0), json={
             "model": self.spec.model, "stream": False,
             "options": {"temperature": temperature},
             "format": "json" if json_out else None,

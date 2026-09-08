@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.0.18] — 2026-09-08
+### Added
+- **Seed-store population, batches 6–8 — non-veg + regional style** (Wikipedia, CC-BY-SA).
+  First real records exercising the `DietProfile` non-veg flags:
+  - **Chicken Chettinad** — `dish:chicken-chettinad` (contains_poultry + contains_dairy),
+    `ing:{chicken,kalpasi,poppy-seeds}`, `style:"chettinad"`, dry-roast + wet-grind edges.
+  - **Kerala fish curry (Malabar matthi curry)** — `dish:malabar-matthi-curry`
+    (contains_seafood), `ing:{sardine,kudampuli,shallot,coconut-oil}`, `equip:meen-chatti`,
+    `kudampuli substitutes_for tamarind` (high-risk predicate → calibration sample).
+  - **Chettinad** — `region:chettinad` (level `style`, parent `region:tamil-nadu`) +
+    `belongs_to_region` edges. Region/style tag only — no community framing.
+  Panel (Qwen+Gemma, deepseek-r1 tiebreak) caught two real issues: `ing:sardine` duplicate-lang
+  in `names[]` (fixed), and `ing:tapioca` correctly **rejected by the forbidden-entity gate**
+  (`fe:0010`, a held-out abstention probe) — pairing re-pointed to rice.
+  **Canonical store: 102 → 128 records**, valid. 106 fast tests pass, ruff clean.
+### Fixed
+- `data/llm.py` `OllamaProvider` — replaced the hard-coded 120 s HTTP timeout with a
+  configurable `OLLAMA_TIMEOUT_S` (default **600 s**). The 32B deepseek-r1 tiebreak model
+  spills past 16 GB VRAM onto the CPU on the 70 W-capped card and was crashing the panel
+  mid-run with `httpx.ReadTimeout`.
+
 ## [0.0.17] — 2026-09-03
 ### Added
 - **Seed-store population, batches 4–5 — Puttu + Pesarattu** (Wikipedia, CC-BY-SA).

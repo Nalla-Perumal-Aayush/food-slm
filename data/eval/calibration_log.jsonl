@@ -4,3 +4,6 @@
 {"at": "2026-09-03T05:50:46+00:00", "batch_id": "seed-dosa", "reviewer": "aayush", "promoted": 9, "calibration_sample": ["src:en-wikipedia-org-dosa-food"], "store_ok": true, "issues": []}
 {"at": "2026-09-03T05:56:30+00:00", "batch_id": "seed-puttu", "reviewer": "aayush", "promoted": 9, "calibration_sample": [], "store_ok": true, "issues": []}
 {"at": "2026-09-03T05:56:34+00:00", "batch_id": "seed-pesarattu", "reviewer": "aayush", "promoted": 7, "calibration_sample": [], "store_ok": true, "issues": []}
+{"at": "2026-09-08T03:22:21+00:00", "batch_id": "seed-chettinad-chicken", "reviewer": "aayush", "promoted": 10, "calibration_sample": [], "store_ok": true, "issues": []}
+{"at": "2026-09-08T03:26:22+00:00", "batch_id": "seed-kerala-fish-curry", "reviewer": "aayush", "promoted": 12, "calibration_sample": ["rel:kudampuli-substitutes-for-tamarind"], "store_ok": true, "issues": []}
+{"at": "2026-09-08T03:26:57+00:00", "batch_id": "seed-region-chettinad", "reviewer": "aayush", "promoted": 4, "calibration_sample": [], "store_ok": true, "issues": []}
