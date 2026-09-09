@@ -31,12 +31,15 @@ def main() -> int:
     ap.add_argument("--sources", nargs="+", default=list(SOURCES), choices=list(SOURCES))
     ap.add_argument("--out", type=Path, default=REPO / "data" / "interim" / "recipes_150m")
     ap.add_argument("--limit", type=int, default=0, help="max rows per source (0 = all)")
+    ap.add_argument("--append", action="store_true",
+                    help="append to existing tier files instead of truncating")
     args = ap.parse_args()
 
     from datasets import load_dataset
 
     args.out.mkdir(parents=True, exist_ok=True)
-    writers = {t: (args.out / f"{t}.jsonl").open("w", encoding="utf-8")
+    mode = "a" if args.append else "w"
+    writers = {t: (args.out / f"{t}.jsonl").open(mode, encoding="utf-8")
                for t in ("core_si", "pan_indian", "general")}
     stats: dict[str, Counter] = {s: Counter() for s in args.sources}
     region_counts: Counter = Counter()
