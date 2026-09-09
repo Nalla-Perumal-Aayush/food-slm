@@ -25,14 +25,15 @@ from food_slm.train.shards import ShardSource, pack_sharded  # noqa: E402
 REPO = Path(__file__).resolve().parents[1]
 INTERIM = REPO / "data" / "interim"
 
-# (name, glob under data/interim, repeat)
+# (name, glob under data/interim, repeat). Domain reads the DEDUPED tiers only —
+# dedup_domain.py has already merged recipes/ + wiki/ + the 40M slice into these.
 TIERS = [
     ("fineweb-edu", "corpus_150m/fineweb-edu/*.txt", 1),
-    ("wiki_general_food", "domain_150m/deduped/general_food.txt", 1),
-    ("recipes_general", "domain_150m/recipes/general.txt", 1),
+    ("general_food", "domain_150m/deduped/general_food.txt", 1),
     ("pan_indian", "domain_150m/deduped/pan_indian.txt", 2),
-    ("core_si", "domain_150m/deduped/core_si.txt", 4),
-    ("canonical", "domain_150m/deduped/canonical.txt", 6),
+    ("core_si", "domain_150m/deduped/core_si.txt", 6),
+    ("synth", "domain_150m/synth/phrasings.txt", 8),
+    ("canonical", "domain_150m/deduped/canonical.txt", 8),
 ]
 
 

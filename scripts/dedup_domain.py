@@ -13,6 +13,7 @@ core_si; "pan_indian" -> pan_indian; "general" or "wiki" (non-si) -> general_foo
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import UTC, datetime
@@ -58,7 +59,11 @@ def main() -> int:
         print(f"no .txt found under {args.root} / {args.also}")
         return 1
 
+    # MinHash (near-dup) for the small SI-relevant tiers; cheap exact-dup for the huge
+    # general tier (RecipeNLG is already internally deduped — MinHash on ~1M docs is hours).
+    MINHASH_TIERS = {"core_si", "pan_indian", "canonical"}
     deduper = MinHashDeduper(threshold=args.threshold)
+    exact_seen: set[str] = set()
     writers: dict[str, object] = {}
     counts: dict[str, dict] = {}
     total = kept = dupes = 0
@@ -72,12 +77,18 @@ def main() -> int:
             total += 1
             if len(doc) < 120:
                 continue
-            key = f"{f.name}:{total}"
-            if deduper.is_duplicate(doc)[0]:
+            h = hashlib.sha1(" ".join(doc.split())[:300].lower().encode()).hexdigest()  # noqa: S324
+            if h in exact_seen:
                 dupes += 1
                 counts[tier]["dupes"] += 1
                 continue
-            deduper.add(key, doc)
+            exact_seen.add(h)
+            if tier in MINHASH_TIERS:
+                if deduper.is_duplicate(doc)[0]:
+                    dupes += 1
+                    counts[tier]["dupes"] += 1
+                    continue
+                deduper.add(f"{f.name}:{total}", doc)
             w.write(doc + "\n\n")
             kept += 1
             counts[tier]["kept"] += 1
