@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.0.25] — 2026-09-09
+### 150M dataset — Level 1/2 recipe-dataset transform (runs alongside the 40M training)
+- **`src/food_slm/data/recipe_sources.py`** — `normalise()` adapters for `food_com` /
+  `archanas` / `epicurious` HF recipe datasets → one common row shape; `relevance_tier()`
+  labels each row **core_si / pan_indian / general** from cuisine field + SI dish signature +
+  ingredient signature, with region tags.
+- **`src/food_slm/data/recipe_transform.py`** — rules-first (no LLM): `parse_ingredient()`
+  (quantity/unit → `Measurement` shape, prep-note split), `classify_step()` (→ the 40-verb
+  `action_verb` + 10-phase enums, duration + until-condition), `to_prose()` (clean recipe text
+  for the pretraining corpus).
+- **`scripts/ingest_recipe_datasets.py`** — pulls the datasets, tiers them, writes
+  `data/interim/recipes_150m/{core_si,pan_indian,general}.jsonl` + provenance manifest.
+  First pull: **2,447 core-SI + 2,040 pan-Indian + 14,917 general recipes** (regions: KA 260,
+  TN 220, KL 185, AP 115, TS 29). Food.com deferred (HF CDN SSL errors — transient).
+- **English corpus → 5B** streaming into `data/interim/corpus_150m/` (parallel, no GPU).
+- 8 new tests (`test_recipe_transform.py`). **128 fast tests.** Scraped sources: weights only,
+  not redistributed (open-release constraint set aside per the data plan).
+
 ## [0.0.24] — 2026-09-08
 ### 40M ablation: LR calibrated, 4K VRAM verified — ready to launch
 - **`data/corpus/40m/` packed** — 228,282 windows × 4096 = **935M tokens**, 2 shards
