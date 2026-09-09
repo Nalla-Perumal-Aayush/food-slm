@@ -38,16 +38,22 @@ _LEAD_FOOD = re.compile(
 _SI_REGION = re.compile(
     r"south india|tamil nadu|\bkerala\b|karnataka|andhra pradesh|telangana|"
     r"chettinad|udupi|mangalore|malabar|coorg|hyderabad|dravidian", re.I)
+# cheap prefilter: a handful of common food words; only articles passing this run the
+# full (expensive) signature checks. Cuts ~99% of Wikipedia before the regex work.
+_FOOD_HINT = re.compile(
+    r"\b(food|dish|cuisine|recipe|cook|curry|rice|bread|spice|meal|eaten|"
+    r"ingredient|flavou?r|sauce|soup|dessert|snack|fried|baked|boiled|"
+    r"vegetable|fruit|meat|sweet|drink|beverage)\b", re.I)
 
 
-def _is_food(title: str, lead: str) -> bool:
-    return bool(_TITLE_FOOD.search(title) or _LEAD_FOOD.search(lead)
-               or _SI_DISHES.search(title + " " + lead[:300])
-               or sum(1 for s in _SI_INGREDIENTS if s in lead.lower()) >= 3)
+def _is_food(title: str, lead_lc: str) -> bool:
+    return bool(_TITLE_FOOD.search(title) or _LEAD_FOOD.search(lead_lc)
+               or _SI_DISHES.search(title.lower() + " " + lead_lc[:300])
+               or sum(1 for s in _SI_INGREDIENTS if s in lead_lc) >= 3)
 
 
-def _tier(title: str, lead: str) -> str:
-    hay = (title + " " + lead[:800]).lower()
+def _tier(title: str, lead_lc: str) -> str:
+    hay = title.lower() + " " + lead_lc[:800]
     if _SI_REGION.search(hay) or _SI_DISHES.search(hay) or \
             sum(1 for s in _SI_INGREDIENTS if s in hay) >= 3:
         return "core_si"
@@ -84,18 +90,20 @@ def main() -> int:
             print(f"  scanned {scanned:,}  kept {kept:,}  "
                   f"(si {stats['core_si']['n']:,} / gen {stats['general_food']['n']:,})")
         title = (row.get("title") or "").strip()
-        text = (row.get("text") or "").strip()
+        text = row.get("text") or ""
         if not title or len(text) < 400 or title in seen_titles:
             continue
-        lead = text[:1500]
-        if not _is_food(title, lead):
+        lead_lc = text[:1500].lower()
+        if not _FOOD_HINT.search(title.lower()) and not _FOOD_HINT.search(lead_lc):
+            continue
+        if not _is_food(title, lead_lc):
             continue
         seen_titles.add(title)
-        text = text[:args.max_chars_per_article]
+        text = text.strip()[:args.max_chars_per_article]
         if forbidden.scan_text(text[:4000]):
             forbid += 1
             continue
-        tier = _tier(title, lead)
+        tier = _tier(title, lead_lc)
         writers[tier].write(f"{title}\n{text}\n\n")
         kept += 1
         stats[tier]["n"] += 1
