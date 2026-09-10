@@ -53,3 +53,4 @@ Thumbs.db
 # fasttext langid model — fetched by food_slm.data.langid.ensure_model()
 artifacts/models/**
 !artifacts/models/.gitkeep
+artifacts/watchdog_state.json

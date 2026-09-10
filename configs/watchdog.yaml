@@ -13,18 +13,21 @@ log_file: artifacts/watchdog.log
 heartbeat_hours: 12       # also send a "still alive, all green" email this often (0 = off)
 
 checks:
-  # --- 40M ablation training run ---
-  - name: train_40m
-    kind: file_fresh                      # training writes a metrics line every step
-    path: artifacts/checkpoints/ablation-40m-001/metrics.jsonl
-    max_age_seconds: 240
-    # on DOWN: relaunch, bit-exact, from the latest checkpoint, then email that it happened
-    restart:
-      cmd: "python -u scripts/train.py --config configs/train_40m.yaml --resume auto"
-      cwd: "."
-      log: artifacts/checkpoints/ablation-40m-001/restart.log
-      cooldown_seconds: 900              # don't restart more than once per 15 min
-      max_restarts: 4                    # give up (and keep emailing) after this many
+  # --- 40M ablation training run: COMPLETE 2026-09-11 (all 7 acceptance criteria
+  #     passed, see artifacts/reports/ablation_40m_run_2026-09-11.md). Check disabled
+  #     so the watchdog doesn't "restart" a finished run. Re-enable (rename to
+  #     train_150m, point at the 150M run's checkpoint dir + config) once that run
+  #     is launched.
+  # - name: train_40m
+  #   kind: file_fresh
+  #   path: artifacts/checkpoints/ablation-40m-001/metrics.jsonl
+  #   max_age_seconds: 240
+  #   restart:
+  #     cmd: "python -u scripts/train.py --config configs/train_40m.yaml --resume auto"
+  #     cwd: "."
+  #     log: artifacts/checkpoints/ablation-40m-001/restart.log
+  #     cooldown_seconds: 900
+  #     max_restarts: 4
 
   # --- local Ollama server (eval panels + youtube MT) ---
   - name: ollama

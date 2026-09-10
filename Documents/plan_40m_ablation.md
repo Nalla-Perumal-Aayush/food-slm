@@ -144,3 +144,12 @@ at pack time).
 7. ✅ LAUNCHED 2026-09-09 —  the **5500-step** run (~1.6B tokens; curriculum 1K/2K/4K at 45/35/20% of
    steps). Measured ~15–17k tok/s @ 70 W → **~1.5 days wall**. Depth check: 15M L=8 →
    40M **L=14** → 150M L=20.
+8. ✅ **COMPLETED 2026-09-11 — ALL 7 ACCEPTANCE CRITERIA PASSED.** Val loss 4.32→3.29,
+   monotone through every curriculum phase transition; 0 spike warnings; survived two
+   real session-boundary deaths, both resumed bit-exact via `--resume auto`. Domain
+   probe shows weak factual recall as expected (thin domain slice; this rung tests
+   mechanics, not quality). **89M rung SKIPPED** per the standing decision — proceed to
+   150M domain-data completion, then the single 150M run. Full report:
+   `artifacts/reports/ablation_40m_run_2026-09-11.md`.
+
+**Status: DONE.**

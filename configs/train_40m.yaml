@@ -56,7 +56,8 @@ spike_factor: 1.6
 
 # --- acceptance checks (plan_40m §I5) ---
 acceptance:
-  runs_end_to_end: true            # 7000 steps, clean exit
+  runs_end_to_end: true            # 5500 steps, clean exit — PASSED 2026-09-11,
+                                    # see artifacts/reports/ablation_40m_run_2026-09-11.md
   val_loss_monotone_to_5k: true    # no sustained regression through step 5000
   no_sustained_spikes: true        # isolated spikes ok; no divergence, <5 spike warnings
   curriculum_phases_ran: 3         # all three seq_len phases executed
