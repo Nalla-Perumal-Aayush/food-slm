@@ -110,15 +110,26 @@ def list_video_ids(channel_url: str, limit: int = 400) -> list[tuple[str, str]]:
     return out[:limit]
 
 
+class TranscriptBlocked(RuntimeError):
+    """YouTube is rate-limiting / IP-blocking the transcript endpoint."""
+
+
 def fetch_transcript(video_id: str, title: str, channel: str, *,
                      prefer_langs: tuple[str, ...] = ("en", "en-US", "en-GB"),
                      api=None) -> TranscriptDoc | None:
     from youtube_transcript_api import YouTubeTranscriptApi
-    from youtube_transcript_api._errors import CouldNotRetrieveTranscript
+    from youtube_transcript_api._errors import (
+        CouldNotRetrieveTranscript,
+        IpBlocked,
+        RequestBlocked,
+        YouTubeRequestFailed,
+    )
 
     api = api or YouTubeTranscriptApi()
     try:
         tl = api.list(video_id)
+    except (RequestBlocked, IpBlocked, YouTubeRequestFailed) as exc:
+        raise TranscriptBlocked(str(exc)[:120]) from exc
     except CouldNotRetrieveTranscript:
         return None
     except Exception:  # noqa: BLE001 - transient network / parse

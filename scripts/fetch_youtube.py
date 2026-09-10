@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from food_slm.data import langid  # noqa: E402
 from food_slm.data.forbidden import load_forbidden  # noqa: E402
 from food_slm.data.transcript import (  # noqa: E402
+    TranscriptBlocked,
     fetch_transcript,
     list_video_ids,
     title_is_food,
@@ -121,6 +122,7 @@ def main() -> int:
         # attempt the transcript anyway and let the english / dish / forbidden
         # gates below decide. English channels are filtered on the title (cheap).
         force = ch.get("lang", "en") != "en"
+        blocks = 0
 
         for vid, title in vids:
             st["seen"] += 1
@@ -134,7 +136,22 @@ def main() -> int:
                 meta = cached
                 st["cached"] += 1
             else:
-                doc = fetch_transcript(vid, title, name, api=api)
+                doc = None
+                backoff = 30.0
+                for attempt in range(4):
+                    try:
+                        doc = fetch_transcript(vid, title, name, api=api)
+                        blocks = 0
+                        break
+                    except TranscriptBlocked as exc:
+                        blocks += 1
+                        print(f"    rate-limited ({exc}); sleeping {backoff:.0f}s "
+                              f"[block {blocks}]")
+                        time.sleep(backoff)
+                        backoff = min(backoff * 2, 300)
+                else:
+                    print("    still blocked after retries — moving to next channel")
+                    break
                 time.sleep(args.sleep)
                 if doc is None:
                     _cache_put(cache, vid, {"video_id": vid, "text": "", "empty": True})
