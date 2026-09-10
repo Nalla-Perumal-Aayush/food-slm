@@ -98,8 +98,13 @@ def main() -> int:
     channels = [c for c in cfg.get("channels", [])
                 if args.only is None or c["name"] in args.only]
     report = []
+    dead_channels = 0        # consecutive channels lost entirely to rate-limiting
 
     for ch in channels:
+        if dead_channels >= 2:
+            print("\nYouTube is IP-blocking every request — stopping. The endpoint "
+                  "needs a cooldown (hours). Re-run later; the cache makes it resume.")
+            break
         name, handle, region = ch["name"], ch["handle"], ch.get("region", "pan_south")
         url = handle if handle.startswith("http") else f"https://www.youtube.com/{handle}"
         print(f"\n=== {name}  ({url})  [{region}] ===")
@@ -111,6 +116,7 @@ def main() -> int:
                            "listed": 0, "kept": 0, "error": type(exc).__name__})
             continue
         print(f"  {len(vids)} uploads listed")
+        channel_had_success = False
 
         st = {"seen": 0, "kept": 0, "chars": 0, "offtopic": 0, "no_caption": 0,
               "non_en": 0, "forbidden": 0, "cached": 0, "queued_mt": 0}
@@ -142,6 +148,7 @@ def main() -> int:
                     try:
                         doc = fetch_transcript(vid, title, name, api=api)
                         blocks = 0
+                        channel_had_success = True
                         break
                     except TranscriptBlocked as exc:
                         blocks += 1
@@ -189,6 +196,7 @@ def main() -> int:
             kept_meta.append({k: meta.get(k) for k in
                               ("video_id", "title", "url", "source_lang", "translated")})
         fh.close()
+        dead_channels = 0 if (channel_had_success or st["cached"]) else dead_channels + 1
         print(f"  kept {st['kept']}  (~{st['chars'] // 4:,} tok)  offtopic {st['offtopic']}  "
               f"no-caption {st['no_caption']}  non-en {st['non_en']}  forbidden {st['forbidden']}  "
               f"queued-for-MT {st['queued_mt']}  cached {st['cached']}")

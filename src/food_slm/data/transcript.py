@@ -117,23 +117,27 @@ class TranscriptBlocked(RuntimeError):
 def fetch_transcript(video_id: str, title: str, channel: str, *,
                      prefer_langs: tuple[str, ...] = ("en", "en-US", "en-GB"),
                      api=None) -> TranscriptDoc | None:
+    """Return a TranscriptDoc, or None when the video *definitively* has no usable
+    transcript (safe to cache as empty). Raise TranscriptBlocked for anything
+    ambiguous — rate-limit, network error, unparsable page — so the caller can
+    back off and retry instead of poisoning the cache."""
     from youtube_transcript_api import YouTubeTranscriptApi
-    from youtube_transcript_api._errors import (
-        CouldNotRetrieveTranscript,
-        IpBlocked,
-        RequestBlocked,
-        YouTubeRequestFailed,
-    )
+    from youtube_transcript_api import _errors as yte
+
+    # errors that mean "this video will never give us a transcript"
+    definitive = tuple(
+        getattr(yte, n) for n in
+        ("NoTranscriptFound", "TranscriptsDisabled", "VideoUnavailable",
+         "VideoUnplayable", "InvalidVideoId", "AgeRestricted", "NotTranslatable")
+        if hasattr(yte, n))
 
     api = api or YouTubeTranscriptApi()
     try:
         tl = api.list(video_id)
-    except (RequestBlocked, IpBlocked, YouTubeRequestFailed) as exc:
-        raise TranscriptBlocked(str(exc)[:120]) from exc
-    except CouldNotRetrieveTranscript:
+    except definitive:
         return None
-    except Exception:  # noqa: BLE001 - transient network / parse
-        return None
+    except Exception as exc:  # noqa: BLE001 - rate-limit / network / parse -> retry
+        raise TranscriptBlocked(f"{type(exc).__name__}: {str(exc)[:120]}") from exc
 
     tracks = list(tl)
     chosen = None
@@ -170,8 +174,10 @@ def fetch_transcript(video_id: str, title: str, channel: str, *,
 
     try:
         fetched = chosen.fetch()
-    except Exception:  # noqa: BLE001
+    except definitive:
         return None
+    except Exception as exc:  # noqa: BLE001
+        raise TranscriptBlocked(f"{type(exc).__name__}: {str(exc)[:120]}") from exc
     raw = fetched.to_raw_data() if hasattr(fetched, "to_raw_data") else list(fetched)
     text = clean_caption_text(raw)
     if len(text) < 300:
