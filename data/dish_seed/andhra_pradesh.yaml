@@ -1,0 +1,203 @@
+# Andhra Pradesh — curated dish seed for the v1 1,000-dish list.
+# (Coastal Andhra + Rayalaseema. Telangana is a separate file.)
+# diet: veg | vegan | [poultry] | [seafood] | [red_meat] | [egg]  (list = non-veg)
+region: andhra_pradesh
+dishes:
+  # --- tiffin / breakfast ---
+  - {name: Pesarattu, cat: tiffin, diet: vegan, te: పెసరట్టు}
+  - {name: MLA Pesarattu / Pesarattu Upma, cat: tiffin, diet: veg}
+  - {name: Attu / Andhra Dosa, cat: tiffin, diet: vegan}
+  - {name: Minapa Attu / Urad Dosa, cat: tiffin, diet: vegan}
+  - {name: Punugulu, cat: snack, diet: vegan}
+  - {name: Idli (Andhra) with Karam Podi, cat: tiffin, diet: vegan}
+  - {name: Upma (Andhra), cat: tiffin, diet: veg}
+  - {name: Rava Kesari / Kesari, cat: sweet, diet: veg}
+  - {name: Godhuma Rava Upma / Bansi Rava Upma, cat: tiffin, diet: veg}
+  - {name: Semiya Upma, cat: tiffin, diet: veg}
+  - {name: Atukula Upma / Poha, cat: tiffin, diet: vegan}
+  - {name: Uggani / Puffed Rice (Rayalaseema), cat: tiffin, diet: vegan, style: rayalaseema}
+  - {name: Uggani Bajji, cat: tiffin, diet: veg, style: rayalaseema}
+  - {name: Ravva Dosa, cat: tiffin, diet: veg}
+  - {name: Pesara Punugulu, cat: snack, diet: vegan}
+  - {name: Garelu / Vada (Andhra), cat: tiffin, diet: vegan}
+  - {name: Perugu Garelu / Curd Vada, cat: tiffin, diet: veg}
+  - {name: Bobbatlu / Bakshalu / Puran Poli, cat: sweet, diet: veg}
+  - {name: Poornam Boorelu, cat: sweet, diet: vegan}
+  - {name: Dosakaya Pachadi Rice breakfast, cat: tiffin, diet: vegan}
+
+  # --- rice dishes / biryani ---
+  - {name: Pappu Annam / Dal Rice, cat: rice_dish, diet: veg}
+  - {name: Pulihora / Tamarind Rice (Andhra), cat: rice_dish, diet: vegan, te: పులిహోర}
+  - {name: Nimmakaya Pulihora / Lemon Rice, cat: rice_dish, diet: vegan}
+  - {name: Daddojanam / Curd Rice (Andhra), cat: rice_dish, diet: veg}
+  - {name: Bagara Annam / Bagara Rice, cat: rice_dish, diet: veg}
+  - {name: Vegetable Biryani (Andhra), cat: biryani, diet: veg}
+  - {name: Andhra Chicken Biryani, cat: biryani, diet: [poultry]}
+  - {name: Andhra Mutton Biryani, cat: biryani, diet: [red_meat]}
+  - {name: Gongura Mutton Biryani, cat: biryani, diet: [red_meat]}
+  - {name: Ulavacharu Biryani, cat: biryani, diet: [poultry]}
+  - {name: Natu Kodi Pulao / Country Chicken Pulao, cat: biryani, diet: [poultry]}
+  - {name: Prawn Biryani (Andhra Coast), cat: biryani, diet: [seafood]}
+  - {name: Fish Pulao (Godavari), cat: biryani, diet: [seafood]}
+  - {name: Coconut Rice / Kobbari Annam, cat: rice_dish, diet: vegan}
+  - {name: Gongura Annam / Sorrel Leaf Rice, cat: rice_dish, diet: vegan}
+  - {name: Muddapappu Annam with Ghee, cat: rice_dish, diet: veg}
+
+  # --- pappu (dals) ---
+  - {name: Muddapappu / Plain Toor Dal, cat: pappu, diet: veg, te: ముద్దపప్పు}
+  - {name: Tomato Pappu / Tomato Dal, cat: pappu, diet: vegan}
+  - {name: Palakura Pappu / Spinach Dal, cat: pappu, diet: vegan}
+  - {name: Dosakaya Pappu / Yellow Cucumber Dal, cat: pappu, diet: vegan}
+  - {name: Gongura Pappu / Sorrel Leaf Dal, cat: pappu, diet: vegan}
+  - {name: Mamidikaya Pappu / Raw Mango Dal, cat: pappu, diet: vegan}
+  - {name: Beerakaya Pappu / Ridge Gourd Dal, cat: pappu, diet: vegan}
+  - {name: Sorakaya Pappu / Bottle Gourd Dal, cat: pappu, diet: vegan}
+  - {name: Chukkakura Pappu / Green Sorrel Dal, cat: pappu, diet: vegan}
+  - {name: Thotakura Pappu / Amaranth Dal, cat: pappu, diet: vegan}
+  - {name: Menthikura Pappu / Fenugreek Leaf Dal, cat: pappu, diet: vegan}
+  - {name: Bachalikura Pappu / Malabar Spinach Dal, cat: pappu, diet: vegan}
+
+  # --- pulusu / charu / sambar ---
+  - {name: Pulusu (generic tamarind stew), cat: pulusu, diet: vegan, te: పులుసు}
+  - {name: Chepala Pulusu / Fish Pulusu, cat: seafood_dish, diet: [seafood]}
+  - {name: Mamidikaya Pulusu / Raw Mango Pulusu, cat: pulusu, diet: vegan}
+  - {name: Gummadikaya Pulusu / Pumpkin Pulusu, cat: pulusu, diet: vegan}
+  - {name: Bendakaya Pulusu / Okra Pulusu, cat: pulusu, diet: vegan}
+  - {name: Ulavacharu / Horsegram Broth, cat: pulusu, diet: vegan, style: coastal}
+  - {name: Sambar (Andhra), cat: sambar, diet: vegan}
+  - {name: Charu / Rasam (Andhra), cat: rasam, diet: vegan}
+  - {name: Chintapandu Charu / Tamarind Rasam, cat: rasam, diet: vegan}
+  - {name: Miriyala Charu / Pepper Rasam, cat: rasam, diet: vegan}
+  - {name: Tomato Charu, cat: rasam, diet: vegan}
+  - {name: Menthi Majjiga / Spiced Buttermilk Curry, cat: kootu, diet: veg}
+  - {name: Majjiga Pulusu / Buttermilk Stew, cat: kootu, diet: veg}
+  - {name: Perugu Pachadi (curd based), cat: pachadi, diet: veg}
+
+  # --- kura (dry & gravy vegetables) ---
+  - {name: Bendakaya Vepudu / Okra Fry, cat: vepudu, diet: vegan}
+  - {name: Aloo Kura / Potato Fry (Andhra), cat: vepudu, diet: vegan}
+  - {name: Dondakaya Vepudu / Ivy Gourd Fry, cat: vepudu, diet: vegan}
+  - {name: Vankaya Vepudu / Brinjal Fry, cat: vepudu, diet: vegan}
+  - {name: Beerakaya Kura / Ridge Gourd Curry, cat: kura, diet: vegan}
+  - {name: Sorakaya Kura / Bottle Gourd Curry, cat: kura, diet: vegan}
+  - {name: Gutti Vankaya Kura / Stuffed Brinjal Curry, cat: kura, diet: vegan, te: గుత్తి వంకాయ}
+  - {name: Vankaya Batani Kura / Brinjal Green Peas, cat: kura, diet: vegan}
+  - {name: Vankaya Pachi Pulusu, cat: pulusu, diet: vegan}
+  - {name: Cabbage Pappu Kura, cat: kura, diet: vegan}
+  - {name: Chikkudukaya Kura / Broad Beans Curry, cat: kura, diet: vegan}
+  - {name: Anapakaya Kura / Bottle Gourd, cat: kura, diet: vegan}
+  - {name: Kandagadda Vepudu / Elephant Yam Fry, cat: vepudu, diet: vegan}
+  - {name: Aratikaya Vepudu / Raw Banana Fry, cat: vepudu, diet: vegan}
+  - {name: Munakkaya Curry / Drumstick Curry, cat: kura, diet: vegan}
+  - {name: Thotakura Vepudu / Amaranth Stir-fry, cat: vepudu, diet: vegan}
+  - {name: Gongura Pachadi (dry), cat: pachadi, diet: vegan}
+  - {name: Dosakaya Senagapappu Kura, cat: kura, diet: vegan}
+  - {name: Vankaya Pulusu Koora, cat: kura, diet: vegan}
+  - {name: Boondi Kura, cat: kura, diet: veg}
+
+  # --- pachadi (chutney) & podi (Andhra's signature) ---
+  - {name: Gongura Pachadi / Sorrel Leaf Chutney, cat: pachadi, diet: vegan, te: గోంగూర పచ్చడి}
+  - {name: Tomato Pachadi / Tamata Pachadi, cat: pachadi, diet: vegan}
+  - {name: Vankaya Pachadi / Brinjal Chutney, cat: pachadi, diet: vegan}
+  - {name: Dosakaya Pachadi / Cucumber Chutney, cat: pachadi, diet: vegan}
+  - {name: Beerakaya Pachadi / Ridge Gourd Chutney, cat: pachadi, diet: vegan}
+  - {name: Kandi Pachadi / Toor Dal Chutney, cat: pachadi, diet: vegan}
+  - {name: Pandumirapakaya Pachadi / Red Chilli Chutney, cat: pachadi, diet: vegan}
+  - {name: Allam Pachadi / Ginger Chutney, cat: pachadi, diet: vegan}
+  - {name: Nuvvula Pachadi / Sesame Chutney, cat: pachadi, diet: vegan}
+  - {name: Pachi Mirapakaya Pachadi / Green Chilli Chutney, cat: pachadi, diet: vegan}
+  - {name: Chintakaya Pachadi / Raw Tamarind Chutney, cat: pachadi, diet: vegan}
+  - {name: Usirikaya Pachadi / Gooseberry Chutney, cat: pachadi, diet: vegan}
+  - {name: Munagaku Pachadi / Drumstick Leaf Chutney, cat: pachadi, diet: vegan}
+  - {name: Tomato Kobbari Pachadi, cat: pachadi, diet: vegan}
+  - {name: Kakarakaya Pachadi / Bitter Gourd Chutney, cat: pachadi, diet: vegan}
+  - {name: Karivepaku Podi / Curry Leaf Powder, cat: podi, diet: vegan}
+  - {name: Kandi Podi / Toor Dal Podi, cat: podi, diet: vegan}
+  - {name: Kobbari Podi / Coconut Powder, cat: podi, diet: vegan}
+  - {name: Nuvvula Podi / Sesame Podi, cat: podi, diet: vegan}
+  - {name: Kura Podi / Curry Powder, cat: podi, diet: vegan}
+  - {name: Idli Karam Podi, cat: podi, diet: vegan}
+  - {name: Palli Podi / Peanut Powder, cat: podi, diet: vegan}
+  - {name: Putnala Podi / Roasted Gram Powder, cat: podi, diet: vegan}
+  - {name: Vrepudu Karam / Multi-purpose Fry Powder, cat: podi, diet: vegan}
+
+  # --- pickles (Avakaya heartland) ---
+  - {name: Avakaya / Andhra Mango Pickle, cat: pickle, diet: vegan, te: ఆవకాయ}
+  - {name: Nilava Avakaya, cat: pickle, diet: vegan}
+  - {name: Bellam Avakaya / Jaggery Mango Pickle, cat: pickle, diet: vegan}
+  - {name: Maagaya / Mango Pickle (soft), cat: pickle, diet: vegan}
+  - {name: Pandu Mirapakaya Pickle / Red Chilli Pickle, cat: pickle, diet: vegan}
+  - {name: Nimmakaya Pickle / Lemon Pickle, cat: pickle, diet: vegan}
+  - {name: Usirikaya Pickle / Gooseberry Pickle, cat: pickle, diet: vegan}
+  - {name: Tomato Pickle (Andhra), cat: pickle, diet: vegan}
+  - {name: Gongura Pickle / Gongura Nilava Pachadi, cat: pickle, diet: vegan}
+  - {name: Chicken Pickle / Kodi Pachadi, cat: pickle, diet: [poultry]}
+  - {name: Mutton Pickle / Mamsam Pickle, cat: pickle, diet: [red_meat]}
+  - {name: Prawn Pickle / Royyala Pickle, cat: pickle, diet: [seafood]}
+  - {name: Fish Pickle / Chepala Pickle, cat: pickle, diet: [seafood]}
+  - {name: Chintakaya Pickle / Tamarind Pickle, cat: pickle, diet: vegan}
+  - {name: Dabbakaya Pickle / Citron Pickle, cat: pickle, diet: vegan}
+
+  # --- non-veg (Rayalaseema + Coastal) ---
+  - {name: Natu Kodi Pulusu / Country Chicken Curry, cat: non_veg_curry, diet: [poultry], style: rayalaseema}
+  - {name: Kodi Kura / Andhra Chicken Curry, cat: non_veg_curry, diet: [poultry]}
+  - {name: Andhra Chicken Fry / Kodi Vepudu, cat: dry_curry, diet: [poultry]}
+  - {name: Chicken Pakoda / Kodi Pakodi, cat: snack, diet: [poultry]}
+  - {name: Gongura Chicken, cat: non_veg_curry, diet: [poultry]}
+  - {name: Gongura Mamsam / Gongura Mutton, cat: non_veg_curry, diet: [red_meat], te: గోంగూర మాంసం}
+  - {name: Ragda Mutton / Rayalaseema Mutton Curry, cat: non_veg_curry, diet: [red_meat], style: rayalaseema}
+  - {name: Mamsam Vepudu / Mutton Fry, cat: dry_curry, diet: [red_meat]}
+  - {name: Boti Curry / Offal Curry, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Bableli Kaji / Rayalaseema Ragi Sangati with mutton, cat: staple, diet: [red_meat], style: rayalaseema}
+  - {name: Ragi Sangati / Ragi Mudda (Rayalaseema), cat: staple, diet: vegan, style: rayalaseema}
+  - {name: Natukodi Vepudu, cat: dry_curry, diet: [poultry], style: rayalaseema}
+  - {name: Kodi Pulusu / Chicken Pulusu, cat: non_veg_curry, diet: [poultry]}
+  - {name: Chepala Vepudu / Fish Fry (Andhra), cat: seafood_dish, diet: [seafood]}
+  - {name: Royyala Iguru / Prawn Masala, cat: seafood_dish, diet: [seafood]}
+  - {name: Royyala Vepudu / Prawn Fry, cat: seafood_dish, diet: [seafood]}
+  - {name: Endu Chepala Pulusu / Dried Fish Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Bommidayala Pulusu / Catfish Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Peetha Curry / Crab Curry (Godavari), cat: seafood_dish, diet: [seafood]}
+  - {name: Kobbari Chepala Pulusu / Coconut Fish Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Guddu Pulusu / Egg Curry (Andhra), cat: egg_dish, diet: [egg]}
+  - {name: Kodi Guddu Vepudu / Egg Fry, cat: egg_dish, diet: [egg]}
+  - {name: Ulava Charu with Mutton, cat: non_veg_curry, diet: [red_meat], style: coastal}
+  - {name: Natu Kodi Chintapandu Pulusu, cat: non_veg_curry, diet: [poultry], style: rayalaseema}
+
+  # --- sweets / snacks ---
+  - {name: Bobbatlu / Bakshalu, cat: sweet, diet: veg}
+  - {name: Ariselu / Adhirasam (Andhra), cat: sweet, diet: veg}
+  - {name: Poornalu / Poornam Boorelu, cat: sweet, diet: vegan}
+  - {name: Sunnundalu / Minapa Sunni, cat: sweet, diet: veg}
+  - {name: Nuvvula Undalu / Sesame Ladoo, cat: sweet, diet: vegan}
+  - {name: Bellam Paramannam / Jaggery Rice Pudding, cat: sweet, diet: veg}
+  - {name: Pala Talikalu, cat: sweet, diet: veg}
+  - {name: Chalimidi, cat: sweet, diet: vegan}
+  - {name: Kudumulu, cat: sweet, diet: vegan}
+  - {name: Gavvalu, cat: snack, diet: veg}
+  - {name: Jantikalu / Chakralu, cat: snack, diet: vegan}
+  - {name: Chekkalu / Rice Crackers, cat: snack, diet: vegan}
+  - {name: Sakinalu, cat: snack, diet: vegan, style: telangana_border}
+  - {name: Kobbari Louz / Coconut Burfi, cat: sweet, diet: veg}
+  - {name: Bandar Laddu (Machilipatnam), cat: sweet, diet: veg, style: coastal}
+  - {name: Kaja / Madatha Kaja, cat: sweet, diet: veg}
+  - {name: Putharekulu / Paper Sweet (Atreyapuram), cat: sweet, diet: veg, style: coastal}
+  - {name: Tapeswaram Kaja, cat: sweet, diet: veg, style: coastal}
+  - {name: Boondi Laddu (Tirupati style), cat: sweet, diet: veg}
+  - {name: Tirupati Laddu / Srivari Laddu, cat: sweet, diet: veg}
+  - {name: Kova Kajjikayalu, cat: sweet, diet: veg}
+  - {name: Garijalu / Kajjikayalu, cat: sweet, diet: veg}
+  - {name: Palakova (Andhra), cat: sweet, diet: veg}
+  - {name: Rava Laddu (Andhra), cat: sweet, diet: veg}
+  - {name: Minapa Sunnundalu with jaggery, cat: sweet, diet: vegan}
+  - {name: Mokkajonna Garelu / Corn Vada, cat: snack, diet: vegan}
+  - {name: Punugulu (snack), cat: snack, diet: vegan}
+  - {name: Mirchi Bajji (Andhra), cat: snack, diet: veg}
+
+  # --- beverages ---
+  - {name: Filter Coffee (Andhra), cat: beverage, diet: veg}
+  - {name: Majjiga / Spiced Buttermilk, cat: beverage, diet: veg}
+  - {name: Ragi Java / Ragi Ambali, cat: beverage, diet: vegan, style: rayalaseema}
+  - {name: Panakam, cat: beverage, diet: vegan}
+  - {name: Bella Panakam (Sri Rama Navami), cat: beverage, diet: vegan}
+  - {name: Nannari Sarbath, cat: beverage, diet: vegan}

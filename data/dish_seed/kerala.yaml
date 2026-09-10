@@ -1,0 +1,183 @@
+# Kerala — curated dish seed for the v1 1,000-dish list.
+# diet: veg | vegan | [poultry] | [seafood] | [red_meat] | [egg] | [beef]  (list = non-veg)
+region: kerala
+dishes:
+  # --- breakfast / tiffin ---
+  - {name: Puttu, cat: tiffin, diet: vegan, ml: പുട്ട്}
+  - {name: Puttu and Kadala Curry, cat: tiffin, diet: vegan}
+  - {name: Kadala Curry / Black Chana Curry, cat: kootu, diet: vegan}
+  - {name: Appam, cat: tiffin, diet: vegan, aka: [Palappam, Vellayappam], ml: അപ്പം}
+  - {name: Appam with Stew, cat: tiffin, diet: veg}
+  - {name: Kallappam, cat: tiffin, diet: veg}
+  - {name: Vattayappam, cat: sweet, diet: veg}
+  - {name: Idiyappam / Nool Puttu, cat: tiffin, diet: vegan, ml: ഇടിയപ്പം}
+  - {name: Idiyappam with Egg Curry, cat: tiffin, diet: [egg]}
+  - {name: Kerala Egg Roast with Idiyappam, cat: tiffin, diet: [egg]}
+  - {name: Pathiri / Ari Pathiri, cat: bread, diet: vegan}
+  - {name: Neer Dosa (border, also Karnataka), cat: tiffin, diet: vegan}
+  - {name: Kerala Dosa / Plain Dosa, cat: tiffin, diet: vegan}
+  - {name: Set Dosa, cat: tiffin, diet: veg}
+  - {name: Uzhunnu Vada / Medu Vada, cat: tiffin, diet: vegan}
+  - {name: Parippu Vada / Dal Vada, cat: snack, diet: vegan}
+  - {name: Sukhiyan / Suzhiyan, cat: snack, diet: vegan}
+  - {name: Pazham Pori / Ethakka Appam / Banana Fritters, cat: snack, diet: vegan}
+  - {name: Unniyappam, cat: sweet, diet: veg}
+  - {name: Kozhukatta (Kerala steamed rice dumpling), cat: sweet, diet: vegan}
+  - {name: Ela Ada, cat: sweet, diet: vegan}
+  - {name: Aval Nanachathu / Sweet Poha, cat: snack, diet: veg}
+  - {name: Kerala Puttu Varieties (ragi, wheat, corn), cat: tiffin, diet: vegan}
+  - {name: Muttamala and Pinjanathappam, cat: sweet, diet: [egg]}
+  - {name: Kaipola / Banana Baked Pudding, cat: sweet, diet: [egg]}
+  - {name: Rava Kichadi (Kerala style), cat: tiffin, diet: veg}
+  - {name: Kanji (rice gruel) with Payar, cat: porridge, diet: vegan}
+  - {name: Karkidaka Kanji / Medicinal Rice Gruel, cat: porridge, diet: vegan}
+
+  # --- Sadya (vegetarian feast) ---
+  - {name: Sadya (Onam feast plate), cat: festival_special, diet: vegan}
+  - {name: Kerala Sambar / Varutharacha Sambar, cat: sambar, diet: vegan}
+  - {name: Parippu (moong dal with ghee), cat: sambar, diet: veg}
+  - {name: Rasam (Kerala style), cat: rasam, diet: vegan}
+  - {name: Aviyal, cat: kootu, diet: veg, ml: അവിയൽ}
+  - {name: Kaalan, cat: kootu, diet: veg}
+  - {name: Olan, cat: kootu, diet: vegan}
+  - {name: Erissery / Mathan Erissery, cat: kootu, diet: vegan}
+  - {name: Pumpkin Erissery, cat: kootu, diet: vegan}
+  - {name: Thoran (cabbage), cat: thoran, diet: vegan}
+  - {name: Beans Thoran, cat: thoran, diet: vegan}
+  - {name: Carrot Beans Thoran, cat: thoran, diet: vegan}
+  - {name: Cheera Thoran / Spinach Thoran, cat: thoran, diet: vegan}
+  - {name: Beetroot Thoran, cat: thoran, diet: vegan}
+  - {name: Muringa Ila Thoran / Drumstick Leaf Thoran, cat: thoran, diet: vegan}
+  - {name: Kootu Curry, cat: kootu, diet: vegan}
+  - {name: Pulisseri / Kaachiya Moru, cat: kootu, diet: veg}
+  - {name: Mambazha Pulissery / Ripe Mango Curry, cat: kootu, diet: veg}
+  - {name: Naranga Curry / Lime Pickle, cat: pickle, diet: vegan}
+  - {name: Inji Puli / Puli Inji / Ginger Tamarind, cat: pickle, diet: vegan}
+  - {name: Manga Achar / Kerala Mango Pickle, cat: pickle, diet: vegan}
+  - {name: Kadumanga Achar, cat: pickle, diet: vegan}
+  - {name: Beetroot Pachadi, cat: pachadi, diet: veg}
+  - {name: Cucumber Pachadi / Vellarikka Pachadi, cat: pachadi, diet: veg}
+  - {name: Pineapple Pachadi / Madhura Curry, cat: pachadi, diet: veg}
+  - {name: Vishu Kanji and Thoran, cat: festival_special, diet: vegan}
+  - {name: Nendran Chips / Banana Chips, cat: snack, diet: vegan}
+  - {name: Sharkara Varatti / Jaggery-coated Banana Chips, cat: snack, diet: vegan}
+  - {name: Kerala Papadam, cat: side, diet: vegan}
+  - {name: Pachadi (curd + vegetable, generic), cat: pachadi, diet: veg}
+
+  # --- Payasam / sweets ---
+  - {name: Palada Payasam / Palada Pradhaman, cat: sweet, diet: veg}
+  - {name: Ada Pradhaman, cat: sweet, diet: vegan}
+  - {name: Parippu Payasam / Parippu Pradhaman, cat: sweet, diet: vegan}
+  - {name: Chakka Pradhaman / Jackfruit Payasam, cat: sweet, diet: vegan}
+  - {name: Gothambu Payasam / Wheat Payasam, cat: sweet, diet: vegan}
+  - {name: Semiya Payasam (Kerala), cat: sweet, diet: veg}
+  - {name: Pal Payasam (Ambalappuzha style), cat: sweet, diet: veg}
+  - {name: Cherupayar Payasam / Green Gram Payasam, cat: sweet, diet: vegan}
+  - {name: Kadala Parippu Payasam, cat: sweet, diet: vegan}
+  - {name: Pazham Pradhaman, cat: sweet, diet: vegan}
+  - {name: Aval Payasam (Kerala), cat: sweet, diet: veg}
+  - {name: Achappam / Rose Cookies, cat: snack, diet: [egg]}
+  - {name: Kuzhalappam, cat: snack, diet: vegan}
+  - {name: Churuttu, cat: sweet, diet: veg}
+  - {name: Avalose Podi / Avalose Unda, cat: snack, diet: vegan}
+  - {name: Chiratta Puttu, cat: tiffin, diet: vegan}
+  - {name: Neyyappam, cat: sweet, diet: veg}
+  - {name: Ari Unda / Rice Ball, cat: sweet, diet: vegan}
+  - {name: Kalathappam, cat: sweet, diet: veg}
+
+  # --- fish & seafood (central to Kerala non-veg) ---
+  - {name: Meen Curry / Kerala Fish Curry (red, tamarind), cat: seafood_dish, diet: [seafood]}
+  - {name: Meen Vevichathu / Kottayam Fish Curry (kudampuli), cat: seafood_dish, diet: [seafood]}
+  - {name: Fish Molee / Meen Moilee (coconut milk), cat: seafood_dish, diet: [seafood]}
+  - {name: Alleppey Fish Curry (mango + coconut), cat: seafood_dish, diet: [seafood]}
+  - {name: Nadan Meen Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Karimeen Pollichathu / Pearl Spot in Banana Leaf, cat: seafood_dish, diet: [seafood]}
+  - {name: Fish Mango Curry / Meen Manga Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Meen Peera / Peera Pattichathu, cat: seafood_dish, diet: [seafood]}
+  - {name: Kerala Fish Fry / Meen Varuthathu, cat: seafood_dish, diet: [seafood]}
+  - {name: Ayala Fry / Mackerel Fry, cat: seafood_dish, diet: [seafood]}
+  - {name: Chemmeen Curry / Prawn Curry (Kerala), cat: seafood_dish, diet: [seafood]}
+  - {name: Chemmeen Roast / Prawn Roast, cat: seafood_dish, diet: [seafood]}
+  - {name: Konju Mango Curry / Prawn Raw Mango Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Kerala Prawn Biryani, cat: biryani, diet: [seafood]}
+  - {name: Kallummakkaya Ularthiyathu / Mussels Stir-fry, cat: seafood_dish, diet: [seafood]}
+  - {name: Arikkadukka / Stuffed Mussels, cat: seafood_dish, diet: [seafood], style: malabar}
+  - {name: Njandu Curry / Crab Curry (Kerala), cat: seafood_dish, diet: [seafood]}
+  - {name: Squid Roast / Koonthal Roast, cat: seafood_dish, diet: [seafood]}
+  - {name: Fish Pickle / Meen Achar, cat: pickle, diet: [seafood]}
+  - {name: Meen Pattichathu, cat: seafood_dish, diet: [seafood]}
+  - {name: Chala Curry / Sardine Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Netholi Fry / Anchovy Fry, cat: seafood_dish, diet: [seafood]}
+
+  # --- meat & poultry ---
+  - {name: Kerala Chicken Curry / Nadan Kozhi Curry, cat: non_veg_curry, diet: [poultry]}
+  - {name: Kozhi Varutharacha Curry / Roasted Coconut Chicken Curry, cat: non_veg_curry, diet: [poultry]}
+  - {name: Nadan Kozhi Varuthathu / Kerala Chicken Fry, cat: dry_curry, diet: [poultry]}
+  - {name: Kerala Chicken Roast / Nadan Chicken Roast, cat: dry_curry, diet: [poultry]}
+  - {name: Chicken Ularthiyathu, cat: dry_curry, diet: [poultry]}
+  - {name: Chicken Stew (Kerala), cat: non_veg_curry, diet: [poultry]}
+  - {name: Kerala Chicken Biryani (Kozhikode / Thalassery style), cat: biryani, diet: [poultry], style: malabar}
+  - {name: Thalassery Biryani, cat: biryani, diet: [poultry], style: malabar}
+  - {name: Kozhi Nirachathu / Stuffed Whole Chicken, cat: non_veg_curry, diet: [poultry], style: malabar}
+  - {name: Nadan Beef Curry, cat: non_veg_curry, diet: [beef]}
+  - {name: Beef Ularthiyathu / Beef Roast (Kerala), cat: dry_curry, diet: [beef]}
+  - {name: Beef Fry with Coconut Slivers, cat: dry_curry, diet: [beef]}
+  - {name: Kerala Beef Curry with Potatoes, cat: non_veg_curry, diet: [beef]}
+  - {name: Erachi Choru / Beef Rice, cat: rice_dish, diet: [beef], style: malabar}
+  - {name: Beef Cutlet, cat: snack, diet: [beef]}
+  - {name: Mutton Curry (Kerala / Nadan), cat: non_veg_curry, diet: [red_meat]}
+  - {name: Mutton Stew, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Mutton Peralan, cat: dry_curry, diet: [red_meat]}
+  - {name: Attirachi Varattiyathu / Mutton Roast, cat: dry_curry, diet: [red_meat]}
+  - {name: Kerala Style Duck Roast / Tharavu Roast, cat: dry_curry, diet: [poultry]}
+  - {name: Duck Mappas / Tharavu Mappas, cat: non_veg_curry, diet: [poultry]}
+  - {name: Pidi and Chicken / Rice Dumplings with Chicken, cat: non_veg_curry, diet: [poultry]}
+  - {name: Kerala Egg Curry / Mutta Curry, cat: egg_dish, diet: [egg]}
+  - {name: Egg Roast / Mutta Roast, cat: egg_dish, diet: [egg]}
+  - {name: Nadan Mutta Curry (coconut milk), cat: egg_dish, diet: [egg]}
+  - {name: Egg Masala (Kerala), cat: egg_dish, diet: [egg]}
+  - {name: Meat Cutlet / Chicken Cutlet, cat: snack, diet: [poultry]}
+  - {name: Unnakkaya / Stuffed Banana Dumpling, cat: snack, diet: [egg], style: malabar}
+  - {name: Pazham Nirachathu / Stuffed Banana, cat: snack, diet: [egg], style: malabar}
+  - {name: Chatti Pathiri, cat: sweet, diet: [egg], style: malabar}
+  - {name: Kai Pathiri / Nice Pathiri, cat: bread, diet: [egg], style: malabar}
+  - {name: Thalassery Mutta Surka, cat: sweet, diet: [egg], style: malabar}
+  - {name: Alisa / Aleesa (wheat + meat porridge), cat: porridge, diet: [poultry], style: malabar}
+  - {name: Muslim-style Kerala Fish Biryani, cat: biryani, diet: [seafood], style: malabar}
+  - {name: Kerala Parotta / Malabar Parotta, cat: bread, diet: veg}
+  - {name: Kothu Porotta (Kerala), cat: bread, diet: [egg, poultry]}
+  - {name: Chicken Perattu, cat: dry_curry, diet: [poultry]}
+
+  # --- vegetable curries / everyday ---
+  - {name: Kerala Vegetable Stew, cat: non_veg_curry, diet: veg}
+  - {name: Cherupayar Curry / Green Gram Curry, cat: kootu, diet: vegan}
+  - {name: Vanpayar Thoran / Red Cowpea Thoran, cat: thoran, diet: vegan}
+  - {name: Kappa / Steamed Tapioca, cat: side, diet: vegan}
+  - {name: Kappa Puzhukku / Mashed Tapioca, cat: side, diet: vegan}
+  - {name: Kappa and Meen Curry, cat: side, diet: [seafood]}
+  - {name: Kappa Biriyani (with beef), cat: rice_dish, diet: [beef]}
+  - {name: Ulli Theeyal / Shallot Theeyal, cat: kootu, diet: vegan}
+  - {name: Pavakka Theeyal / Bitter Gourd Theeyal, cat: kootu, diet: vegan}
+  - {name: Vendakka Theeyal / Okra Theeyal, cat: kootu, diet: vegan}
+  - {name: Chena Mezhukkupuratti / Yam Stir-fry, cat: thoran, diet: vegan}
+  - {name: Nendrakkai Mezhukkupuratti / Plantain Stir-fry, cat: thoran, diet: vegan}
+  - {name: Koorka Mezhukkupuratti / Chinese Potato Fry, cat: thoran, diet: vegan}
+  - {name: Muringakka Curry / Drumstick Curry, cat: kootu, diet: vegan}
+  - {name: Vazhakka Curry / Raw Banana Curry, cat: kootu, diet: vegan}
+  - {name: Chakka Puzhukku / Jackfruit Mash, cat: side, diet: vegan}
+  - {name: Idichakka Thoran / Tender Jackfruit Thoran, cat: thoran, diet: vegan}
+  - {name: Chakkakuru Curry / Jackfruit Seed Curry, cat: kootu, diet: vegan}
+  - {name: Manga Curry / Raw Mango Curry, cat: kootu, diet: vegan}
+  - {name: Moru Curry with Vazhuthananga / Brinjal, cat: kootu, diet: veg}
+  - {name: Kerala Paneer Curry, cat: gravy_curry, diet: veg}
+  - {name: Vegetable Kurma (Kerala), cat: kurma, diet: veg}
+  - {name: Green Peas Masala (Kerala), cat: gravy_curry, diet: veg}
+
+  # --- beverages ---
+  - {name: Sulaimani / Sulaimani Chai, cat: beverage, diet: vegan, style: malabar}
+  - {name: Kattan Chaya / Black Tea, cat: beverage, diet: vegan}
+  - {name: Kerala Kaapi, cat: beverage, diet: veg}
+  - {name: Sambharam / Spiced Buttermilk, cat: beverage, diet: veg}
+  - {name: Nannari Sharbath, cat: beverage, diet: vegan}
+  - {name: Naranga Vellam / Lime Juice, cat: beverage, diet: vegan}
+  - {name: Kaapi with Jaggery, cat: beverage, diet: veg}

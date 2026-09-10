@@ -1,0 +1,169 @@
+# Telangana — curated dish seed for the v1 1,000-dish list.
+# Distinct from Andhra: millet (jonna/sajja) staples, less coconut, Hyderabadi Deccani
+# stream, more meat, distinctive sour/roasted-spice profile.
+# diet: veg | vegan | [poultry] | [seafood] | [red_meat] | [egg]  (list = non-veg)
+region: telangana
+dishes:
+  # --- staples / breakfast ---
+  - {name: Sarva Pindi / Ginne Appa, cat: tiffin, diet: vegan, te: సర్వపిండి}
+  - {name: Sakinalu, cat: snack, diet: vegan}
+  - {name: Jonna Rotte / Sorghum Roti, cat: bread, diet: vegan}
+  - {name: Sajja Rotte / Pearl Millet Roti, cat: bread, diet: vegan}
+  - {name: Uggani / Bellam Uggani, cat: tiffin, diet: vegan}
+  - {name: Pesara Punugulu, cat: snack, diet: vegan}
+  - {name: Attu / Pesarattu (Telangana), cat: tiffin, diet: vegan}
+  - {name: Dosa (Telangana), cat: tiffin, diet: vegan}
+  - {name: Idli with Karam Podi, cat: tiffin, diet: vegan}
+  - {name: Upma (Telangana), cat: tiffin, diet: veg}
+  - {name: Godhuma Pindi Sankati, cat: staple, diet: vegan}
+  - {name: Jonna Ganji / Sorghum Porridge, cat: porridge, diet: vegan}
+  - {name: Ambali / Fermented Millet Porridge, cat: beverage, diet: vegan}
+  - {name: Garijelu / Kajjikayalu (Telangana), cat: sweet, diet: veg}
+  - {name: Malida / Jonna Rotte Sweet Crumble, cat: sweet, diet: veg}
+  - {name: Bhakshalu / Bobbatlu (Telangana), cat: sweet, diet: veg}
+
+  # --- pappu / charu / pulusu ---
+  - {name: Tomato Pappu (Telangana), cat: pappu, diet: vegan}
+  - {name: Dosakaya Pappu, cat: pappu, diet: vegan}
+  - {name: Gongura Pappu (Telangana), cat: pappu, diet: vegan}
+  - {name: Bachali Pappu / Malabar Spinach Dal, cat: pappu, diet: vegan}
+  - {name: Menthikura Pappu, cat: pappu, diet: vegan}
+  - {name: Palakura Pappu, cat: pappu, diet: vegan}
+  - {name: Sorakaya Pappu, cat: pappu, diet: vegan}
+  - {name: Kandi Pachadi (Telangana), cat: pachadi, diet: vegan}
+  - {name: Charu / Rasam (Telangana), cat: rasam, diet: vegan}
+  - {name: Tomato Charu, cat: rasam, diet: vegan}
+  - {name: Chintchiguru Charu / Tender Tamarind Leaf Rasam, cat: rasam, diet: vegan}
+  - {name: Golichina Charu / Pachi Charu, cat: rasam, diet: vegan}
+  - {name: Sakinalu Charu, cat: rasam, diet: vegan}
+  - {name: Pulusu (Telangana tamarind stew), cat: pulusu, diet: vegan}
+  - {name: Chinta Chiguru Pappu / Tamarind Leaf Dal, cat: pappu, diet: vegan}
+  - {name: Bachali Kaya Pulusu, cat: pulusu, diet: vegan}
+  - {name: Mamidikaya Pappu Pulusu, cat: pulusu, diet: vegan}
+  - {name: Sajja Ganji, cat: porridge, diet: vegan}
+  - {name: Majjiga Charu / Buttermilk Rasam, cat: rasam, diet: veg}
+
+  # --- kura / vepudu ---
+  - {name: Vankaya Pachi Pulusu, cat: pulusu, diet: vegan}
+  - {name: Aloo Kura (Telangana), cat: vepudu, diet: vegan}
+  - {name: Bendakaya Fry, cat: vepudu, diet: vegan}
+  - {name: Dondakaya Vepudu, cat: vepudu, diet: vegan}
+  - {name: Beerakaya Kura, cat: kura, diet: vegan}
+  - {name: Chikkudukaya Kura / Broad Beans, cat: kura, diet: vegan}
+  - {name: Gutti Vankaya (Telangana), cat: kura, diet: vegan}
+  - {name: Anapakaya Kura / Bottle Gourd, cat: kura, diet: vegan}
+  - {name: Kakarakaya Vepudu / Bitter Gourd Fry, cat: vepudu, diet: vegan}
+  - {name: Thotakura Vepudu, cat: vepudu, diet: vegan}
+  - {name: Boddu Kura / Colocasia Stem Curry, cat: kura, diet: vegan}
+  - {name: Sorakaya Senagapappu Kura, cat: kura, diet: vegan}
+  - {name: Aakukura Vepudu / Mixed Greens Fry, cat: vepudu, diet: vegan}
+  - {name: Cabbage Kura, cat: kura, diet: vegan}
+  - {name: Dosakaya Senaga Pappu Kura, cat: kura, diet: vegan}
+
+  # --- pachadi / podi / pickle ---
+  - {name: Tomato Pachadi (Telangana), cat: pachadi, diet: vegan}
+  - {name: Vankaya Pachadi, cat: pachadi, diet: vegan}
+  - {name: Gongura Pachadi (Telangana), cat: pachadi, diet: vegan}
+  - {name: Beerakaya Pachadi, cat: pachadi, diet: vegan}
+  - {name: Dosakaya Pachadi, cat: pachadi, diet: vegan}
+  - {name: Tomato Kobbari Pachadi, cat: pachadi, diet: vegan}
+  - {name: Nuvvula Karam / Sesame Chilli Powder, cat: podi, diet: vegan}
+  - {name: Palli Karam Podi / Peanut Chilli Powder, cat: podi, diet: vegan}
+  - {name: Kandi Podi / Kandipodi with sesame, cat: podi, diet: vegan}
+  - {name: Karivepaku Karam / Curry Leaf Powder, cat: podi, diet: vegan}
+  - {name: Putnala Karam / Roasted Gram Chilli Powder, cat: podi, diet: vegan}
+  - {name: Idli Karam Podi (Telangana), cat: podi, diet: vegan}
+  - {name: Kobbari Karam / Coconut Chilli Powder, cat: podi, diet: vegan}
+  - {name: Verusenaga Podi / Groundnut Powder, cat: podi, diet: vegan}
+  - {name: Avakaya (Telangana), cat: pickle, diet: vegan}
+  - {name: Tomato Pickle (Telangana), cat: pickle, diet: vegan}
+  - {name: Usirikaya Nilava Pachadi / Gooseberry Pickle, cat: pickle, diet: vegan}
+  - {name: Pandu Mirapakaya Pickle, cat: pickle, diet: vegan}
+  - {name: Chintakaya Pachadi (Telangana), cat: pickle, diet: vegan}
+  - {name: Mamidikaya Allam Pachadi, cat: pickle, diet: vegan}
+  - {name: Chicken Pickle (Telangana), cat: pickle, diet: [poultry]}
+  - {name: Mutton Pickle (Telangana), cat: pickle, diet: [red_meat]}
+  - {name: Boneless Kodi Pachadi, cat: pickle, diet: [poultry]}
+
+  # --- non-veg (Telangana rural + Deccani) ---
+  - {name: Natu Kodi Pulusu / Country Chicken Curry (Telangana), cat: non_veg_curry, diet: [poultry], te: నాటుకోడి పులుసు}
+  - {name: Kodi Koora / Telangana Chicken Curry, cat: non_veg_curry, diet: [poultry]}
+  - {name: Kodi Vepudu / Chicken Fry, cat: dry_curry, diet: [poultry]}
+  - {name: Chicken Fry Piece / Chicken 65 (Telangana), cat: dry_curry, diet: [poultry]}
+  - {name: Mamsam Pulusu / Mutton Curry (Telangana), cat: non_veg_curry, diet: [red_meat]}
+  - {name: Mutton Vepudu / Mutton Fry, cat: dry_curry, diet: [red_meat]}
+  - {name: Mutton Rogan Josh (Hyderabadi), cat: non_veg_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Gongura Mamsam (Telangana), cat: non_veg_curry, diet: [red_meat]}
+  - {name: Boti Curry / Offal Curry (Telangana), cat: non_veg_curry, diet: [red_meat]}
+  - {name: Talakaya Kura / Goat Head Curry, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Ranga Kura / Bone Marrow Curry, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Chintapandu Kodi Pulusu, cat: non_veg_curry, diet: [poultry]}
+  - {name: Golichina Mamsam, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Pothu Kura / Buffalo Meat Curry, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Sajja Rotte with Mamsam, cat: staple, diet: [red_meat]}
+  - {name: Guddu Pulusu / Egg Curry (Telangana), cat: egg_dish, diet: [egg]}
+  - {name: Kodi Guddu Pulusu with tamarind, cat: egg_dish, diet: [egg]}
+  - {name: Egg Fry / Guddu Vepudu, cat: egg_dish, diet: [egg]}
+  - {name: Endu Chepala Pulusu / Dry Fish Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Chepala Pulusu (Telangana), cat: seafood_dish, diet: [seafood]}
+  - {name: Chepa Vepudu / Fish Fry, cat: seafood_dish, diet: [seafood]}
+  - {name: Royyala Vepudu / Prawn Fry, cat: seafood_dish, diet: [seafood]}
+
+  # --- Hyderabadi / Deccani (Hyderabad, historically Telangana) ---
+  - {name: Hyderabadi Chicken Dum Biryani, cat: biryani, diet: [poultry], style: hyderabadi, te: హైదరాబాదీ బిర్యానీ}
+  - {name: Hyderabadi Mutton Dum Biryani, cat: biryani, diet: [red_meat], style: hyderabadi}
+  - {name: Kacchi Gosht ki Biryani, cat: biryani, diet: [red_meat], style: hyderabadi}
+  - {name: Hyderabadi Vegetable Dum Biryani, cat: biryani, diet: veg, style: hyderabadi}
+  - {name: Bagara Baingan, cat: gravy_curry, diet: vegan, style: hyderabadi}
+  - {name: Mirchi ka Salan, cat: gravy_curry, diet: vegan, style: hyderabadi}
+  - {name: Dahi ki Chutney / Raita for Biryani, cat: side, diet: veg, style: hyderabadi}
+  - {name: Hyderabadi Haleem, cat: porridge, diet: [red_meat], style: hyderabadi}
+  - {name: Hyderabadi Marag / Mutton Soup, cat: non_veg_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Dalcha / Lentil Mutton Curry, cat: non_veg_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Khatti Dal, cat: pappu, diet: vegan, style: hyderabadi}
+  - {name: Tomato Kut / Tamatar ka Kut, cat: gravy_curry, diet: veg, style: hyderabadi}
+  - {name: Hyderabadi Khichdi Khatta Kheema, cat: rice_dish, diet: [red_meat], style: hyderabadi}
+  - {name: Nihari (Hyderabadi), cat: non_veg_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Paya / Trotters Curry (Hyderabadi), cat: non_veg_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Lukhmi / Mince Pastry, cat: snack, diet: [red_meat], style: hyderabadi}
+  - {name: Hyderabadi Chicken 65, cat: dry_curry, diet: [poultry], style: hyderabadi}
+  - {name: Pathar ka Gosht, cat: dry_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Tala Hua Gosht / Talawa Gosht, cat: dry_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Kheema Matar (Hyderabadi), cat: non_veg_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Shikampur Kebab, cat: dry_curry, diet: [red_meat], style: hyderabadi}
+  - {name: Hyderabadi Chicken Korma, cat: non_veg_curry, diet: [poultry], style: hyderabadi}
+  - {name: Murgh Do Pyaza (Hyderabadi), cat: non_veg_curry, diet: [poultry], style: hyderabadi}
+  - {name: Sheer Khurma, cat: sweet, diet: veg, style: hyderabadi}
+  - {name: Double ka Meetha, cat: sweet, diet: veg, style: hyderabadi}
+  - {name: Khubani ka Meetha, cat: sweet, diet: veg, style: hyderabadi}
+  - {name: Qubani Custard, cat: sweet, diet: [egg], style: hyderabadi}
+  - {name: Gil-e-Firdaus, cat: sweet, diet: veg, style: hyderabadi}
+  - {name: Ande ka Halwa / Egg Halwa, cat: sweet, diet: [egg], style: hyderabadi}
+  - {name: Dil Pasand, cat: sweet, diet: veg, style: hyderabadi}
+  - {name: Osmania Biscuits, cat: snack, diet: [egg], style: hyderabadi}
+  - {name: Hyderabadi Irani Chai, cat: beverage, diet: veg, style: hyderabadi}
+  - {name: Malai / Bun Maska with Irani Chai, cat: snack, diet: veg, style: hyderabadi}
+  - {name: Hyderabadi Til ki Chutney, cat: pachadi, diet: vegan, style: hyderabadi}
+
+  # --- sweets / snacks (Telangana) ---
+  - {name: Ariselu (Telangana), cat: sweet, diet: veg}
+  - {name: Sunnundalu (Telangana), cat: sweet, diet: veg}
+  - {name: Nuvvula Undalu, cat: sweet, diet: vegan}
+  - {name: Kobbari Louz, cat: sweet, diet: veg}
+  - {name: Bellam Sunni / Jaggery Sesame Ladoo, cat: sweet, diet: vegan}
+  - {name: Gavvalu (Telangana), cat: snack, diet: veg}
+  - {name: Chekkalu (Telangana), cat: snack, diet: vegan}
+  - {name: Karam Gavvalu, cat: snack, diet: vegan}
+  - {name: Boondi Laddu (Telangana), cat: sweet, diet: veg}
+  - {name: Bellam Paramannam, cat: sweet, diet: veg}
+  - {name: Pala Kova (Telangana), cat: sweet, diet: veg}
+  - {name: Kunda / Junnu / Colostrum Pudding, cat: sweet, diet: veg}
+  - {name: Sajja Burfi / Pearl Millet Burfi, cat: sweet, diet: veg}
+  - {name: Jonna Pindi Laddu, cat: sweet, diet: vegan}
+
+  # --- beverages ---
+  - {name: Irani Chai, cat: beverage, diet: veg, style: hyderabadi}
+  - {name: Majjiga / Spiced Buttermilk (Telangana), cat: beverage, diet: veg}
+  - {name: Ambali (millet drink), cat: beverage, diet: vegan}
+  - {name: Bella Panakam, cat: beverage, diet: vegan}
+  - {name: Ragi Java, cat: beverage, diet: vegan}

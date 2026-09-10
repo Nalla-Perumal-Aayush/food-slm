@@ -1,0 +1,54 @@
+# Puducherry — curated dish seed for the v1 1,000-dish list.
+# Small union territory: Tamil base (Pondicherry + Karaikal) with a distinctive
+# French-Creole "Pondicherry cuisine" layer, plus Kerala influence in Mahe and
+# Telugu influence in Yanam. Keep the entries that are genuinely local/creole;
+# the plain Tamil dishes are already covered in tamil_nadu.yaml.
+region: puducherry
+dishes:
+  # --- Franco-Tamil / Creole (the reason Puducherry is its own region) ---
+  - {name: Pondicherry Prawn Curry / Creole Prawn Curry, cat: seafood_dish, diet: [seafood], style: creole}
+  - {name: Poulet Rouge / Pondicherry Red Chicken, cat: non_veg_curry, diet: [poultry], style: creole}
+  - {name: Pondicherry Fish Assad / Poisson Assad, cat: seafood_dish, diet: [seafood], style: creole}
+  - {name: Meen Puyabaisse / Pondicherry Bouillabaisse, cat: seafood_dish, diet: [seafood], style: creole}
+  - {name: Coq au Vin Pondicherry style, cat: non_veg_curry, diet: [poultry], style: creole}
+  - {name: Pondicherry Mutton Stew (Franco-Tamil), cat: non_veg_curry, diet: [red_meat], style: creole}
+  - {name: Croquettes / Pondicherry Fish Croquettes, cat: snack, diet: [seafood], style: creole}
+  - {name: Pondicherry Vegetable Bouillon, cat: non_veg_curry, diet: veg, style: creole}
+  - {name: Cabbage Foogath (Pondicherry), cat: thoran, diet: vegan, style: creole}
+  - {name: Pondicherry Prawn Rassa, cat: seafood_dish, diet: [seafood], style: creole}
+  - {name: Kadugu Yerra / Mustard Prawns (Pondicherry), cat: seafood_dish, diet: [seafood], style: creole}
+  - {name: Pondicherry Chicken Buemboo / Bamboo Chicken, cat: non_veg_curry, diet: [poultry], style: creole}
+  - {name: Pot au Feu Pondicherry, cat: non_veg_curry, diet: [red_meat], style: creole}
+  - {name: Assad de Legumes / Vegetable Assad, cat: kootu, diet: vegan, style: creole}
+
+  # --- Franco-Tamil bakes & sweets ---
+  - {name: Pondicherry Baguette (local sourdough-style bread), cat: bread, diet: vegan, style: creole}
+  - {name: Bonbon Pondicherry / Coconut Bonbon, cat: sweet, diet: veg, style: creole}
+  - {name: Pondicherry Mille-Feuille, cat: sweet, diet: [egg], style: creole}
+  - {name: Palmier / Pondicherry Palm Biscuit, cat: snack, diet: [egg], style: creole}
+  - {name: Rose Cookies / Achu Murukku (Pondicherry), cat: snack, diet: [egg]}
+  - {name: Pondicherry Custard Pudding / Creme Caramel, cat: sweet, diet: [egg], style: creole}
+  - {name: Pain de Genes style coconut cake, cat: sweet, diet: [egg], style: creole}
+  - {name: Pondicherry Gateau Patate / Sweet Potato Cake, cat: sweet, diet: [egg], style: creole}
+
+  # --- Tamil-Pondicherry everyday (local emphasis) ---
+  - {name: Pondicherry Meen Kuzhambu, cat: seafood_dish, diet: [seafood]}
+  - {name: Karaikal Prawn Masala, cat: seafood_dish, diet: [seafood]}
+  - {name: Nandu Kuzhambu / Crab Curry (Pondicherry), cat: seafood_dish, diet: [seafood]}
+  - {name: Pondicherry Chicken Kuzhambu, cat: non_veg_curry, diet: [poultry]}
+  - {name: Kizhi Parotta / Pondicherry Parotta, cat: bread, diet: veg}
+  - {name: Pondicherry Mutton Biryani, cat: biryani, diet: [red_meat]}
+  - {name: Vadai Curry (Pondicherry breakfast side), cat: gravy_curry, diet: vegan}
+  - {name: Pondicherry Sundal, cat: snack, diet: vegan}
+  - {name: Meen varuval (Karaikal style), cat: seafood_dish, diet: [seafood]}
+  - {name: Pondicherry Kothu Parotta, cat: bread, diet: [egg, poultry]}
+
+  # --- Mahe (Kerala influence) & Yanam (Telugu influence) ---
+  - {name: Mahe Fish Curry (Kerala-influenced), cat: seafood_dish, diet: [seafood], style: mahe}
+  - {name: Mahe Beef Ularthiyathu, cat: dry_curry, diet: [beef], style: mahe}
+  - {name: Yanam Chepala Pulusu / Fish Curry, cat: seafood_dish, diet: [seafood], style: yanam}
+  - {name: Yanam Kodi Pulusu, cat: non_veg_curry, diet: [poultry], style: yanam}
+
+  # --- beverages ---
+  - {name: Pondicherry Filter Coffee, cat: beverage, diet: veg}
+  - {name: Toddy / Kallu (Pondicherry), cat: beverage, diet: vegan}

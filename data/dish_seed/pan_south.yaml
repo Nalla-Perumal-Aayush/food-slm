@@ -1,0 +1,82 @@
+# Pan-South Indian — dishes that are shared across three or more of the six regions
+# and don't belong to any single one. Kept small on purpose: region-specific
+# variants live in the region files; this file is for the genuinely common core
+# plus modern pan-South restaurant/tiffin-hall staples.
+region: pan_south
+dishes:
+  # --- the shared tiffin core (idli/dosa/vada already regionalised; these are the
+  #     truly generic "South Indian tiffin" references) ---
+  - {name: South Indian Tiffin (concept / meal type), cat: concept, diet: veg}
+  - {name: Meals Plate / South Indian Thali, cat: concept, diet: veg}
+  - {name: Banana Leaf Meals, cat: concept, diet: veg}
+  - {name: Tiffin Sambar (hotel style), cat: sambar, diet: vegan}
+  - {name: Hotel-style Coconut Chutney, cat: chutney, diet: vegan}
+  - {name: Sambar Powder (generic blend), cat: podi, diet: vegan}
+  - {name: Rasam Powder (generic blend), cat: podi, diet: vegan}
+  - {name: Idli Milagai Podi / Gunpowder, cat: podi, diet: vegan}
+  - {name: Curry Leaf Podi, cat: podi, diet: vegan}
+  - {name: Tempering / Tadka / Thalippu (technique dish-adjacent), cat: technique, diet: vegan}
+
+  # --- shared everyday dishes ---
+  - {name: Curd Rice, cat: rice_dish, diet: veg}
+  - {name: Lemon Rice, cat: rice_dish, diet: vegan}
+  - {name: Tamarind Rice / Puliyogare / Pulihora, cat: rice_dish, diet: vegan}
+  - {name: Coconut Rice, cat: rice_dish, diet: vegan}
+  - {name: Tomato Rice, cat: rice_dish, diet: vegan}
+  - {name: Vegetable Kurma / Saagu, cat: kurma, diet: veg}
+  - {name: Mixed Vegetable Sambar, cat: sambar, diet: vegan}
+  - {name: Tomato Rasam, cat: rasam, diet: vegan}
+  - {name: Pepper Rasam / Milagu Rasam, cat: rasam, diet: vegan}
+  - {name: Buttermilk Kadhi / Mor Kuzhambu / Majjige Huli, cat: kootu, diet: veg}
+  - {name: Paruppu / Plain Dal with ghee, cat: sambar, diet: veg}
+  - {name: Kootu / Lentil-Vegetable Stew, cat: kootu, diet: veg}
+  - {name: Poriyal / Palya / Thoran (dry vegetable, concept), cat: concept, diet: vegan}
+  - {name: Avial (pan-South of TN/Kerala/coastal Karnataka), cat: kootu, diet: veg}
+  - {name: Sundal (festival legume snack), cat: snack, diet: vegan}
+
+  # --- shared sweets ---
+  - {name: Payasam / Kheer (concept), cat: sweet, diet: veg}
+  - {name: Semiya Payasam / Vermicelli Kheer, cat: sweet, diet: veg}
+  - {name: Paal Payasam / Rice Kheer, cat: sweet, diet: veg}
+  - {name: Parippu / Pappu Payasam, cat: sweet, diet: vegan}
+  - {name: Rava Kesari / Kesari Bath, cat: sweet, diet: veg}
+  - {name: Sakkarai Pongal / Chakkara Pongali, cat: sweet, diet: veg}
+  - {name: Mysore Pak, cat: sweet, diet: veg}
+  - {name: Boondi Ladoo, cat: sweet, diet: veg}
+  - {name: Rava Ladoo, cat: sweet, diet: veg}
+  - {name: Coconut Burfi, cat: sweet, diet: veg}
+  - {name: Bobbatlu / Obbattu / Holige / Puran Poli, cat: sweet, diet: veg}
+  - {name: Adhirasam / Ariselu, cat: sweet, diet: veg}
+  - {name: Kozhukattai / Modak / Kudumu (Ganesh festival), cat: sweet, diet: vegan}
+  - {name: Sunnundalu / Urad Dal Ladoo, cat: sweet, diet: veg}
+
+  # --- shared snacks ---
+  - {name: Murukku / Chakli / Jantikalu, cat: snack, diet: vegan}
+  - {name: Thattai / Nippattu / Chekkalu, cat: snack, diet: vegan}
+  - {name: Mixture / Kara Sev, cat: snack, diet: vegan}
+  - {name: Bajji / Bonda, cat: snack, diet: veg}
+  - {name: Masala Vada / Aama Vada / Chana Dal Vada, cat: snack, diet: vegan}
+  - {name: Banana Chips / Nendran Chips, cat: snack, diet: vegan}
+  - {name: Ribbon Pakoda, cat: snack, diet: vegan}
+  - {name: Peanut / Kadalai Urundai Chikki, cat: sweet, diet: vegan}
+
+  # --- shared non-veg templates ---
+  - {name: South Indian Chicken Curry (generic template), cat: non_veg_curry, diet: [poultry]}
+  - {name: South Indian Mutton Curry (generic template), cat: non_veg_curry, diet: [red_meat]}
+  - {name: Pepper Chicken / Milagu Kozhi, cat: dry_curry, diet: [poultry]}
+  - {name: Chicken 65, cat: dry_curry, diet: [poultry]}
+  - {name: Egg Curry (South Indian, coconut base), cat: egg_dish, diet: [egg]}
+  - {name: Egg Bhurji / Muttai Podimas, cat: egg_dish, diet: [egg]}
+  - {name: Fish Fry (rava / masala coated), cat: seafood_dish, diet: [seafood]}
+  - {name: Prawn Masala / Prawn Roast, cat: seafood_dish, diet: [seafood]}
+  - {name: South Indian Fish Curry (tamarind + coconut, template), cat: seafood_dish, diet: [seafood]}
+  - {name: Chicken Biryani (South Indian, seeraga samba template), cat: biryani, diet: [poultry]}
+  - {name: Vegetable Biryani (South Indian), cat: biryani, diet: veg}
+
+  # --- beverages ---
+  - {name: Filter Coffee / Kaapi, cat: beverage, diet: veg}
+  - {name: Spiced Buttermilk / Neer Mor / Majjiga / Sambharam, cat: beverage, diet: veg}
+  - {name: Panakam / Panaka / Bella Panakam, cat: beverage, diet: vegan}
+  - {name: Nannari Sarbath, cat: beverage, diet: vegan}
+  - {name: Ragi Malt / Ragi Java / Ragi Ambali, cat: beverage, diet: vegan}
+  - {name: Rasam as a drink / Rasam shot, cat: beverage, diet: vegan}

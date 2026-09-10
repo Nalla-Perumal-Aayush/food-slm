@@ -1,0 +1,42 @@
+# South Indian cooking YouTube channels for the 150M domain corpus (Level 1, method B7).
+# Used for spoken technique / ratio / troubleshooting narration that rarely appears in
+# written recipes. Transcripts only (no video/audio). English-language channels are
+# ingested directly; regional-language channels (ml/ta/te/kn) have their auto-caption
+# transcripts parked for a local machine-translation pass (scripts/translate_youtube_cache.py)
+# because YouTube no longer exposes server-side translation for ASR captions.
+#
+# Openly published; transcripts used for weights only, NOT redistributed. Provenance
+# (channel, video id, title, url, caption language, translated?) tracked in the manifest.
+# Rate-limited. No GPU.
+#
+# handle: an @handle, a full https://www.youtube.com/... URL, or /channel/<ID>.
+#         The crawler tries <url>/videos then <url>/streams and skips on failure.
+# tier:   core_si (region-specific specialist) | pan_si (pan-South, English)
+
+channels:
+  # --- Tamil Nadu ---
+  - {name: home_cooking_show,   handle: "@HomeCookingShow",                              region: tamil_nadu,     lang: en, tier: pan_si}
+  - {name: madras_samayal,      handle: "@MadrasSamayal",                                region: tamil_nadu,     lang: ta, tier: core_si}
+  - {name: cookd,               handle: "@cookdtv",                                      region: tamil_nadu,     lang: ta, tier: core_si}
+  - {name: kannamma_cooks_yt,   handle: "@kannammacooks",                                region: tamil_nadu,     lang: en, tier: core_si}
+  - {name: sharmis_passions_yt, handle: "@Sharmispassions",                              region: tamil_nadu,     lang: en, tier: core_si}
+
+  # --- Kerala ---
+  - {name: salu_kitchen,        handle: "https://www.youtube.com/user/salukitchen",      region: kerala,         lang: ml, tier: core_si}
+  - {name: veenas_curryworld,   handle: "/channel/UCugwC12zllpi9zJoUP5ZVyw",             region: kerala,         lang: ml, tier: core_si}
+  - {name: marias_menu,         handle: "@mariasmenu",                                   region: kerala,         lang: en, tier: core_si}
+  - {name: pachakam,            handle: "@pachakam",                                     region: kerala,         lang: en, tier: core_si}
+
+  # --- Karnataka ---
+  - {name: hebbars_kitchen,     handle: "/channel/UCPPIsrNlEkaFQBk-4uNkOaw",             region: karnataka,      lang: en, tier: pan_si}
+  - {name: udupi_recipes_yt,    handle: "@UdupiRecipes",                                 region: karnataka,      lang: en, tier: core_si}
+
+  # --- Andhra Pradesh / Telangana ---
+  - {name: vahchef,             handle: "/channel/UC_R8qIXaTKpkAJuuiZhHTmA",             region: telangana,      lang: en, tier: pan_si}
+  - {name: hyderabadi_ruchulu,  handle: "@HyderabadiRuchulu",                            region: telangana,      lang: te, tier: core_si}
+  - {name: attamma_tv,          handle: "@AttammaTV",                                    region: andhra_pradesh, lang: te, tier: core_si}
+  - {name: gayatri_vantillu,    handle: "@GayatriVantillu",                              region: andhra_pradesh, lang: en, tier: core_si}
+  - {name: vismai_food_yt,      handle: "@VismaiFoodChannel",                            region: telangana,      lang: te, tier: core_si}
+
+  # --- pan-South / English ---
+  - {name: show_me_the_curry,   handle: "@showmethecurry",                               region: pan_south,      lang: en, tier: pan_si}

@@ -1,0 +1,195 @@
+# Karnataka — curated dish seed for the v1 1,000-dish list.
+# diet: veg | vegan | [poultry] | [seafood] | [red_meat] | [egg]  (list = non-veg)
+# style hints: udupi | mangalorean | coorg (kodava) | north_karnataka | mysore
+region: karnataka
+dishes:
+  # --- tiffin / breakfast (Udupi-Mangalore heartland) ---
+  - {name: Masala Dosa (Mysore / Bangalore style), cat: tiffin, diet: veg}
+  - {name: Mysore Masala Dosa, cat: tiffin, diet: veg, style: mysore}
+  - {name: Benne Dose / Butter Dosa (Davanagere), cat: tiffin, diet: veg}
+  - {name: Set Dosa (Karnataka), cat: tiffin, diet: veg}
+  - {name: Neer Dosa, cat: tiffin, diet: vegan, style: mangalorean, kn: ನೀರ್ ದೋಸೆ}
+  - {name: Pesarattu (border), cat: tiffin, diet: vegan}
+  - {name: Rava Dosa, cat: tiffin, diet: veg}
+  - {name: Uddina Dose, cat: tiffin, diet: vegan}
+  - {name: Poori Saagu / Baji, cat: tiffin, diet: veg}
+  - {name: Khara Bath, cat: tiffin, diet: veg}
+  - {name: Kesari Bath, cat: sweet, diet: veg}
+  - {name: Chow Chow Bath (Khara + Kesari), cat: tiffin, diet: veg}
+  - {name: Bisi Bele Bath, cat: rice_dish, diet: veg, style: mysore, kn: ಬಿಸಿ ಬೇಳೆ ಬಾತ್}
+  - {name: Vangi Bath / Brinjal Rice, cat: rice_dish, diet: vegan}
+  - {name: Puliyogare / Tamarind Rice (Karnataka), cat: rice_dish, diet: vegan}
+  - {name: Chitranna / Lemon Rice (Karnataka), cat: rice_dish, diet: vegan}
+  - {name: Mavinakayi Chitranna / Raw Mango Rice, cat: rice_dish, diet: vegan}
+  - {name: Coconut Rice / Kayi Anna, cat: rice_dish, diet: vegan}
+  - {name: Rave Idli / Rava Idli, cat: tiffin, diet: veg, style: mysore}
+  - {name: Thatte Idli, cat: tiffin, diet: vegan}
+  - {name: Idli (Karnataka soft), cat: tiffin, diet: vegan}
+  - {name: Mangalore Buns / Banana Buns, cat: tiffin, diet: veg, style: mangalorean}
+  - {name: Goli Baje / Mangalore Bajji, cat: snack, diet: veg, style: mangalorean}
+  - {name: Uppittu / Upma (Karnataka), cat: tiffin, diet: veg}
+  - {name: Avalakki / Poha (Karnataka), cat: tiffin, diet: vegan}
+  - {name: Menthya Avalakki, cat: tiffin, diet: vegan}
+  - {name: Kharabath with Chow Chow, cat: tiffin, diet: veg}
+  - {name: Akki Rotti, cat: bread, diet: vegan, kn: ಅಕ್ಕಿ ರೊಟ್ಟಿ}
+  - {name: Ragi Rotti, cat: bread, diet: vegan}
+  - {name: Jolada Rotti / Sorghum Flatbread, cat: bread, diet: vegan, style: north_karnataka}
+  - {name: Kadubu (steamed rice dumpling), cat: tiffin, diet: vegan}
+  - {name: Moode / Gunda (steamed idli in kedige leaf), cat: tiffin, diet: vegan, style: mangalorean}
+  - {name: Pundi / Rice Dumplings (Mangalore), cat: tiffin, diet: vegan, style: mangalorean}
+  - {name: Sajjige / Rava Kesari, cat: sweet, diet: veg}
+  - {name: Menthe Dosa / Fenugreek Dosa, cat: tiffin, diet: vegan}
+
+  # --- rice, ragi, staples ---
+  - {name: Ragi Mudde / Ragi Ball, cat: staple, diet: vegan, kn: ರಾಗಿ ಮುದ್ದೆ}
+  - {name: Ragi Mudde with Soppina Saaru, cat: staple, diet: vegan}
+  - {name: Jolada Rotti with Enngai, cat: bread, diet: vegan, style: north_karnataka}
+  - {name: Kesari Anna, cat: sweet, diet: veg}
+  - {name: Curd Rice (Karnataka / Mosaru Anna), cat: rice_dish, diet: veg}
+  - {name: Nucchinunde / Steamed Lentil Dumpling, cat: tiffin, diet: vegan}
+  - {name: Kadabu (Ganesha festival), cat: sweet, diet: veg}
+
+  # --- saaru / huli / kootu / palya ---
+  - {name: Saaru / Rasam (Karnataka), cat: rasam, diet: vegan}
+  - {name: Tomato Saaru, cat: rasam, diet: vegan}
+  - {name: Pineapple Saasive, cat: pachadi, diet: veg}
+  - {name: Huli / Sambar (Karnataka), cat: sambar, diet: vegan}
+  - {name: Menthya Huli, cat: sambar, diet: vegan}
+  - {name: Majjige Huli / Mor Kuzhambu, cat: kootu, diet: veg}
+  - {name: Gojju (generic sweet-sour-spicy), cat: gojju, diet: vegan}
+  - {name: Menaskai / Menasinakai Gojju, cat: gojju, diet: vegan, style: udupi}
+  - {name: Hagalakai Gojju / Bitter Gourd Gojju, cat: gojju, diet: vegan}
+  - {name: Tomato Gojju, cat: gojju, diet: vegan}
+  - {name: Mavinakayi Gojju / Raw Mango Gojju, cat: gojju, diet: vegan}
+  - {name: Sasive / Mustard Coconut Curry, cat: pachadi, diet: veg}
+  - {name: Kosambari / Moong Dal Salad, cat: side, diet: vegan}
+  - {name: Palya (beans), cat: palya, diet: vegan}
+  - {name: Cabbage Palya, cat: palya, diet: vegan}
+  - {name: Beans Palya, cat: palya, diet: vegan}
+  - {name: Alugadde Palya / Potato Palya, cat: palya, diet: vegan}
+  - {name: Capsicum Palya, cat: palya, diet: vegan}
+  - {name: Soppu Palya / Greens Palya, cat: palya, diet: vegan}
+  - {name: Heerekai Palya / Ridge Gourd, cat: palya, diet: vegan}
+  - {name: Hurali Saaru / Horsegram Rasam, cat: rasam, diet: vegan}
+  - {name: Tovve / Plain Dal (Karnataka), cat: sambar, diet: veg}
+  - {name: Bassaru / Lentil-greens Stock Curry, cat: non_veg_curry, diet: vegan, style: mysore}
+  - {name: Nuchinunde Saaru, cat: rasam, diet: vegan}
+  - {name: Soppina Saaru / Greens Saaru, cat: rasam, diet: vegan}
+  - {name: Avarekalu Saaru / Hyacinth Bean Curry, cat: non_veg_curry, diet: vegan}
+  - {name: Avarekalu Uppittu, cat: tiffin, diet: veg}
+
+  # --- chutney / thambuli / pickle / podi ---
+  - {name: Coconut Chutney (Karnataka), cat: chutney, diet: vegan}
+  - {name: Hurigadale Chutney / Roasted Gram Chutney, cat: chutney, diet: vegan}
+  - {name: Kayi Chutney with tempering, cat: chutney, diet: vegan}
+  - {name: Tomato Chutney (Karnataka), cat: chutney, diet: vegan}
+  - {name: Shenga Chutney / Peanut Chutney (North Karnataka), cat: chutney, diet: vegan}
+  - {name: Agasi Chutney / Flaxseed Chutney Powder, cat: podi, diet: vegan, style: north_karnataka}
+  - {name: Gurellu Chutney Pudi / Niger Seed Powder, cat: podi, diet: vegan, style: north_karnataka}
+  - {name: Chutney Pudi / Idli Podi (Karnataka), cat: podi, diet: vegan}
+  - {name: Thambuli (curd + herb, generic), cat: pachadi, diet: veg, style: udupi}
+  - {name: Doddapatre Thambuli, cat: pachadi, diet: veg}
+  - {name: Menthe Thambuli / Fenugreek Thambuli, cat: pachadi, diet: veg}
+  - {name: Nellikai Thambuli / Gooseberry Thambuli, cat: pachadi, diet: veg}
+  - {name: Uppinakai / Karnataka Mango Pickle, cat: pickle, diet: vegan}
+  - {name: Nimbekai Uppinakai / Lime Pickle, cat: pickle, diet: vegan}
+  - {name: Gasagase Payasa base spice, cat: podi, diet: vegan}
+
+  # --- Coorg / Kodava ---
+  - {name: Pandi Curry / Coorg Pork Curry, cat: non_veg_curry, diet: [red_meat], style: coorg}
+  - {name: Kadambuttu / Rice Dumplings (Coorg), cat: staple, diet: vegan, style: coorg}
+  - {name: Noolputtu (Coorg), cat: staple, diet: vegan, style: coorg}
+  - {name: Akki Otti (Coorg rice roti), cat: bread, diet: vegan, style: coorg}
+  - {name: Koli Curry / Coorg Chicken Curry, cat: non_veg_curry, diet: [poultry], style: coorg}
+  - {name: Kaad Maange Curry / Wild Mango Curry, cat: kootu, diet: vegan, style: coorg}
+  - {name: Bamboo Shoot Curry / Baimbale Curry, cat: kootu, diet: vegan, style: coorg}
+  - {name: Coorg Mushroom Curry / Kumm Curry, cat: kootu, diet: vegan, style: coorg}
+  - {name: Pork Bafat (Coorg / Mangalore), cat: non_veg_curry, diet: [red_meat]}
+  - {name: Coorg Fish Curry / Meen Curry (Kodava), cat: seafood_dish, diet: [seafood], style: coorg}
+  - {name: Kokum Curry / Coorg style, cat: kootu, diet: vegan, style: coorg}
+  - {name: Nuruk / Coorg Crispy Rice Snack, cat: snack, diet: vegan, style: coorg}
+  - {name: Thaliya Puttu, cat: staple, diet: vegan, style: coorg}
+  - {name: Paputtu, cat: tiffin, diet: veg, style: coorg}
+  - {name: Kadala Curry (Coorg), cat: non_veg_curry, diet: vegan, style: coorg}
+  - {name: Chekke Curry / Jackfruit Curry (Coorg), cat: kootu, diet: vegan, style: coorg}
+  - {name: Mudi Chekke Palya, cat: palya, diet: vegan, style: coorg}
+
+  # --- Mangalorean (incl. GSB / Konkani) ---
+  - {name: Mangalorean Fish Curry / Meen Gassi, cat: seafood_dish, diet: [seafood], style: mangalorean}
+  - {name: Anjal Fry / Seer Fish Fry (Mangalore), cat: seafood_dish, diet: [seafood], style: mangalorean}
+  - {name: Bangude Pulimunchi / Mackerel Sour-Spicy Curry, cat: seafood_dish, diet: [seafood], style: mangalorean}
+  - {name: Kane Rava Fry / Ladyfish Fry, cat: seafood_dish, diet: [seafood], style: mangalorean}
+  - {name: Prawn Ghee Roast (Kundapur), cat: seafood_dish, diet: [seafood], style: mangalorean}
+  - {name: Chicken Ghee Roast (Kundapura), cat: dry_curry, diet: [poultry], style: mangalorean}
+  - {name: Mangalorean Chicken Sukka / Kori Sukka, cat: dry_curry, diet: [poultry], style: mangalorean}
+  - {name: Kori Rotti / Chicken Curry with Crisp Rice Wafers, cat: non_veg_curry, diet: [poultry], style: mangalorean}
+  - {name: Mangalorean Chicken Curry / Kori Gassi, cat: non_veg_curry, diet: [poultry], style: mangalorean}
+  - {name: Pork Indad, cat: non_veg_curry, diet: [red_meat], style: mangalorean}
+  - {name: Mutton Sukka (Mangalore), cat: dry_curry, diet: [red_meat], style: mangalorean}
+  - {name: Neer Dosa with Chicken Curry, cat: non_veg_curry, diet: [poultry], style: mangalorean}
+  - {name: Patrode / Colocasia Leaf Rolls, cat: snack, diet: vegan, style: mangalorean}
+  - {name: Pathrode Gashi, cat: kootu, diet: vegan, style: mangalorean}
+  - {name: Bendi / GSB Sambar (Konkani), cat: sambar, diet: vegan, style: mangalorean}
+  - {name: Dali Thoy / Konkani Dal, cat: sambar, diet: vegan, style: mangalorean}
+  - {name: Ghashi / Coconut Curry (Konkani), cat: kootu, diet: vegan, style: mangalorean}
+  - {name: Sukke / Konkani Dry Vegetable, cat: palya, diet: vegan, style: mangalorean}
+  - {name: Batata Song, cat: gojju, diet: vegan, style: mangalorean}
+  - {name: Mangalore Sasam / Fruit in Mustard Coconut, cat: pachadi, diet: veg, style: mangalorean}
+  - {name: Kadgi Chakko / Raw Jackfruit Konkani, cat: palya, diet: vegan, style: mangalorean}
+  - {name: Valval / Konkani Mixed Veg in Coconut Milk, cat: kootu, diet: vegan, style: mangalorean}
+  - {name: Mangalorean Egg Curry / Mutte Gassi, cat: egg_dish, diet: [egg], style: mangalorean}
+  - {name: Clam Sukka / Marvai Sukka, cat: seafood_dish, diet: [seafood], style: mangalorean}
+  - {name: Prawn Sukka / Yetti Sukka, cat: seafood_dish, diet: [seafood], style: mangalorean}
+  - {name: Fish Kabab / Meen Kabab (Mangalore), cat: seafood_dish, diet: [seafood], style: mangalorean}
+
+  # --- North Karnataka ---
+  - {name: Ennegai / Badanekai Ennegai / Stuffed Brinjal, cat: gravy_curry, diet: vegan, style: north_karnataka}
+  - {name: Jhunka / Zunka, cat: side, diet: vegan, style: north_karnataka}
+  - {name: Shenga Holige / Peanut Puran Poli, cat: sweet, diet: veg, style: north_karnataka}
+  - {name: Holige / Obbattu / Puran Poli, cat: sweet, diet: veg}
+  - {name: Kayi Holige / Coconut Holige, cat: sweet, diet: veg}
+  - {name: Kadle Bele Holige / Chana Dal Holige, cat: sweet, diet: veg}
+  - {name: Sabakki / Sabudana items (North Karnataka), cat: snack, diet: vegan, style: north_karnataka}
+  - {name: Girmit / Puffed Rice Chaat, cat: snack, diet: vegan, style: north_karnataka}
+  - {name: Mirchi Bajji (North Karnataka), cat: snack, diet: veg, style: north_karnataka}
+  - {name: Kunda / Belgaum Kunda, cat: sweet, diet: veg, style: north_karnataka}
+  - {name: Dharwad Peda, cat: sweet, diet: veg, style: north_karnataka}
+  - {name: Madli / Karadantu (Gokak), cat: sweet, diet: veg, style: north_karnataka}
+  - {name: Bele Obbattu Saaru / Holige Saaru, cat: rasam, diet: vegan, style: north_karnataka}
+  - {name: Sajjaka / Godhi Huggi, cat: sweet, diet: veg, style: north_karnataka}
+  - {name: Kalasina Palya, cat: palya, diet: vegan, style: north_karnataka}
+
+  # --- sweets / snacks (statewide) ---
+  - {name: Mysore Pak, cat: sweet, diet: veg, style: mysore, kn: ಮೈಸೂರು ಪಾಕ್}
+  - {name: Dharwad Pedha, cat: sweet, diet: veg}
+  - {name: Chiroti, cat: sweet, diet: veg, style: north_karnataka}
+  - {name: Karadantu, cat: sweet, diet: veg}
+  - {name: Hayagreeva / Hesaru Bele Sweet, cat: sweet, diet: veg, style: udupi}
+  - {name: Rave Unde / Rava Ladoo (Karnataka), cat: sweet, diet: veg}
+  - {name: Kadle Bele Payasa / Chana Dal Payasa, cat: sweet, diet: vegan}
+  - {name: Hesaru Bele Payasa / Moong Dal Payasa, cat: sweet, diet: vegan}
+  - {name: Shavige Payasa / Vermicelli Kheer, cat: sweet, diet: veg}
+  - {name: Gasagase Payasa / Poppy Seed Kheer, cat: sweet, diet: veg}
+  - {name: Kai Kadubu / Modaka (Karnataka), cat: sweet, diet: vegan}
+  - {name: Tambittu / Rice Flour Jaggery Ladoo, cat: sweet, diet: vegan}
+  - {name: Nippattu / Thattai (Karnataka), cat: snack, diet: vegan}
+  - {name: Kodubale, cat: snack, diet: vegan}
+  - {name: Chakli / Chakkuli (Karnataka), cat: snack, diet: vegan}
+  - {name: Kobbari Mithai / Coconut Candy, cat: sweet, diet: veg}
+  - {name: Congress Kadalekai / Spiced Split Peanuts, cat: snack, diet: vegan, style: mysore}
+  - {name: Maddur Vada, cat: snack, diet: vegan, style: mysore}
+  - {name: Nuchinunde (snack), cat: snack, diet: vegan}
+  - {name: Uddina Vada (Karnataka), cat: snack, diet: vegan}
+  - {name: Ambode / Masala Vada (Karnataka), cat: snack, diet: vegan}
+  - {name: Bonda (Karnataka), cat: snack, diet: veg}
+  - {name: Mangalore Gadbad Ice Cream, cat: sweet, diet: veg, style: mangalorean}
+  - {name: Holige with Kai Haalu, cat: sweet, diet: veg}
+  - {name: Obbattina Saaru, cat: rasam, diet: vegan}
+
+  # --- beverages ---
+  - {name: Filter Coffee (Karnataka), cat: beverage, diet: veg}
+  - {name: Byadagi / Kashaya, cat: beverage, diet: vegan}
+  - {name: Majjige / Spiced Buttermilk (Karnataka), cat: beverage, diet: veg}
+  - {name: Panaka / Panakam, cat: beverage, diet: vegan}
+  - {name: Kokum Juice / Punarpuli Saaru drink, cat: beverage, diet: vegan, style: mangalorean}
+  - {name: Solkadhi (border Konkan), cat: beverage, diet: veg, style: mangalorean}

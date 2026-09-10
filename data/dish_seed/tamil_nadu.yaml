@@ -1,0 +1,288 @@
+# Tamil Nadu — curated dish seed for the v1 1,000-dish list.
+# diet: veg | vegan | [poultry] | [seafood] | [red_meat] | [egg]  (list = non-veg)
+region: tamil_nadu
+dishes:
+  # --- tiffin / breakfast ---
+  - {name: Idli, cat: tiffin, diet: vegan, ta: இட்லி}
+  - {name: Rava Idli, cat: tiffin, diet: veg}
+  - {name: Kanchipuram Idli, cat: tiffin, diet: veg, aka: [Kovil Idli]}
+  - {name: Mini Idli / Podi Idli, cat: tiffin, diet: veg}
+  - {name: Thatte Idli, cat: tiffin, diet: vegan}
+  - {name: Ragi Idli, cat: tiffin, diet: vegan}
+  - {name: Millet Idli, cat: tiffin, diet: vegan}
+  - {name: Sanna / Idli-like steamed cake, cat: tiffin, diet: vegan}
+  - {name: Dosa, cat: tiffin, diet: vegan, ta: தோசை, aka: [Plain Dosai]}
+  - {name: Masala Dosa, cat: tiffin, diet: veg}
+  - {name: Onion Rava Dosa, cat: tiffin, diet: veg}
+  - {name: Rava Dosa, cat: tiffin, diet: veg}
+  - {name: Set Dosa, cat: tiffin, diet: veg}
+  - {name: Kal Dosa, cat: tiffin, diet: vegan}
+  - {name: Ghee Roast Dosa, cat: tiffin, diet: veg}
+  - {name: Paper Roast Dosa, cat: tiffin, diet: vegan}
+  - {name: Kari Dosa, cat: tiffin, diet: [poultry, red_meat], aka: [Madurai Kari Dosa]}
+  - {name: Muttai Dosai / Egg Dosa, cat: tiffin, diet: [egg]}
+  - {name: Adai, cat: tiffin, diet: vegan, ta: அடை}
+  - {name: Adai Aviyal, cat: tiffin, diet: veg}
+  - {name: Kuzhi Paniyaram, cat: tiffin, diet: vegan, aka: [Kara Paniyaram]}
+  - {name: Sweet Paniyaram, cat: tiffin, diet: veg}
+  - {name: Uttapam, cat: tiffin, diet: vegan, aka: [Uthappam, Onion Uttapam]}
+  - {name: Podi Uttapam, cat: tiffin, diet: vegan}
+  - {name: Ven Pongal, cat: tiffin, diet: veg, aka: [Khara Pongal, Ghee Pongal], ta: வெண் பொங்கல்}
+  - {name: Sakkarai Pongal, cat: sweet, diet: veg, aka: [Chakkarai Pongal], ta: சர்க்கரைப் பொங்கல்}
+  - {name: Rava Pongal, cat: tiffin, diet: veg}
+  - {name: Millet Pongal, cat: tiffin, diet: veg}
+  - {name: Rava Upma, cat: tiffin, diet: veg, aka: [Uppuma], ta: உப்புமா}
+  - {name: Vermicelli Upma / Semiya Upma, cat: tiffin, diet: veg}
+  - {name: Arisi Upma, cat: tiffin, diet: vegan}
+  - {name: Godhumai Upma / Broken Wheat Upma, cat: tiffin, diet: veg}
+  - {name: Aval Upma / Poha, cat: tiffin, diet: vegan}
+  - {name: Kichadi (rava, vegetable), cat: tiffin, diet: veg}
+  - {name: Medu Vada, cat: tiffin, diet: vegan, aka: [Ulundhu Vadai, Uzhunnu Vada]}
+  - {name: Thayir Vada, cat: tiffin, diet: veg, aka: [Curd Vada, Perugu Vada]}
+  - {name: Masala Vada, cat: snack, diet: vegan, aka: [Paruppu Vadai, Chana Dal Vada]}
+  - {name: Keerai Vadai, cat: snack, diet: vegan}
+  - {name: Sambar Vada, cat: tiffin, diet: vegan}
+  - {name: Rava Vada, cat: snack, diet: veg}
+  - {name: Idiyappam, cat: tiffin, diet: vegan, aka: [Sevai, String Hoppers], ta: இடியப்பம்}
+  - {name: Santhagai / Nool Puttu, cat: tiffin, diet: vegan}
+  - {name: Lemon Sevai, cat: tiffin, diet: vegan}
+  - {name: Coconut Sevai, cat: tiffin, diet: vegan}
+  - {name: Tamarind Sevai / Puli Sevai, cat: tiffin, diet: vegan}
+  - {name: Aappam / Appam, cat: tiffin, diet: vegan}
+  - {name: Paal Appam, cat: tiffin, diet: veg}
+  - {name: Kal Appam, cat: tiffin, diet: veg}
+  - {name: Pesarattu (border, also Andhra), cat: tiffin, diet: vegan}
+  - {name: Pori Urundai, cat: sweet, diet: vegan}
+  - {name: Kambu Koozh / Millet Porridge, cat: beverage, diet: vegan}
+  - {name: Ragi Koozh, cat: beverage, diet: vegan}
+  - {name: Kanji / Rice Porridge, cat: porridge, diet: vegan}
+
+  # --- rice dishes ---
+  - {name: Curd Rice, cat: rice_dish, diet: veg, aka: [Thayir Sadam, Bagala Bath], ta: தயிர் சாதம்}
+  - {name: Lemon Rice, cat: rice_dish, diet: vegan, aka: [Elumichai Sadam], ta: எலுமிச்சை சாதம்}
+  - {name: Tamarind Rice, cat: rice_dish, diet: vegan, aka: [Puliyodarai, Puliyogare, Pulihora]}
+  - {name: Coconut Rice, cat: rice_dish, diet: vegan, aka: [Thengai Sadam]}
+  - {name: Sesame Rice / Ellu Sadam, cat: rice_dish, diet: vegan}
+  - {name: Pepper Rice / Milagu Sadam, cat: rice_dish, diet: vegan}
+  - {name: Curry Leaf Rice / Karuveppilai Sadam, cat: rice_dish, diet: vegan}
+  - {name: Mango Rice / Mangai Sadam, cat: rice_dish, diet: vegan}
+  - {name: Tomato Rice / Thakkali Sadam, cat: rice_dish, diet: vegan}
+  - {name: Vegetable Biryani (Tamil style), cat: biryani, diet: veg}
+  - {name: Ambur Star Biryani, cat: biryani, diet: [red_meat]}
+  - {name: Dindigul Thalappakatti Biryani, cat: biryani, diet: [red_meat]}
+  - {name: Ambur Chicken Biryani, cat: biryani, diet: [poultry]}
+  - {name: Muslim-style Mutton Biryani (Tamil Nadu), cat: biryani, diet: [red_meat]}
+  - {name: Seeraga Samba Biryani, cat: biryani, diet: [poultry]}
+  - {name: Chicken Dum Biryani, cat: biryani, diet: [poultry]}
+  - {name: Bisi Bele Bath (border, also Karnataka), cat: rice_dish, diet: veg}
+  - {name: Sambar Sadam, cat: rice_dish, diet: veg}
+  - {name: Kootu Sadam, cat: rice_dish, diet: veg}
+  - {name: Vella Sadam / Jaggery Rice, cat: sweet, diet: veg}
+  - {name: Kalkandu Sadam / Rock Sugar Rice, cat: sweet, diet: veg}
+  - {name: Ghee Rice / Nei Choru, cat: rice_dish, diet: veg}
+  - {name: Kuska (plain biryani rice), cat: rice_dish, diet: veg}
+
+  # --- kuzhambu / gravies ---
+  - {name: Vatha Kuzhambu, cat: kuzhambu, diet: vegan, aka: [Vathal Kuzhambu]}
+  - {name: Puli Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Kara Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Ennai Kathirikai Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Mor Kuzhambu, cat: kuzhambu, diet: veg, aka: [Majjige Huli]}
+  - {name: Puli Milagai / Chilli Tamarind Gravy, cat: kuzhambu, diet: vegan}
+  - {name: Poondu Kuzhambu / Garlic Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Manathakkali Vathal Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Sundakkai Vathal Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Murungakkai Kuzhambu / Drumstick Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Vengaya Kuzhambu / Small Onion Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Karamani Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Paruppu Urundai Kuzhambu, cat: kuzhambu, diet: vegan}
+  - {name: Meen Kuzhambu / Fish Curry (Tamil), cat: seafood_dish, diet: [seafood]}
+  - {name: Nethili Meen Kuzhambu / Anchovy Curry, cat: seafood_dish, diet: [seafood]}
+  - {name: Chettinad Meen Kuzhambu, cat: seafood_dish, diet: [seafood]}
+  - {name: Kara Kuzhambu with Mutton, cat: non_veg_curry, diet: [red_meat]}
+
+  # --- sambar / rasam ---
+  - {name: Arachuvitta Sambar, cat: sambar, diet: vegan}
+  - {name: Tiffin Sambar, cat: sambar, diet: vegan}
+  - {name: Drumstick Sambar, cat: sambar, diet: vegan}
+  - {name: Small Onion Sambar / Vengaya Sambar, cat: sambar, diet: vegan}
+  - {name: Mixed Vegetable Sambar, cat: sambar, diet: vegan}
+  - {name: Radish Sambar / Mullangi Sambar, cat: sambar, diet: vegan}
+  - {name: Ladies Finger Sambar / Vendakkai Sambar, cat: sambar, diet: vegan}
+  - {name: Paruppu (plain dal), cat: sambar, diet: veg, aka: [Dal, Kandi Pappu]}
+  - {name: Milagu Rasam / Pepper Rasam, cat: rasam, diet: vegan}
+  - {name: Tomato Rasam / Thakkali Rasam, cat: rasam, diet: vegan}
+  - {name: Paruppu Rasam / Dal Rasam, cat: rasam, diet: vegan}
+  - {name: Lemon Rasam / Elumichai Rasam, cat: rasam, diet: vegan}
+  - {name: Jeera Rasam / Cumin Rasam, cat: rasam, diet: vegan}
+  - {name: Garlic Rasam / Poondu Rasam, cat: rasam, diet: vegan}
+  - {name: Neer Rasam, cat: rasam, diet: vegan}
+  - {name: Kandathippili Rasam, cat: rasam, diet: vegan}
+  - {name: Mysore Rasam, cat: rasam, diet: vegan}
+  - {name: Pineapple Rasam, cat: rasam, diet: vegan}
+  - {name: Kollu Rasam / Horsegram Rasam, cat: rasam, diet: vegan}
+  - {name: Nellikai Rasam / Gooseberry Rasam, cat: rasam, diet: vegan}
+
+  # --- kootu / masiyal / poriyal ---
+  - {name: Kootu (generic mixed lentil-vegetable), cat: kootu, diet: veg}
+  - {name: Chow Chow Kootu, cat: kootu, diet: veg}
+  - {name: Cabbage Kootu, cat: kootu, diet: veg}
+  - {name: Beans Kootu, cat: kootu, diet: veg}
+  - {name: Poricha Kootu, cat: kootu, diet: vegan}
+  - {name: Araichuvitta Kootu, cat: kootu, diet: veg}
+  - {name: Kalyana Rasavangi, cat: kootu, diet: vegan}
+  - {name: Keerai Masiyal, cat: masiyal, diet: vegan}
+  - {name: Keerai Kootu, cat: kootu, diet: veg}
+  - {name: Paruppu Keerai, cat: masiyal, diet: vegan}
+  - {name: Beans Poriyal, cat: poriyal, diet: vegan}
+  - {name: Carrot Poriyal, cat: poriyal, diet: vegan}
+  - {name: Cabbage Poriyal, cat: poriyal, diet: vegan}
+  - {name: Beetroot Poriyal, cat: poriyal, diet: vegan}
+  - {name: Vazhaikai Poriyal / Raw Banana Poriyal, cat: poriyal, diet: vegan}
+  - {name: Urulaikizhangu Poriyal / Potato Fry, cat: poriyal, diet: vegan}
+  - {name: Vendakkai Poriyal / Okra Fry, cat: poriyal, diet: vegan}
+  - {name: Kovakkai Poriyal / Ivy Gourd Fry, cat: poriyal, diet: vegan}
+  - {name: Chow Chow Poriyal, cat: poriyal, diet: vegan}
+  - {name: Cluster Beans Poriyal / Kothavarangai Poriyal, cat: poriyal, diet: vegan}
+  - {name: Peerkangai Poriyal / Ridge Gourd, cat: poriyal, diet: vegan}
+  - {name: Senai Kizhangu Varuval / Yam Fry, cat: poriyal, diet: vegan}
+  - {name: Vazhaipoo Poriyal / Banana Flower, cat: poriyal, diet: vegan}
+  - {name: Avarakkai Poriyal / Broad Beans, cat: poriyal, diet: vegan}
+  - {name: Sundal (chickpea / legume), cat: snack, diet: vegan}
+  - {name: Kadalai Sundal, cat: snack, diet: vegan}
+  - {name: Pattani Sundal / Green Peas Sundal, cat: snack, diet: vegan}
+  - {name: Mochai Sundal, cat: snack, diet: vegan}
+  - {name: Thengai Sundal / Coconut Sundal, cat: snack, diet: vegan}
+  - {name: Verkadalai Sundal / Peanut Sundal, cat: snack, diet: vegan}
+
+  # --- chutney / thogayal / pachadi / podi ---
+  - {name: Coconut Chutney, cat: chutney, diet: vegan, aka: [Thengai Chutney]}
+  - {name: Tomato Chutney / Thakkali Chutney, cat: chutney, diet: vegan}
+  - {name: Onion Chutney / Vengaya Chutney, cat: chutney, diet: vegan}
+  - {name: Coriander Chutney / Kothamalli Chutney, cat: chutney, diet: vegan}
+  - {name: Mint Chutney / Pudina Chutney, cat: chutney, diet: vegan}
+  - {name: Peanut Chutney / Verkadalai Chutney, cat: chutney, diet: vegan}
+  - {name: Tomato Onion Chutney (hotel style), cat: chutney, diet: vegan}
+  - {name: Kara Chutney, cat: chutney, diet: vegan}
+  - {name: Ridge Gourd Chutney / Peerkangai Thogayal, cat: thogayal, diet: vegan}
+  - {name: Coconut Coriander Chutney, cat: chutney, diet: vegan}
+  - {name: Curry Leaf Chutney / Karuveppilai Chutney, cat: chutney, diet: vegan}
+  - {name: Pirandai Thogayal, cat: thogayal, diet: vegan}
+  - {name: Ellu Thogayal / Sesame Thogayal, cat: thogayal, diet: vegan}
+  - {name: Paruppu Thogayal, cat: thogayal, diet: vegan}
+  - {name: Manga Thokku / Mango Thokku, cat: pickle, diet: vegan}
+  - {name: Vatha Kuzhambu Podi, cat: podi, diet: vegan}
+  - {name: Idli Podi / Milagai Podi, cat: podi, diet: vegan, aka: [Gunpowder]}
+  - {name: Paruppu Podi, cat: podi, diet: vegan}
+  - {name: Curry Leaf Podi / Karuveppilai Podi, cat: podi, diet: vegan}
+  - {name: Ellu Podi / Sesame Podi, cat: podi, diet: vegan}
+  - {name: Sambar Powder, cat: podi, diet: vegan}
+  - {name: Rasam Powder, cat: podi, diet: vegan}
+  - {name: Poondu Podi / Garlic Podi, cat: podi, diet: vegan}
+  - {name: Thengai Podi / Coconut Podi, cat: podi, diet: vegan}
+  - {name: Tomato Pachadi, cat: pachadi, diet: veg}
+  - {name: Vellarikai Pachadi / Cucumber Pachadi, cat: pachadi, diet: veg}
+  - {name: Beetroot Pachadi, cat: pachadi, diet: veg}
+  - {name: Vendhaya Kuzhambu, cat: kuzhambu, diet: vegan}
+
+  # --- Chettinad ---
+  - {name: Chettinad Chicken / Kozhi Chettinad, cat: non_veg_curry, diet: [poultry], style: chettinad}
+  - {name: Chettinad Chicken Kuzhambu, cat: non_veg_curry, diet: [poultry], style: chettinad}
+  - {name: Chettinad Pepper Chicken / Milagu Kozhi, cat: non_veg_curry, diet: [poultry], style: chettinad}
+  - {name: Chettinad Chicken Roast / Kozhi Varuval, cat: dry_curry, diet: [poultry], style: chettinad}
+  - {name: Chettinad Mutton Kuzhambu, cat: non_veg_curry, diet: [red_meat], style: chettinad}
+  - {name: Chettinad Mutton Chukka, cat: dry_curry, diet: [red_meat], style: chettinad}
+  - {name: Chettinad Fish Fry / Meen Varuval, cat: seafood_dish, diet: [seafood], style: chettinad}
+  - {name: Chettinad Prawn Masala / Eral Masala, cat: seafood_dish, diet: [seafood], style: chettinad}
+  - {name: Chettinad Egg Curry / Muttai Kuzhambu, cat: egg_dish, diet: [egg], style: chettinad}
+  - {name: Chettinad Vegetable Kurma, cat: kurma, diet: veg, style: chettinad}
+  - {name: Kandarappam, cat: sweet, diet: veg, style: chettinad}
+  - {name: Seeyam / Suzhiyam, cat: sweet, diet: veg, style: chettinad}
+  - {name: Paal Paniyaram, cat: sweet, diet: veg, style: chettinad}
+  - {name: Karadaiyan Nombu Adai, cat: festival_special, diet: veg}
+  - {name: Kavuni Arisi / Black Rice Pudding, cat: sweet, diet: veg, style: chettinad}
+  - {name: Mutton Kola Urundai, cat: dry_curry, diet: [red_meat], style: chettinad}
+  - {name: Nandu Masala / Crab Masala, cat: seafood_dish, diet: [seafood], style: chettinad}
+
+  # --- non-veg (general Tamil Nadu) ---
+  - {name: Chicken 65, cat: non_veg_curry, diet: [poultry]}
+  - {name: Chicken Chukka, cat: dry_curry, diet: [poultry]}
+  - {name: Kozhi Rasam / Chicken Rasam, cat: rasam, diet: [poultry]}
+  - {name: Nattu Kozhi Kuzhambu / Country Chicken Curry, cat: non_veg_curry, diet: [poultry]}
+  - {name: Mutton Kuzhambu, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Mutton Chukka Varuval, cat: dry_curry, diet: [red_meat]}
+  - {name: Mutton Sukka, cat: dry_curry, diet: [red_meat]}
+  - {name: Aattu Kaal Paya / Trotters Soup, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Mutton Kola Urundai Kuzhambu, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Elumbu Kuzhambu / Bone Marrow Curry, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Kari Kuzhambu, cat: non_veg_curry, diet: [red_meat]}
+  - {name: Muttai Kuzhambu / Egg Curry, cat: egg_dish, diet: [egg]}
+  - {name: Muttai Poriyal / Egg Bhurji, cat: egg_dish, diet: [egg]}
+  - {name: Kothu Parotta, cat: bread, diet: [egg, poultry], aka: [Kottu Parotta]}
+  - {name: Parotta, cat: bread, diet: veg, aka: [Barotta]}
+  - {name: Salna / Chalna, cat: gravy_curry, diet: veg}
+  - {name: Empty Salna, cat: gravy_curry, diet: veg}
+  - {name: Karaikudi Prawn Masala, cat: seafood_dish, diet: [seafood]}
+  - {name: Nethili Fry / Anchovy Fry, cat: seafood_dish, diet: [seafood]}
+  - {name: Vanjaram Fish Fry / Seer Fish Fry, cat: seafood_dish, diet: [seafood]}
+  - {name: Sura Puttu / Shark Meat Scramble, cat: seafood_dish, diet: [seafood]}
+  - {name: Meen Varuval / Fish Fry (Tamil), cat: seafood_dish, diet: [seafood]}
+
+  # --- sweets / snacks / festival ---
+  - {name: Adhirasam / Athirasam, cat: sweet, diet: veg}
+  - {name: Mysore Pak (also Karnataka), cat: sweet, diet: veg}
+  - {name: Rava Kesari, cat: sweet, diet: veg, aka: [Kesari Bath]}
+  - {name: Pineapple Kesari, cat: sweet, diet: veg}
+  - {name: Semiya Payasam / Vermicelli Kheer, cat: sweet, diet: veg}
+  - {name: Paruppu Payasam, cat: sweet, diet: veg}
+  - {name: Aval Payasam / Poha Kheer, cat: sweet, diet: veg}
+  - {name: Javvarisi Payasam / Sago Kheer, cat: sweet, diet: veg}
+  - {name: Pal Payasam / Milk Kheer, cat: sweet, diet: veg}
+  - {name: Akkaravadisal, cat: sweet, diet: veg}
+  - {name: Sakkarai Pongal (temple style), cat: sweet, diet: veg}
+  - {name: Kozhukattai / Modak, cat: sweet, diet: veg, aka: [Pillayar Kozhukattai]}
+  - {name: Ammini Kozhukattai, cat: snack, diet: vegan}
+  - {name: Ulundu Kozhukattai, cat: snack, diet: vegan}
+  - {name: Ellu Urundai / Sesame Balls, cat: sweet, diet: vegan}
+  - {name: Maa Ladoo / Pottukadalai Ladoo, cat: sweet, diet: veg}
+  - {name: Rava Ladoo, cat: sweet, diet: veg}
+  - {name: Boondi Ladoo, cat: sweet, diet: veg}
+  - {name: Thattai, cat: snack, diet: vegan}
+  - {name: Thenkuzhal / Murukku, cat: snack, diet: vegan}
+  - {name: Mullu Murukku, cat: snack, diet: vegan}
+  - {name: Kai Murukku, cat: snack, diet: vegan}
+  - {name: Ribbon Pakoda / Ola Pakoda, cat: snack, diet: vegan}
+  - {name: Seedai / Uppu Seedai, cat: snack, diet: vegan}
+  - {name: Vella Seedai / Sweet Seedai, cat: sweet, diet: veg}
+  - {name: Mixture, cat: snack, diet: vegan}
+  - {name: Omapodi / Sev, cat: snack, diet: vegan}
+  - {name: Kara Boondi, cat: snack, diet: vegan}
+  - {name: Bonda / Ulundu Bonda, cat: snack, diet: veg}
+  - {name: Mysore Bonda, cat: snack, diet: veg}
+  - {name: Bajji / Molaga Bajji, cat: snack, diet: veg}
+  - {name: Vazhaikai Bajji / Plantain Bajji, cat: snack, diet: veg}
+  - {name: Masala Bonda / Aloo Bonda, cat: snack, diet: veg}
+  - {name: Sundal (festival), cat: snack, diet: vegan}
+  - {name: Jangiri, cat: sweet, diet: veg}
+  - {name: Badusha, cat: sweet, diet: veg}
+  - {name: Palkova / Therattipal, cat: sweet, diet: veg}
+  - {name: Milk Peda, cat: sweet, diet: veg}
+  - {name: Manoharam, cat: sweet, diet: vegan}
+  - {name: Thirattipal, cat: sweet, diet: veg}
+  - {name: Nei Appam / Ghee Appam, cat: sweet, diet: veg}
+  - {name: Sweet Somasi / Karam Somasi, cat: snack, diet: veg}
+  - {name: Pori Urundai (festival), cat: sweet, diet: vegan}
+  - {name: Kadalai Urundai / Peanut Chikki, cat: sweet, diet: vegan}
+  - {name: Coconut Burfi / Thengai Burfi, cat: sweet, diet: veg}
+  - {name: 7 Cup Burfi, cat: sweet, diet: veg}
+
+  # --- beverages ---
+  - {name: Filter Coffee, cat: beverage, diet: veg, aka: [Kaapi, Degree Coffee]}
+  - {name: Sukku Malli Coffee / Dry Ginger Coffee, cat: beverage, diet: vegan}
+  - {name: Panagam / Panakam, cat: beverage, diet: vegan}
+  - {name: Neer Mor / Spiced Buttermilk, cat: beverage, diet: veg}
+  - {name: Nannari Sarbath, cat: beverage, diet: vegan}
+  - {name: Jigarthanda (Madurai), cat: beverage, diet: veg}
+  - {name: Rose Milk, cat: beverage, diet: veg}
+  - {name: Paruthi Paal / Cottonseed Milk, cat: beverage, diet: vegan}
+  - {name: Ragi Malt / Ragi Java, cat: beverage, diet: veg}
