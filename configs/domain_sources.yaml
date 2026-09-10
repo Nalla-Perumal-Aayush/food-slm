@@ -1,0 +1,49 @@
+# South Indian cuisine domain sources (150M dataset).
+# From the user's curated list (Downloads/South_Indian_Cookbooks_and_Websites.pdf, 2026-09-10).
+# Open-release constraint set aside: scraped/borrowed content is used for weights only,
+# NOT redistributed. Public-domain items are cleanly reusable.
+
+# --- public-domain books (archive.org, true PD, full text downloadable) ---
+archive_pd_books:
+  - id: indiancookeryboo00unse
+    title: "The Indian Cookery Book: A Practical Handbook to the Kitchen in India"
+    note: "colonial-era, 19th c.; Madras Presidency + Bengal/Bombay; historical dish facts + terminology"
+    region: pan_south
+  - id: in.ernet.dli.2015.150459
+    title: "Indian Cookery — E. P. Veerasawmy (1915)"
+    note: "230pp; Madras mutton/rice/coconut-milk dishes"
+    region: pan_south
+  - id: in.ernet.dli.2015.221261
+    title: "Indian Cookery — E. P. Veerasawmy (1936 edition)"
+    note: "later edition"
+    region: pan_south
+  - id: cu31924059630735
+    title: "Indian Cookery and Confectionery (407 Recipes) — Mrs. I. R. Dey"
+    note: "Cornell copy, pre-1929"
+    region: pan_south
+
+# --- controlled digital lending (borrow only — user must supply if wanted) ---
+archive_cdl_books:
+  - {id: flavoursofmadras0000king, title: "Flavours of Madras — Rani Kingman", region: tamil_nadu}
+  - {id: chettinadkitchen0000vair, title: "Chettinad Kitchen — Alamelu Vairavan", region: tamil_nadu}
+  - {id: completebookofin0000vasw, title: "Complete Book of Indian Cooking — Suneeta Vaswani", region: pan_south}
+
+# --- live blogs / sites (openly published web content) ---
+# type: wp = WordPress (try /wp-json/wp/v2/posts first); site = generic (sitemap crawl)
+blogs:
+  - {name: kannamma_cooks,      url: "https://www.kannammacooks.com",        region: tamil_nadu,     type: wp}
+  - {name: simpleindianrecipes, url: "https://simpleindianrecipes.com",       region: tamil_nadu,     type: site}
+  - {name: sharmis_passions,    url: "https://www.sharmispassions.com",       region: tamil_nadu,     type: wp}
+  - {name: paint_kitchen_red,   url: "https://www.paintthekitchenred.com",    region: kerala,         type: wp}
+  - {name: kothiyavunu,         url: "https://www.kothiyavunu.com",           region: kerala,         type: wp}
+  - {name: cooking_curries,     url: "https://www.cookingcurries.com",        region: kerala,         type: wp}
+  - {name: jinoos_kitchen,      url: "https://www.jinooskitchen.com",         region: kerala,         type: wp}
+  - {name: udupi_recipes,       url: "https://udupi-recipes.com",             region: karnataka,      type: wp}
+  - {name: sailus_food,         url: "https://www.sailusfood.com",            region: andhra_pradesh, type: site}
+  - {name: vismai_food,         url: "https://vismaifood.com",                region: telangana,      type: site}
+  - {name: awesome_cuisine,     url: "https://www.awesomecuisine.com",        region: pan_south,      type: wp}
+
+# --- commercial cookbooks (user must acquire; then -> scripts/ingest_documents.py) ---
+# Sections 1-5 of the source PDF: Aharam, Annapurni, Samaithu Paar, The Bangala Table,
+# The Essential Kerala Cookbook, Malabar Muslim Cookery, The Udupi Kitchen, Coorg: The
+# Cookbook, The Essential Andhra Cookbook, Vindu: A Taste of Telangana, Dakshin, ...
