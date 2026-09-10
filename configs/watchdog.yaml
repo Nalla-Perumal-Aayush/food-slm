@@ -1,0 +1,47 @@
+# Watchdog — emails you when a long-running job dies, and can auto-restart training.
+#   python scripts/watchdog.py                 # run the loop (foreground)
+#   python scripts/watchdog.py --test-mail     # send one test email and exit
+#   python scripts/watchdog.py --once          # evaluate every check once and exit
+#
+# Credentials live in .env (gitignored) — see .env.example.
+
+poll_seconds: 60          # how often to evaluate every check
+fail_threshold: 3         # consecutive failed polls before a check is declared DOWN
+                          # (3 x 60s = ~3 min of silence -> alert)
+state_file: artifacts/watchdog_state.json
+log_file: artifacts/watchdog.log
+heartbeat_hours: 12       # also send a "still alive, all green" email this often (0 = off)
+
+checks:
+  # --- 40M ablation training run ---
+  - name: train_40m
+    kind: file_fresh                      # training writes a metrics line every step
+    path: artifacts/checkpoints/ablation-40m-001/metrics.jsonl
+    max_age_seconds: 240
+    # on DOWN: relaunch, bit-exact, from the latest checkpoint, then email that it happened
+    restart:
+      cmd: "python -u scripts/train.py --config configs/train_40m.yaml --resume auto"
+      cwd: "."
+      log: artifacts/checkpoints/ablation-40m-001/restart.log
+      cooldown_seconds: 900              # don't restart more than once per 15 min
+      max_restarts: 4                    # give up (and keep emailing) after this many
+
+  # --- local Ollama server (eval panels + youtube MT) ---
+  - name: ollama
+    kind: http_ok
+    url: "http://localhost:11434/api/version"
+    optional: true                       # not always meant to be up -> DOWN emails only after it was UP
+
+  # --- YouTube caption crawl (only while it is meant to be running) ---
+  - name: youtube_crawl
+    kind: file_fresh
+    path: artifacts/logs/yt_crawl.log
+    max_age_seconds: 1800
+    optional: true
+
+  # --- food-blog crawl ---
+  - name: blog_crawl
+    kind: file_fresh
+    path: artifacts/logs/blog_crawl.log
+    max_age_seconds: 1800
+    optional: true
