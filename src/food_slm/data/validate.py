@@ -117,7 +117,11 @@ def validate_records(
         result = panel.vote(_VAL_SYSTEM, _val_prompt(rec, source_text), parse=parse_json_verdict)
         reasons += [f"{v.provider}:{v.decision}" for v in result.verdicts]
 
-        if result.split and heavy_provider is not None:
+        # The heavy tiebreak can only ever move a record to `auto_validated`, and that
+        # outcome also requires corr >= 2 — so on a split vote with corr < 2 the result
+        # is `needs_human` no matter what the tiebreak says. Skip the (very slow, ~6
+        # tok/s) call in that case; it can't change the decision.
+        if result.split and heavy_provider is not None and corr >= 2:
             tb = parse_json_verdict(heavy_provider.complete(
                 _VAL_SYSTEM, _val_prompt(rec, source_text), temperature=0.0, json_out=True))
             reasons.append(f"tiebreak:{tb.decision}")

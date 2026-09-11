@@ -77,6 +77,23 @@ def test_split_with_heavy_tiebreak() -> None:
     assert v.decision == "needs_human"     # 2 accept / 1 reject / 1 uncertain -> not unanimous
 
 
+def test_split_skips_heavy_tiebreak_when_corroboration_below_2() -> None:
+    # corr < 2 means the record can never reach auto_validated regardless of what
+    # the tiebreak says, so the (slow) heavy call must not be made at all.
+    calls = []
+
+    def _spy(s, p):
+        calls.append(1)
+        return '{"decision":"accept","reason":"ok"}'
+
+    heavy = FakeProvider(ProviderSpec("deepseek", "fake", "x", "deepseek"), responder=_spy)
+    v = validate_records([_draft(corr=1)], "text", panel=_panel("accept", "reject", "uncertain"),
+                         heavy_provider=heavy)[0]
+    assert not calls, "heavy tiebreak must be skipped when corr < 2"
+    assert v.decision == "needs_human"
+    assert not any(r.startswith("tiebreak:") for r in v.reasons)
+
+
 def test_schema_invalid_draft_is_rejected_before_panel() -> None:
     bad = {"id": "term:x", "type": "term", "schema_version": "2", "labels": ["x"],
            "content": {}, "structure": {}, "provenance": {}, "quality": {},

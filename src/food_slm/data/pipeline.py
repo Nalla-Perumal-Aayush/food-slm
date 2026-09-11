@@ -197,6 +197,51 @@ class SourceRun:
                 "verdicts": by_dec, "staged": len(self.staged)}
 
 
+def process_cached_text(
+    source_id: str,
+    source_url: str,
+    kind: str,
+    text: str,
+    license_class: str,
+    *,
+    title: str,
+    extract_provider: Provider,
+    panel: Panel,
+    staging_dir,
+    store: CanonicalStore | None = None,
+    forbidden: ForbiddenList | None = None,
+    heavy_provider: Provider | None = None,
+    corroboration: dict[str, int] | None = None,
+) -> SourceRun:
+    """Same chain as `process_source` (extract -> resolve refs -> validate -> stage) but
+    for text already on disk (a blog post / wiki article / recipe entry we scraped
+    earlier) instead of a live fetch. `license_class` is supplied directly — these
+    sources were already classified once at collection time (see the per-source
+    fetch scripts), so we don't re-derive it from HTML that no longer exists here."""
+    from food_slm.data.licensing import USABLE_FOR, LicenseVerdict
+
+    run = SourceRun(url=source_url, source_id=source_id,
+                    fetch=FetchResult(url=source_url, status=200, text=text))
+    run.license = LicenseVerdict(license_class, "pre-classified at collection",
+                                 USABLE_FOR[license_class], [], 0.85)
+    run.source_record = build_source_record(source_url, run.license, kind=kind, title=title)
+
+    run.extraction = extract_records(text, source_id, extract_provider)
+    drafts = list(run.extraction.drafts)
+    drafts, run.dropped_refs = resolve_batch_refs(drafts, store)
+
+    run.verdicts = validate_records(
+        drafts, text, panel=panel, forbidden=forbidden,
+        heavy_provider=heavy_provider, corroboration=corroboration)
+    for v, rec in zip(run.verdicts, drafts, strict=True):
+        v.apply_to(rec)
+
+    to_stage = [run.source_record] + [
+        rec for v, rec in zip(run.verdicts, drafts, strict=True) if v.decision != "rejected"]
+    run.staged = stage_records(to_stage, staging_dir).staged
+    return run
+
+
 def process_source(
     url: str,
     kind: str,

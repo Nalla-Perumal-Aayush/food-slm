@@ -60,9 +60,23 @@ def test_parse_extraction_produces_valid_records() -> None:
     assert dish["structure"]["primary_ingredients"] == ["ing:rice", "ing:toor-dal", "ing:tamarind"]
 
 
+def test_parse_extraction_coerces_unknown_enum_values() -> None:
+    # A local 7-9B extractor free-texts enum fields fairly often ("breakfast" for a
+    # dish category); an otherwise-good record must not be thrown away for that —
+    # it's coerced to the schema's fallback value instead of rejected.
+    ok = {"dishes": [{"name_en": "Mystery", "category": "not_a_real_category",
+                      "cuisine_state": "karnataka", "diet": {"vegetarian": True}}]}
+    res = parse_extraction(ok, "src:x")
+    assert res.drafts and not res.invalid
+    assert res.drafts[0]["structure"]["category"] == "other"
+
+
 def test_parse_extraction_routes_bad_records_to_invalid() -> None:
-    bad = {"dishes": [{"name_en": "Mystery", "category": "not_a_real_category",
-                       "cuisine_state": "karnataka", "diet": {"vegetarian": True}}]}
+    # Genuinely malformed (names must be a list of {lang,native,transliteration}
+    # objects) still fails schema validation and is not silently coerced.
+    bad = {"dishes": [{"name_en": "Mystery", "category": "rice_dish",
+                       "cuisine_state": "karnataka", "diet": {"vegetarian": True},
+                       "names": "not-a-list"}]}
     res = parse_extraction(bad, "src:x")
     assert not res.drafts and res.invalid
     assert "schema" in res.invalid[0][1]
