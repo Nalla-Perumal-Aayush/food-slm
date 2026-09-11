@@ -28,7 +28,7 @@ dishes:
   - {name: Mangalore Buns / Banana Buns, cat: tiffin, diet: veg, style: mangalorean}
   - {name: Goli Baje / Mangalore Bajji, cat: snack, diet: veg, style: mangalorean}
   - {name: Uppittu / Upma (Karnataka), cat: tiffin, diet: veg}
-  - {name: Avalakki / Poha (Karnataka), cat: tiffin, diet: vegan}
+  - {name: Avalakki (Karnataka Poha), cat: tiffin, diet: vegan}
   - {name: Menthya Avalakki, cat: tiffin, diet: vegan}
   - {name: Kharabath with Chow Chow, cat: tiffin, diet: veg}
   - {name: Akki Rotti, cat: bread, diet: vegan, kn: ಅಕ್ಕಿ ರೊಟ್ಟಿ}

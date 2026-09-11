@@ -164,6 +164,37 @@ def cmd_review(args) -> int:
     return 0
 
 
+def cmd_promote_ready(args) -> int:
+    """Promote every staged record that is schema-valid, not rejected, and either
+    (a) the panel unanimously accepted it, or (b) >= --min-corroboration independent
+    sources produced the same id (cross-source corroboration IS the AI-primary
+    validation signal here, not a re-run of the panel — evaluation_strategy.md §3).
+    Always excludes `rejected`. `source` records (the provenance envelopes) are
+    promoted unconditionally alongside whatever they support."""
+    staged = list_staged(STAGING)
+    ready = []
+    for rec in staged:
+        q = rec.get("quality", {})
+        if q.get("validation_status") == "rejected":
+            continue
+        if rec["type"] == "source":
+            ready.append(rec["id"])
+        elif q.get("corroboration_count", 0) >= args.min_corroboration:
+            ready.append(rec["id"])
+        elif q.get("validation_status") in ("auto_validated", "human_validated"):
+            ready.append(rec["id"])
+    if not ready:
+        print("nothing ready to promote")
+        return 0
+    print(f"promoting {len(ready)} of {len(staged)} staged records "
+         f"(corroboration >= {args.min_corroboration}, or already validated)")
+    res = promote_staged(ready, staging_dir=STAGING, canonical_dir=CANON,
+                         reviewer=args.reviewer, batch_id=args.batch, eval_dir=EVAL)
+    print(json.dumps({"promoted": len(res.promoted), "calibration_sample": res.calibration_sample,
+                      "store_ok": res.store_ok, "issues": res.issues}, indent=2))
+    return 0 if res.store_ok else 1
+
+
 def cmd_promote(args) -> int:
     res = promote_staged(args.ids, staging_dir=STAGING, canonical_dir=CANON,
                          reviewer=args.reviewer, batch_id=args.batch, eval_dir=EVAL)
@@ -194,10 +225,14 @@ def main() -> int:
     p.add_argument("--ids", nargs="+", required=True)
     p.add_argument("--reviewer", required=True)
     p.add_argument("--batch", default=None)
+    pr = sub.add_parser("promote-ready")
+    pr.add_argument("--reviewer", required=True)
+    pr.add_argument("--min-corroboration", type=int, default=2)
+    pr.add_argument("--batch", default=None)
     args = ap.parse_args()
     return {"gaps": cmd_gaps, "run": cmd_run, "stage": cmd_stage,
             "validate-staged": cmd_validate_staged, "review": cmd_review,
-            "promote": cmd_promote}[args.cmd](args)
+            "promote": cmd_promote, "promote-ready": cmd_promote_ready}[args.cmd](args)
 
 
 if __name__ == "__main__":

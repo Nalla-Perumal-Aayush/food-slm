@@ -1,6 +1,6 @@
-# Dish list v1 — coverage report (2026-09-10)
+# Dish list v1 — coverage report (2026-09-11)
 
-**986 dishes** across 7 regions. Draft; awaiting review.
+**985 dishes** across 7 regions. Draft; awaiting review.
 
 ## Region balance vs target
 
@@ -12,13 +12,13 @@
 | andhra_pradesh | 175 | 18% | 15% | 150 | 20% | 45% |
 | telangana | 146 | 15% | 10% | 100 | 31% | 45% |
 | puducherry | 38 | 4% | 3% | 30 | 74% | 40% |
-| pan_south | 26 | 3% | 2% | 20 | 35% | 20% |
+| pan_south | 25 | 3% | 2% | 20 | 36% | 20% |
 
 ## Category balance vs target weight
 
 | category | dishes | share | target weight |
 |---|--:|--:|--:|
-| sweet | 136 | 13.8% | 6% |
+| sweet | 135 | 13.7% | 6% |
 | tiffin | 107 | 10.9% | 12% |
 | snack | 77 | 7.8% | 5% |
 | non_veg_curry | 70 | 7.1% | 6% |

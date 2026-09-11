@@ -54,3 +54,5 @@ Thumbs.db
 artifacts/models/**
 !artifacts/models/.gitkeep
 artifacts/watchdog_state.json
+artifacts/logs/*
+!artifacts/logs/.gitkeep

@@ -2,13 +2,12 @@
 # Primary source: data/dish_seed/*.yaml (hand-authored). Prominence = hand base
 # score + log2 boost from scraped-title frequency. Regenerate:
 #   python scripts/build_dish_list.py
-# generated 2026-09-10T02:35:15+00:00  total=986
+# generated 2026-09-11T02:19:03+00:00  total=985
 version: 1
 dishes:
   # --- tamil_nadu  (262) ---
   - id: dish:aval-upma
     canonical_name: Aval Upma
-    also_known_as: [Poha]
     region: tamil_nadu
     category: tiffin
     diet: {vegetarian: true, vegan: true, non_veg: false}
@@ -471,7 +470,7 @@ dishes:
     prominence: 6    # scrape_freq=0
   - id: dish:paruppu
     canonical_name: Paruppu
-    also_known_as: [Dal, Kandi Pappu, Plain Dal with ghee]
+    also_known_as: [Kandi Pappu, Plain Dal with ghee]
     region: tamil_nadu
     category: sambar
     note: plain dal
@@ -2914,10 +2913,9 @@ dishes:
     prominence: 7    # scrape_freq=3
   - id: dish:avalakki
     canonical_name: Avalakki
-    also_known_as: [Poha]
     region: karnataka
     category: tiffin
-    note: Karnataka
+    note: Karnataka Poha
     diet: {vegetarian: true, vegan: true, non_veg: false}
     prominence: 6    # scrape_freq=0
   - id: dish:avarekalu-uppittu
@@ -4201,7 +4199,6 @@ dishes:
     prominence: 6    # scrape_freq=0
   - id: dish:atukula-upma
     canonical_name: Atukula Upma
-    also_known_as: [Poha]
     region: andhra_pradesh
     category: tiffin
     diet: {vegetarian: true, vegan: true, non_veg: false}
@@ -6679,7 +6676,7 @@ dishes:
     note: Pondicherry breakfast side
     diet: {vegetarian: true, vegan: true, non_veg: false}
     prominence: 4    # scrape_freq=0
-  # --- pan_south  (26) ---
+  # --- pan_south  (25) ---
   - id: dish:chicken-biryani-south-indian
     canonical_name: Chicken Biryani (South Indian
     region: pan_south
@@ -6739,13 +6736,6 @@ dishes:
     category: sweet
     note: concept
     diet: {vegetarian: true, vegan: false, non_veg: false, contains: [dairy]}
-    prominence: 5    # scrape_freq=0
-  - id: dish:peanut
-    canonical_name: Peanut
-    also_known_as: [Kadalai Urundai Chikki]
-    region: pan_south
-    category: sweet
-    diet: {vegetarian: true, vegan: true, non_veg: false}
     prominence: 5    # scrape_freq=0
   - id: dish:poriyal
     canonical_name: Poriyal

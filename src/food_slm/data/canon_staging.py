@@ -27,8 +27,37 @@ class StageResult:
     rejected: list[tuple[str, str]]        # (id, reason)
 
 
+def _merge_with_existing(obj: dict, existing_path: Path) -> dict:
+    """A second (or third...) source independently produced a record with the same
+    id — union their `provenance.source_ids` so `corroboration_count` (len of that
+    list) reflects genuine cross-source agreement, per the AI-primary/human-anchored
+    design (evaluation_strategy.md §3: "cross-source corroboration (not a model)").
+    Keeps the newer record's content/verdict (usually the more complete one) but
+    never loses a source_id or drops below a status the earlier version already
+    reached (never downgrade auto_validated/human_validated back to unverified)."""
+    try:
+        prev = json.loads(existing_path.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return obj
+    prev_ids = prev.get("provenance", {}).get("source_ids", [])
+    new_ids = obj.setdefault("provenance", {}).setdefault("source_ids", [])
+    merged_ids = list(dict.fromkeys([*prev_ids, *new_ids]))
+    obj["provenance"]["source_ids"] = merged_ids
+    q = obj.setdefault("quality", {})
+    q["corroboration_count"] = max(len(merged_ids), q.get("corroboration_count", 0),
+                                   prev.get("quality", {}).get("corroboration_count", 0))
+    _rank = {"unverified": 0, "needs_human": 0, "auto_validated": 1, "human_validated": 2,
+            "rejected": -1}
+    prev_status = prev.get("quality", {}).get("validation_status", "unverified")
+    if _rank.get(prev_status, 0) > _rank.get(q.get("validation_status", "unverified"), 0):
+        q["validation_status"] = prev_status
+    return obj
+
+
 def stage_records(records: list[dict], staging_dir: str | Path) -> StageResult:
-    """Validate each draft against the schema; write the valid ones to staging."""
+    """Validate each draft against the schema; write the valid ones to staging.
+    A record whose id is already staged (from an earlier source) is merged, not
+    clobbered — see `_merge_with_existing`."""
     out = Path(staging_dir)
     staged, rejected = [], []
     for obj in records:
@@ -41,8 +70,10 @@ def stage_records(records: list[dict], staging_dir: str | Path) -> StageResult:
         obj.setdefault("quality", {}).setdefault("validation_status", "auto_validated")
         d = out / rec.type
         d.mkdir(parents=True, exist_ok=True)
-        (d / f"{rec.id.split(':', 1)[1]}.json").write_text(
-            json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
+        p = d / f"{rec.id.split(':', 1)[1]}.json"
+        if p.exists():
+            obj = _merge_with_existing(obj, p)
+        p.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
         staged.append(rec.id)
     return StageResult(staged, rejected)
 

@@ -14,7 +14,7 @@ dishes:
   - {name: Rava Kesari / Kesari, cat: sweet, diet: veg}
   - {name: Godhuma Rava Upma / Bansi Rava Upma, cat: tiffin, diet: veg}
   - {name: Semiya Upma, cat: tiffin, diet: veg}
-  - {name: Atukula Upma / Poha, cat: tiffin, diet: vegan}
+  - {name: Atukula Upma, cat: tiffin, diet: vegan}
   - {name: Uggani / Puffed Rice (Rayalaseema), cat: tiffin, diet: vegan, style: rayalaseema}
   - {name: Uggani Bajji, cat: tiffin, diet: veg, style: rayalaseema}
   - {name: Ravva Dosa, cat: tiffin, diet: veg}

@@ -58,7 +58,7 @@ dishes:
   - {name: Masala Vada / Aama Vada / Chana Dal Vada, cat: snack, diet: vegan}
   - {name: Banana Chips / Nendran Chips, cat: snack, diet: vegan}
   - {name: Ribbon Pakoda, cat: snack, diet: vegan}
-  - {name: Peanut / Kadalai Urundai Chikki, cat: sweet, diet: vegan}
+  - {name: Kadalai Urundai / Peanut Chikki, cat: sweet, diet: vegan}
 
   # --- shared non-veg templates ---
   - {name: South Indian Chicken Curry (generic template), cat: non_veg_curry, diet: [poultry]}

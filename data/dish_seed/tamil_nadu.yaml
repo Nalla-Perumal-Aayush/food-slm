@@ -35,7 +35,7 @@ dishes:
   - {name: Vermicelli Upma / Semiya Upma, cat: tiffin, diet: veg}
   - {name: Arisi Upma, cat: tiffin, diet: vegan}
   - {name: Godhumai Upma / Broken Wheat Upma, cat: tiffin, diet: veg}
-  - {name: Aval Upma / Poha, cat: tiffin, diet: vegan}
+  - {name: Aval Upma, cat: tiffin, diet: vegan}
   - {name: Kichadi (rava, vegetable), cat: tiffin, diet: veg}
   - {name: Medu Vada, cat: tiffin, diet: vegan, aka: [Ulundhu Vadai, Uzhunnu Vada]}
   - {name: Thayir Vada, cat: tiffin, diet: veg, aka: [Curd Vada, Perugu Vada]}
@@ -109,7 +109,7 @@ dishes:
   - {name: Mixed Vegetable Sambar, cat: sambar, diet: vegan}
   - {name: Radish Sambar / Mullangi Sambar, cat: sambar, diet: vegan}
   - {name: Ladies Finger Sambar / Vendakkai Sambar, cat: sambar, diet: vegan}
-  - {name: Paruppu (plain dal), cat: sambar, diet: veg, aka: [Dal, Kandi Pappu]}
+  - {name: Paruppu (plain dal), cat: sambar, diet: veg, aka: [Kandi Pappu]}
   - {name: Milagu Rasam / Pepper Rasam, cat: rasam, diet: vegan}
   - {name: Tomato Rasam / Thakkali Rasam, cat: rasam, diet: vegan}
   - {name: Paruppu Rasam / Dal Rasam, cat: rasam, diet: vegan}
