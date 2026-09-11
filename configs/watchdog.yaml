@@ -48,3 +48,10 @@ checks:
     path: artifacts/logs/blog_crawl.log
     max_age_seconds: 1800
     optional: true
+
+  # --- Phase 2: per-dish canonical extraction (local qwen7b+gemma9b, hours-long) ---
+  - name: canon_extract
+    kind: file_fresh
+    path: artifacts/logs/canon_extract_progress.json   # written every 10 docs
+    max_age_seconds: 2400
+    optional: true
