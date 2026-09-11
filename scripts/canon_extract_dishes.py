@@ -168,6 +168,35 @@ def collect_docs(dish_index) -> list[dict]:
     return docs
 
 
+def _interleave_by_dish(docs: list[dict], cap: int) -> list[dict]:
+    """Round-robin across dishes (highest prominence first), capping each dish at
+    `cap` docs this run, so a handful of generic-name dishes (Dosa, Poriyal, Rasam)
+    can't consume the whole doc budget before the long tail gets a single doc.
+    Docs beyond the cap are simply dropped from *this run's* list — they're still
+    on disk and still match, so a later run (already_staged filters what's done by
+    then) will pick them up once the long tail has some coverage too."""
+    from collections import defaultdict
+
+    by_dish: dict[str, list[dict]] = defaultdict(list)
+    for d in docs:
+        by_dish[d["dish"]["canonical_name"]].append(d)
+    order = sorted(by_dish, key=lambda name: -by_dish[name][0]["dish"].get("prominence", 1))
+    capped = {name: lst[:cap] for name, lst in by_dish.items()}
+    out: list[dict] = []
+    i = 0
+    while True:
+        added = False
+        for name in order:
+            lst = capped[name]
+            if i < len(lst):
+                out.append(lst[i])
+                added = True
+        if not added:
+            break
+        i += 1
+    return out
+
+
 def already_staged(source_id: str) -> bool:
     slug = source_id.split(":", 1)[1]
     return (STAGING / "source" / f"{slug}.json").exists()
@@ -179,6 +208,11 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="max docs this run (0 = no limit)")
     ap.add_argument("--max-minutes", type=float, default=0, help="wall-clock budget (0 = none)")
     ap.add_argument("--only-region", default=None)
+    ap.add_argument("--max-docs-per-dish", type=int, default=5,
+                    help="cap corroborating docs per dish so a few generic-name "
+                         "dishes (Dosa, Poriyal, Rasam...) don't starve the long "
+                         "tail's doc budget within one run; extra docs are simply "
+                         "deferred to a later run, not dropped")
     args = ap.parse_args()
 
     dish_index = load_dish_index(args.dish_list)
@@ -190,6 +224,7 @@ def main() -> int:
     todo = [d for d in docs if not already_staged(d["source_id"])]
     print(f"{len(docs)} dish-matched docs total, {len(docs) - len(todo)} already staged, "
          f"{len(todo)} to process")
+    todo = _interleave_by_dish(todo, args.max_docs_per_dish)
 
     roles = load_agents_config(AGENTS)
     extract_p = build_provider(roles["extraction_local"][0])
