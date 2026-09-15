@@ -67,7 +67,7 @@ checks:
       # started from a Git-Bash session predating the var) — set it explicitly so
       # the restarted job doesn't silently fall back to the default C: model path
       # and find zero models.
-      cmd: 'cmd /c "set OLLAMA_MODELS=D:\ollama\models&& python -u scripts/canon_extract_dishes.py --max-docs-per-dish 3"'
+      cmd: 'cmd /c "set OLLAMA_MODELS=D:\ollama\models&& set OLLAMA_TIMEOUT_S=120&& python -u scripts/canon_extract_dishes.py --max-docs-per-dish 3"'
       cwd: "."
       log: artifacts/logs/canon_extract.log
       cooldown_seconds: 1800
