@@ -236,6 +236,7 @@ def main() -> int:
     stats = {"docs_done": 0, "docs_skipped_empty": 0, "docs_error": 0, "staged": 0,
             "by_type": {}, "by_decision": {}, "dishes_touched": set()}
     t0 = time.time()
+    consecutive_errors = 0
     for i, doc in enumerate(todo):
         if args.limit and stats["docs_done"] >= args.limit:
             print(f"--limit {args.limit} reached")
@@ -255,7 +256,23 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             print(f"    ERROR {type(exc).__name__}: {str(exc)[:200]}")
             stats["docs_error"] += 1
+            consecutive_errors += 1
+            if consecutive_errors >= 5:
+                # Isolated timeouts (one slow doc) are normal and handled; 5 in a row
+                # means something is actually broken (Ollama hung/down, not just one
+                # big document) — burning through the rest of the backlog at this
+                # point would just fail every doc near-instantly and *look* alive
+                # (the progress file would keep updating) while producing nothing.
+                # Exit non-zero so the file goes stale and the watchdog's restart
+                # (a fresh process, fresh Ollama connection) actually fixes it,
+                # instead of masking the outage.
+                print(f"    {consecutive_errors} consecutive failures — something is "
+                     f"broken (Ollama down/hung?), not just a slow document. Stopping "
+                     f"rather than fail through the rest of the backlog.")
+                _write_progress(stats, stats["docs_done"], len(todo), t0, final=True)
+                return 1
             continue
+        consecutive_errors = 0
         s = run.summary()
         if s["extracted"] == 0:
             stats["docs_skipped_empty"] += 1
