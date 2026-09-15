@@ -10,6 +10,7 @@ from food_slm.data.licensing import classify_license
 from food_slm.data.llm import FakeProvider, Panel, ProviderSpec
 from food_slm.data.pipeline import (
     build_source_record,
+    process_cached_text,
     process_source,
     resolve_batch_refs,
     source_id_for,
@@ -98,6 +99,37 @@ def test_process_source_stages_source_plus_records(tmp_path: Path) -> None:
                          canonical_dir=_copy_store(tmp_path), reviewer="aayush",
                          batch_id="b1", eval_dir=tmp_path / "eval")
     assert res.store_ok, res.issues
+
+
+def test_process_cached_text_gives_each_doc_its_own_source_record(tmp_path: Path) -> None:
+    # canon_extract_dishes.py has no real per-post URL for a blog, so it synthesizes
+    # one with a URL *fragment* ("https://site.example/#some-post-slug"). A fragment
+    # is not part of urlparse().path, so deriving the source record's id from that
+    # placeholder URL the way process_source does (source_id_for) would give every
+    # post on the same site an empty path -> the same "index" id, collapsing them
+    # all onto one staged source record and breaking the already-staged resume
+    # check for every one of them. process_cached_text must use the id it's given.
+    store = load_store(CANON, strict=True)
+    staging = tmp_path / "staging"
+    fp = FakeProvider(ProviderSpec("qwen", "fake", "x", "qwen"),
+                      responder=lambda s, p: _EXTRACT_JSON)
+
+    run1 = process_cached_text(
+        source_id="src:someblog-olan-recipe", source_url="https://someblog.example/#olan-recipe",
+        kind="recipe_blog", text=_PAGE_TEXT, license_class="unknown", title="Olan Recipe",
+        extract_provider=fp, panel=_panel("accept", "accept"), staging_dir=staging, store=store)
+    run2 = process_cached_text(
+        source_id="src:someblog-second-post", source_url="https://someblog.example/#second-post",
+        kind="recipe_blog", text=_PAGE_TEXT, license_class="unknown", title="Second Post",
+        extract_provider=fp, panel=_panel("accept", "accept"), staging_dir=staging, store=store)
+
+    assert run1.source_id == "src:someblog-olan-recipe"
+    assert run2.source_id == "src:someblog-second-post"
+    assert run1.source_id != run2.source_id
+    assert run1.source_record["id"] == run1.source_id
+    assert run2.source_record["id"] == run2.source_id
+    staged_ids = {r["id"] for r in list_staged(staging)}
+    assert run1.source_id in staged_ids and run2.source_id in staged_ids
 
 
 def _copy_store(tmp_path: Path) -> Path:

@@ -40,9 +40,15 @@ def source_id_for(url: str) -> str:
 
 
 def build_source_record(url: str, verdict: LicenseVerdict, *, kind: str,
-                        title: str = "") -> dict:
+                        title: str = "", source_id: str | None = None) -> dict:
+    """`source_id`: explicit id override. Needed by `process_cached_text` — its
+    `url` is a synthetic placeholder (cached text has no real URL to fetch again),
+    so deriving the id from it the way `process_source`'s live fetch does would
+    collapse every document from the same site onto one id (empty/fragment-only
+    path -> the same 'index' slug for all of them), silently breaking both
+    resumability and per-document provenance."""
     today = datetime.now(UTC).date().isoformat()
-    sid = source_id_for(url)
+    sid = source_id or source_id_for(url)
     return {
         "id": sid, "type": "source", "schema_version": "2",
         "labels": [title or urlparse(url).netloc],
@@ -224,7 +230,8 @@ def process_cached_text(
                     fetch=FetchResult(url=source_url, status=200, text=text))
     run.license = LicenseVerdict(license_class, "pre-classified at collection",
                                  USABLE_FOR[license_class], [], 0.85)
-    run.source_record = build_source_record(source_url, run.license, kind=kind, title=title)
+    run.source_record = build_source_record(source_url, run.license, kind=kind, title=title,
+                                            source_id=source_id)
 
     run.extraction = extract_records(text, source_id, extract_provider)
     drafts = list(run.extraction.drafts)
