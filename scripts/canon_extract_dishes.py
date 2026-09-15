@@ -148,7 +148,7 @@ def collect_docs(dish_index) -> list[dict]:
                 continue
             url = f"https://en.wikipedia.org/wiki/{title.strip().replace(' ', '_')}"
             docs.append({"source_id": f"src:en-wikipedia-org-{_slug(title)}", "url": url,
-                        "kind": "encyclopedia", "license_class": "share_alike",
+                        "kind": "wikipedia", "license_class": "share_alike",
                         "title": title, "text": f"{title}\n{body}", "dish": dish})
 
     for name in ("core_si.jsonl", "pan_indian.jsonl"):
@@ -220,7 +220,7 @@ def main() -> int:
     docs = collect_docs(dish_index)
     if args.only_region:
         docs = [d for d in docs if d["dish"]["region"] == args.only_region]
-    docs.sort(key=lambda d: (-d["dish"].get("prominence", 1), d["kind"] != "encyclopedia"))
+    docs.sort(key=lambda d: (-d["dish"].get("prominence", 1), d["kind"] != "wikipedia"))
     todo = [d for d in docs if not already_staged(d["source_id"])]
     print(f"{len(docs)} dish-matched docs total, {len(docs) - len(todo)} already staged, "
          f"{len(todo)} to process")
