@@ -52,7 +52,7 @@ dishes:
   - {name: Pulisseri / Kaachiya Moru, cat: kootu, diet: veg}
   - {name: Mambazha Pulissery / Ripe Mango Curry, cat: kootu, diet: veg}
   - {name: Naranga Curry / Lime Pickle, cat: pickle, diet: vegan}
-  - {name: Inji Puli / Puli Inji / Ginger Tamarind, cat: pickle, diet: vegan}
+  - {name: Inji Puli / Puli Inji, cat: pickle, diet: vegan}
   - {name: Manga Achar / Kerala Mango Pickle, cat: pickle, diet: vegan}
   - {name: Kadumanga Achar, cat: pickle, diet: vegan}
   - {name: Beetroot Pachadi, cat: pachadi, diet: veg}
