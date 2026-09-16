@@ -12,7 +12,7 @@ dishes:
   - {name: Meen Puyabaisse / Pondicherry Bouillabaisse, cat: seafood_dish, diet: [seafood], style: creole}
   - {name: Coq au Vin Pondicherry style, cat: non_veg_curry, diet: [poultry], style: creole}
   - {name: Pondicherry Mutton Stew (Franco-Tamil), cat: non_veg_curry, diet: [red_meat], style: creole}
-  - {name: Croquettes / Pondicherry Fish Croquettes, cat: snack, diet: [seafood], style: creole}
+  - {name: Pondicherry Fish Croquettes, cat: snack, diet: [seafood], style: creole}
   - {name: Pondicherry Vegetable Bouillon, cat: non_veg_curry, diet: veg, style: creole}
   - {name: Cabbage Foogath (Pondicherry), cat: thoran, diet: vegan, style: creole}
   - {name: Pondicherry Prawn Rassa, cat: seafood_dish, diet: [seafood], style: creole}

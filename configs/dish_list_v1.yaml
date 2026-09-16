@@ -2,7 +2,7 @@
 # Primary source: data/dish_seed/*.yaml (hand-authored). Prominence = hand base
 # score + log2 boost from scraped-title frequency. Regenerate:
 #   python scripts/build_dish_list.py
-# generated 2026-09-11T02:19:03+00:00  total=985
+# generated 2026-09-16T18:35:04+00:00  total=985
 version: 1
 dishes:
   # --- tamil_nadu  (262) ---
@@ -2267,13 +2267,6 @@ dishes:
     note: Kerala steamed rice dumpling
     diet: {vegetarian: true, vegan: true, non_veg: false}
     prominence: 5    # scrape_freq=0
-  - id: dish:meat-cutlet
-    canonical_name: Meat Cutlet
-    also_known_as: [Chicken Cutlet]
-    region: kerala
-    category: snack
-    diet: {vegetarian: false, vegan: false, non_veg: true, contains: [poultry]}
-    prominence: 5    # scrape_freq=1
   - id: dish:meen-curry
     canonical_name: Meen Curry
     also_known_as: [Kerala Fish Curry (red]
@@ -2333,10 +2326,9 @@ dishes:
     prominence: 5    # scrape_freq=0
   - id: dish:njandu-curry
     canonical_name: Njandu Curry
-    also_known_as: [Crab Curry]
     region: kerala
     category: seafood_dish
-    note: Kerala
+    note: Kerala Crab Curry
     diet: {vegetarian: false, vegan: false, non_veg: true, contains: [seafood]}
     prominence: 5    # scrape_freq=0
   - id: dish:parippu-payasam
@@ -2552,6 +2544,13 @@ dishes:
     region: kerala
     category: beverage
     diet: {vegetarian: true, vegan: false, non_veg: false, contains: [dairy]}
+    prominence: 4    # scrape_freq=0
+  - id: dish:kerala-meat-cutlet
+    canonical_name: Kerala Meat Cutlet
+    region: kerala
+    category: snack
+    note: Chicken Cutlet
+    diet: {vegetarian: false, vegan: false, non_veg: true, contains: [poultry]}
     prominence: 4    # scrape_freq=0
   - id: dish:kerala-paneer-curry
     canonical_name: Kerala Paneer Curry
@@ -2818,7 +2817,7 @@ dishes:
     prominence: 3    # scrape_freq=0
   - id: dish:inji-puli
     canonical_name: Inji Puli
-    also_known_as: [Puli Inji, Ginger Tamarind]
+    also_known_as: [Puli Inji]
     region: kerala
     category: pickle
     diet: {vegetarian: true, vegan: true, non_veg: false}
@@ -6618,14 +6617,6 @@ dishes:
     note: Pondicherry
     diet: {vegetarian: true, vegan: true, non_veg: false}
     prominence: 4    # scrape_freq=0
-  - id: dish:croquettes
-    canonical_name: Croquettes
-    also_known_as: [Pondicherry Fish Croquettes]
-    region: puducherry
-    category: snack
-    style: creole
-    diet: {vegetarian: false, vegan: false, non_veg: true, contains: [seafood]}
-    prominence: 4    # scrape_freq=0
   - id: dish:mahe-beef-ularthiyathu
     canonical_name: Mahe Beef Ularthiyathu
     region: puducherry
@@ -6646,6 +6637,13 @@ dishes:
     region: puducherry
     category: beverage
     diet: {vegetarian: true, vegan: false, non_veg: false, contains: [dairy]}
+    prominence: 4    # scrape_freq=0
+  - id: dish:pondicherry-fish-croquettes
+    canonical_name: Pondicherry Fish Croquettes
+    region: puducherry
+    category: snack
+    style: creole
+    diet: {vegetarian: false, vegan: false, non_veg: true, contains: [seafood]}
     prominence: 4    # scrape_freq=0
   - id: dish:pondicherry-sundal
     canonical_name: Pondicherry Sundal
