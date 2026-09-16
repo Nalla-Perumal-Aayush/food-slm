@@ -136,7 +136,7 @@ dishes:
   - {name: Egg Roast / Mutta Roast, cat: egg_dish, diet: [egg]}
   - {name: Nadan Mutta Curry (coconut milk), cat: egg_dish, diet: [egg]}
   - {name: Egg Masala (Kerala), cat: egg_dish, diet: [egg]}
-  - {name: Meat Cutlet / Chicken Cutlet, cat: snack, diet: [poultry]}
+  - {name: Kerala Meat Cutlet (Chicken Cutlet), cat: snack, diet: [poultry]}
   - {name: Unnakkaya / Stuffed Banana Dumpling, cat: snack, diet: [egg], style: malabar}
   - {name: Pazham Nirachathu / Stuffed Banana, cat: snack, diet: [egg], style: malabar}
   - {name: Chatti Pathiri, cat: sweet, diet: [egg], style: malabar}
