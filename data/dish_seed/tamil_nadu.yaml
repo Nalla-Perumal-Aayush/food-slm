@@ -255,7 +255,7 @@ dishes:
   - {name: Seedai / Uppu Seedai, cat: snack, diet: vegan}
   - {name: Vella Seedai / Sweet Seedai, cat: sweet, diet: veg}
   - {name: Mixture, cat: snack, diet: vegan}
-  - {name: Omapodi / Sev, cat: snack, diet: vegan}
+  - {name: Omapodi, cat: snack, diet: vegan}
   - {name: Kara Boondi, cat: snack, diet: vegan}
   - {name: Bonda / Ulundu Bonda, cat: snack, diet: veg}
   - {name: Mysore Bonda, cat: snack, diet: veg}
