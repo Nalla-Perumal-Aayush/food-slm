@@ -102,7 +102,7 @@ dishes:
   - {name: Kerala Prawn Biryani, cat: biryani, diet: [seafood]}
   - {name: Kallummakkaya Ularthiyathu / Mussels Stir-fry, cat: seafood_dish, diet: [seafood]}
   - {name: Arikkadukka / Stuffed Mussels, cat: seafood_dish, diet: [seafood], style: malabar}
-  - {name: Njandu Curry / Crab Curry (Kerala), cat: seafood_dish, diet: [seafood]}
+  - {name: Njandu Curry (Kerala Crab Curry), cat: seafood_dish, diet: [seafood]}
   - {name: Squid Roast / Koonthal Roast, cat: seafood_dish, diet: [seafood]}
   - {name: Fish Pickle / Meen Achar, cat: pickle, diet: [seafood]}
   - {name: Meen Pattichathu, cat: seafood_dish, diet: [seafood]}
