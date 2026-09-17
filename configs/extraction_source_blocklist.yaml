@@ -18,3 +18,5 @@
   reason: "Assamese-style snack; matched via 'Dil Pasand' dish name"
 - id: src:archanas-mango-phirni-recipe-north-indian-milk-pudding-with-fresh-alp
   reason: "explicitly North Indian rice pudding (phirni); matched via 'Mango Rice' dish name"
+- id: src:kothiyavunu-kanda-poha-recipe-aval-upma-recipe-indian-breakfast-recipe
+  reason: "explicitly Maharashtrian breakfast (Kanda Poha); matched via 'Aval Upma' dish name"
