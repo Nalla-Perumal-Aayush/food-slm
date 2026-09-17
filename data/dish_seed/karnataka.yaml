@@ -111,7 +111,7 @@ dishes:
   - {name: Thaliya Puttu, cat: staple, diet: vegan, style: coorg}
   - {name: Paputtu, cat: tiffin, diet: veg, style: coorg}
   - {name: Kadala Curry (Coorg), cat: non_veg_curry, diet: vegan, style: coorg}
-  - {name: Chekke Curry / Jackfruit Curry (Coorg), cat: kootu, diet: vegan, style: coorg}
+  - {name: Chekke Curry (Coorg Jackfruit Curry), cat: kootu, diet: vegan, style: coorg}
   - {name: Mudi Chekke Palya, cat: palya, diet: vegan, style: coorg}
 
   # --- Mangalorean (incl. GSB / Konkani) ---
