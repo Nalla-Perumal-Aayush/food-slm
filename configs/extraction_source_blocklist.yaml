@@ -24,3 +24,5 @@
   reason: "North Indian Mughlai-style curry (naan/pav, cashew-brown-onion gravy, garam masala); matched via 'Mutton Curry' dish name"
 - id: src:archanas-mizoram-style-arsa-beipenek-recipe-spicy-chicken-stew-recipe
   reason: "explicitly North East India recipe; matched via 'Chicken Stew' dish name"
+- id: src:archanas-dum-pukht-gosht-recipe-slow-cooked-mutton-curry
+  reason: "explicitly Lucknowi/Awadhi dish (dough-sealed slow cooking); matched via 'Mutton Curry' dish name"
