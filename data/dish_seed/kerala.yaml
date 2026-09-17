@@ -96,7 +96,7 @@ dishes:
   - {name: Meen Peera / Peera Pattichathu, cat: seafood_dish, diet: [seafood]}
   - {name: Kerala Fish Fry / Meen Varuthathu, cat: seafood_dish, diet: [seafood]}
   - {name: Ayala Fry / Mackerel Fry, cat: seafood_dish, diet: [seafood]}
-  - {name: Chemmeen Curry / Prawn Curry (Kerala), cat: seafood_dish, diet: [seafood]}
+  - {name: Chemmeen Curry (Kerala Prawn Curry), cat: seafood_dish, diet: [seafood]}
   - {name: Chemmeen Roast / Prawn Roast, cat: seafood_dish, diet: [seafood]}
   - {name: Konju Mango Curry / Prawn Raw Mango Curry, cat: seafood_dish, diet: [seafood]}
   - {name: Kerala Prawn Biryani, cat: biryani, diet: [seafood]}
