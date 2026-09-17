@@ -55,6 +55,7 @@ BLOGS = REPO / "data" / "interim" / "domain_150m" / "blogs"
 WIKI = REPO / "data" / "interim" / "domain_150m" / "wiki"
 RECIPES = REPO / "data" / "interim" / "recipes_150m"
 PROGRESS = REPO / "artifacts" / "logs" / "canon_extract_progress.json"
+SOURCE_BLOCKLIST = REPO / "configs" / "extraction_source_blocklist.yaml"
 
 _SLUG = re.compile(r"[^a-z0-9]+")
 
@@ -202,6 +203,16 @@ def already_staged(source_id: str) -> bool:
     return (STAGING / "source" / f"{slug}.json").exists()
 
 
+def load_source_blocklist() -> set[str]:
+    """Docs confirmed (by human review of staged output) to be a different cuisine
+    entirely, matched anyway because their title happens to contain a genuine South
+    Indian dish name. Deleting a bad doc's staged records makes already_staged() see
+    it as unprocessed again, so without this list it gets re-extracted every run."""
+    if not SOURCE_BLOCKLIST.exists():
+        return set()
+    return {row["id"] for row in load_yaml(SOURCE_BLOCKLIST)}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dish-list", type=Path, default=REPO / "configs" / "dish_list_v1.yaml")
@@ -221,9 +232,10 @@ def main() -> int:
     if args.only_region:
         docs = [d for d in docs if d["dish"]["region"] == args.only_region]
     docs.sort(key=lambda d: (-d["dish"].get("prominence", 1), d["kind"] != "wikipedia"))
-    todo = [d for d in docs if not already_staged(d["source_id"])]
-    print(f"{len(docs)} dish-matched docs total, {len(docs) - len(todo)} already staged, "
-         f"{len(todo)} to process")
+    blocklist = load_source_blocklist()
+    todo = [d for d in docs if not already_staged(d["source_id"]) and d["source_id"] not in blocklist]
+    print(f"{len(docs)} dish-matched docs total, {len(docs) - len(todo)} already staged "
+         f"or blocklisted, {len(todo)} to process")
     todo = _interleave_by_dish(todo, args.max_docs_per_dish)
 
     roles = load_agents_config(AGENTS)

@@ -1,0 +1,12 @@
+# Source ids for docs that keep getting matched to a South Indian dish by
+# canon_extract_dishes.py's title/alias matching but are, on inspection, a
+# different cuisine entirely (Western fusion, Thai, Bengali, Assamese, ...).
+# Deleting their staged records makes already_staged() treat them as
+# unprocessed again, so without this list they get re-extracted and
+# re-staged on every subsequent run. Add an entry here (with a one-line
+# reason) instead of just deleting the staged files next time.
+
+- id: src:paint_kitchen_red-easy-instant-pot-chicken-stew
+  reason: "Western Instant Pot chicken stew (thyme/rosemary/celery/chicken broth); matched via generic 'Chicken Stew' dish name"
+- id: src:kannamma_cooks-thai-banana-fritters-kluay-kaek-thai-street-food
+  reason: "Thai banana fritters (Kluay Kaek); matched via 'Pazham Pori' dish name"
