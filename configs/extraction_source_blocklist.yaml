@@ -22,3 +22,5 @@
   reason: "explicitly Maharashtrian breakfast (Kanda Poha); matched via 'Aval Upma' dish name"
 - id: src:simpleindianrecipes-shahi-mutton-curry-gosht-shahi-korma-simple-indian-recipes
   reason: "North Indian Mughlai-style curry (naan/pav, cashew-brown-onion gravy, garam masala); matched via 'Mutton Curry' dish name"
+- id: src:archanas-mizoram-style-arsa-beipenek-recipe-spicy-chicken-stew-recipe
+  reason: "explicitly North East India recipe; matched via 'Chicken Stew' dish name"
