@@ -10,3 +10,11 @@
   reason: "Western Instant Pot chicken stew (thyme/rosemary/celery/chicken broth); matched via generic 'Chicken Stew' dish name"
 - id: src:kannamma_cooks-thai-banana-fritters-kluay-kaek-thai-street-food
   reason: "Thai banana fritters (Kluay Kaek); matched via 'Pazham Pori' dish name"
+- id: src:en-wikipedia-org-torani-water-of-cooked-rice-or-pakhala-kanji
+  reason: "Wikipedia article on Odia/Bengali fermented rice water (Pakhala); matched via bare 'Kanji' dish name, model also fabricated a fake Malayalam name for it"
+- id: src:archanas-assamese-saaru-maas-diya-adar-jhol-recipe-fish-in-ginger-gra
+  reason: "Assamese fish curry (mustard oil, panch phoran); matched via 'Saaru' dish name"
+- id: src:archanas-assamese-style-dil-pasand-recipe
+  reason: "Assamese-style snack; matched via 'Dil Pasand' dish name"
+- id: src:archanas-mango-phirni-recipe-north-indian-milk-pudding-with-fresh-alp
+  reason: "explicitly North Indian rice pudding (phirni); matched via 'Mango Rice' dish name"
