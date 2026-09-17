@@ -76,7 +76,7 @@ dishes:
   - {name: Kadala Parippu Payasam, cat: sweet, diet: vegan}
   - {name: Pazham Pradhaman, cat: sweet, diet: vegan}
   - {name: Aval Payasam (Kerala), cat: sweet, diet: veg}
-  - {name: Achappam / Rose Cookies, cat: snack, diet: [egg]}
+  - {name: Achappam (Kerala Rose Cookies), cat: snack, diet: [egg]}
   - {name: Kuzhalappam, cat: snack, diet: vegan}
   - {name: Churuttu, cat: sweet, diet: veg}
   - {name: Avalose Podi / Avalose Unda, cat: snack, diet: vegan}
