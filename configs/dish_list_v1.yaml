@@ -2,7 +2,7 @@
 # Primary source: data/dish_seed/*.yaml (hand-authored). Prominence = hand base
 # score + log2 boost from scraped-title frequency. Regenerate:
 #   python scripts/build_dish_list.py
-# generated 2026-09-17T12:24:51+00:00  total=985
+# generated 2026-09-17T12:45:06+00:00  total=985
 version: 1
 dishes:
   # --- tamil_nadu  (262) ---
@@ -2584,9 +2584,9 @@ dishes:
     prominence: 4    # scrape_freq=0
   - id: dish:mambazha-pulissery
     canonical_name: Mambazha Pulissery
-    also_known_as: [Ripe Mango Curry]
     region: kerala
     category: kootu
+    note: Kerala Ripe Mango Curry
     diet: {vegetarian: true, vegan: false, non_veg: false, contains: [dairy]}
     prominence: 4    # scrape_freq=0
   - id: dish:manga-curry
