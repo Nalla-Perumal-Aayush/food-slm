@@ -99,7 +99,7 @@ dishes:
   - {name: Gongura Pachadi / Sorrel Leaf Chutney, cat: pachadi, diet: vegan, te: గోంగూర పచ్చడి}
   - {name: Tomato Pachadi / Tamata Pachadi, cat: pachadi, diet: vegan}
   - {name: Vankaya Pachadi / Brinjal Chutney, cat: pachadi, diet: vegan}
-  - {name: Dosakaya Pachadi / Cucumber Chutney, cat: pachadi, diet: vegan}
+  - {name: Dosakaya Pachadi (Andhra Cucumber Chutney), cat: pachadi, diet: vegan}
   - {name: Beerakaya Pachadi / Ridge Gourd Chutney, cat: pachadi, diet: vegan}
   - {name: Kandi Pachadi / Toor Dal Chutney, cat: pachadi, diet: vegan}
   - {name: Pandumirapakaya Pachadi / Red Chilli Chutney, cat: pachadi, diet: vegan}

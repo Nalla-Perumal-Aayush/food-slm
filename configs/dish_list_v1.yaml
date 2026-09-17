@@ -2,7 +2,7 @@
 # Primary source: data/dish_seed/*.yaml (hand-authored). Prominence = hand base
 # score + log2 boost from scraped-title frequency. Regenerate:
 #   python scripts/build_dish_list.py
-# generated 2026-09-17T00:59:02+00:00  total=985
+# generated 2026-09-17T02:02:59+00:00  total=985
 version: 1
 dishes:
   # --- tamil_nadu  (262) ---
@@ -4936,9 +4936,9 @@ dishes:
     prominence: 4    # scrape_freq=0
   - id: dish:dosakaya-pachadi
     canonical_name: Dosakaya Pachadi
-    also_known_as: [Cucumber Chutney]
     region: andhra_pradesh
     category: pachadi
+    note: Andhra Cucumber Chutney
     diet: {vegetarian: true, vegan: true, non_veg: false}
     prominence: 4    # scrape_freq=0
   - id: dish:dosakaya-senagapappu-kura
