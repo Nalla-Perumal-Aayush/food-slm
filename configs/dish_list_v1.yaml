@@ -2,7 +2,7 @@
 # Primary source: data/dish_seed/*.yaml (hand-authored). Prominence = hand base
 # score + log2 boost from scraped-title frequency. Regenerate:
 #   python scripts/build_dish_list.py
-# generated 2026-09-17T02:02:59+00:00  total=985
+# generated 2026-09-17T09:16:01+00:00  total=985
 version: 1
 dishes:
   # --- tamil_nadu  (262) ---
@@ -5299,10 +5299,9 @@ dishes:
     prominence: 3    # scrape_freq=0
   - id: dish:maagaya
     canonical_name: Maagaya
-    also_known_as: [Mango Pickle]
     region: andhra_pradesh
     category: pickle
-    note: soft
+    note: Andhra Soft Mango Pickle
     diet: {vegetarian: true, vegan: true, non_veg: false}
     prominence: 3    # scrape_freq=0
   - id: dish:mutton-pickle
