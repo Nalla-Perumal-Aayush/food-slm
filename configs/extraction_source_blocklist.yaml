@@ -28,3 +28,7 @@
   reason: "explicitly Lucknowi/Awadhi dish (dough-sealed slow cooking); matched via 'Mutton Curry' dish name"
 - id: src:paint_kitchen_red-thai-fish-curry
   reason: "explicitly Thai (choo-chee curry paste, jasmine rice); matched via 'Meen Kuzhambu' dish name"
+- id: src:simpleindianrecipes-modakachi-amti-modak-bhaji-simple-indian-recipes
+  reason: "explicitly Vidarbha/Maharashtra speciality; matched via 'Kozhukattai' dish name"
+- id: src:simpleindianrecipes-ukadiche-modak-maharashtrian-steamed-dumplings-simple-indian
+  reason: "explicitly Maharashtrian steamed dumplings; matched via 'Kozhukattai' dish name"
