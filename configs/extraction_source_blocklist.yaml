@@ -54,3 +54,5 @@
   reason: "Maharashtrian-style raw dry-fruit modak (no rice flour/coconut/steaming, unrelated to Kozhukattai's prep); matched via 'Kozhukattai' dish name"
 - id: src:archanas-bengali-egg-curry-recipe
   reason: "explicitly Bengali egg curry; matched via 'Muttai Kuzhambu' dish name"
+- id: src:archanas-baingan-sarson-ka-saag-recipe-in-hindi
+  reason: "explicitly Punjabi (sarson ka saag, mustard greens); matched via 'Moru Curry with Vazhuthananga' dish name"
