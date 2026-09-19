@@ -50,3 +50,7 @@
   reason: "Mughlai-style (garam masala, kasuri methi, cashew gravy); matched via 'Muttai Kuzhambu' dish name"
 - id: src:archanas-shorshe-maach-recipe-bengali-style-mustard-fish-curry
   reason: "explicitly Bengali mustard fish curry; matched via 'Meen Kuzhambu' dish name"
+- id: src:archanas-dry-fruit-nut-modak-recipe
+  reason: "Maharashtrian-style raw dry-fruit modak (no rice flour/coconut/steaming, unrelated to Kozhukattai's prep); matched via 'Kozhukattai' dish name"
+- id: src:archanas-bengali-egg-curry-recipe
+  reason: "explicitly Bengali egg curry; matched via 'Muttai Kuzhambu' dish name"
