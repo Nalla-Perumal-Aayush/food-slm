@@ -56,3 +56,5 @@
   reason: "explicitly Bengali egg curry; matched via 'Muttai Kuzhambu' dish name"
 - id: src:archanas-baingan-sarson-ka-saag-recipe-in-hindi
   reason: "explicitly Punjabi (sarson ka saag, mustard greens); matched via 'Moru Curry with Vazhuthananga' dish name"
+- id: src:archanas-aar-macher-jhol-recipe-bengali-fish-curry
+  reason: "explicitly Bengali fish curry (Aar Macher Jhol); matched via 'Meen Kuzhambu' dish name"
