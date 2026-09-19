@@ -19,7 +19,7 @@ dishes:
   - {name: Uggani Bajji, cat: tiffin, diet: veg, style: rayalaseema}
   - {name: Ravva Dosa, cat: tiffin, diet: veg}
   - {name: Pesara Punugulu, cat: snack, diet: vegan}
-  - {name: Garelu / Vada (Andhra), cat: tiffin, diet: vegan}
+  - {name: Garelu (Andhra Vada), cat: tiffin, diet: vegan}
   - {name: Perugu Garelu / Curd Vada, cat: tiffin, diet: veg}
   - {name: Bobbatlu / Bakshalu / Puran Poli, cat: sweet, diet: veg}
   - {name: Poornam Boorelu, cat: sweet, diet: vegan}

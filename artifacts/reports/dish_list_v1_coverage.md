@@ -1,4 +1,4 @@
-# Dish list v1 — coverage report (2026-09-17)
+# Dish list v1 — coverage report (2026-09-19)
 
 **985 dishes** across 7 regions. Draft; awaiting review.
 
