@@ -58,3 +58,7 @@
   reason: "explicitly Punjabi (sarson ka saag, mustard greens); matched via 'Moru Curry with Vazhuthananga' dish name"
 - id: src:archanas-aar-macher-jhol-recipe-bengali-fish-curry
   reason: "explicitly Bengali fish curry (Aar Macher Jhol); matched via 'Meen Kuzhambu' dish name"
+- id: src:archanas-goan-style-brinjal-bharta-recipe-in-hindi
+  reason: "explicitly Goan (Goa is out of scope); matched via 'Moru Curry with Vazhuthananga' dish name"
+- id: src:archanas-goan-style-brinjal-bharta-recipe
+  reason: "explicitly Goan (Goa is out of scope; English-language duplicate of the Hindi version); matched via 'Moru Curry with Vazhuthananga' dish name"
