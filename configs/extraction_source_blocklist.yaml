@@ -66,3 +66,9 @@
   reason: "explicitly Odia fish curry; matched via 'Meen Kuzhambu' dish name"
 - id: src:archanas-mughlai-fish-curry-recipe
   reason: "explicitly Mughlai fish curry; matched via 'Meen Kuzhambu' dish name"
+- id: src:archanas-pabda-mach-kalo-jeera-diye-recipe-bengali-pabda-fish-curry
+  reason: "explicitly Bengali fish curry; matched via 'Meen Kuzhambu' dish name"
+- id: src:archanas-bhey-vangan-saag-recipe-sindhi-style-lotus-stem-spinach-brin
+  reason: "explicitly Sindhi (lotus stem spinach brinjal saag); matched via 'Moru Curry with Vazhuthananga' dish name"
+- id: src:archanas-bom-chount-wangan-recipe-kashmiri-apple-brinjal-curry
+  reason: "explicitly Kashmiri apple-brinjal curry; matched via 'Moru Curry with Vazhuthananga' dish name"
