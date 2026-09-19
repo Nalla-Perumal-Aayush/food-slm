@@ -5,6 +5,15 @@
 # unprocessed again, so without this list they get re-extracted and
 # re-staged on every subsequent run. Add an entry here (with a one-line
 # reason) instead of just deleting the staged files next time.
+#
+# A second failure class lives here too: docs whose *title* contains a
+# disallowed community/religion term (Brahmin, Muslim, Madhwa, ...) fail
+# Source schema validation every run (Rev 5 scope excludes religion/
+# community), so their source/<slug>.json is never written and
+# already_staged() retries them forever even though they're genuinely
+# South Indian and their other extracted records (ingredient/technique/
+# term) stage fine. Same fix: blocklist the source_id so the run stops
+# burning an LLM pass on a doc that can never actually complete.
 
 - id: src:paint_kitchen_red-easy-instant-pot-chicken-stew
   reason: "Western Instant Pot chicken stew (thyme/rosemary/celery/chicken broth); matched via generic 'Chicken Stew' dish name"
@@ -74,3 +83,18 @@
   reason: "explicitly Kashmiri apple-brinjal curry; matched via 'Moru Curry with Vazhuthananga' dish name"
 - id: src:archanas-aloo-bilahi-maas-recipe-assamese-fish-curry-with-potatoes-an
   reason: "explicitly Assamese fish curry; matched via 'Meen Kuzhambu' dish name"
+
+# --- stuck forever: title contains a disallowed community/religion term, so
+#     the source record fails schema validation and never stages (see header) ---
+- id: src:archanas-brahmin-style-vegetable-kurma-recipe-no-onion-and-no-garlic
+  reason: "title contains 'Brahmin' (disallowed community term); source record fails schema validation every run, retried forever without this entry"
+- id: src:archanas-matwadi-palya-recipe-madhwa-brahmin-style-methi-chana-dal-sa
+  reason: "title contains 'Madhwa'/'Brahmin' (disallowed community terms); source record fails schema validation every run, retried forever without this entry"
+- id: src:jinoos_kitchen-mutton-kuzhambu-for-idli-mutton-curry-muslim-style
+  reason: "title contains 'Muslim' (disallowed community term); source record fails schema validation every run, retried forever without this entry"
+- id: src:jinoos_kitchen-malabar-muslim-style-thenga-choru-recipe-coconut-rice-kerala
+  reason: "title contains 'Muslim' (disallowed community term); source record fails schema validation every run, retried forever without this entry"
+- id: src:kannamma_cooks-aloo-palya-bun-iyengar-bakery-style-potato-stuffed-bun
+  reason: "title contains 'Iyengar' (disallowed community term); source record fails schema validation every run, retried forever without this entry"
+- id: src:archanas-iyengar-style-thavala-adai-recipe
+  reason: "title contains 'Iyengar' (disallowed community term); source record fails schema validation every run, retried forever without this entry"
