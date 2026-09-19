@@ -32,3 +32,5 @@
   reason: "explicitly Vidarbha/Maharashtra speciality; matched via 'Kozhukattai' dish name"
 - id: src:simpleindianrecipes-ukadiche-modak-maharashtrian-steamed-dumplings-simple-indian
   reason: "explicitly Maharashtrian steamed dumplings; matched via 'Kozhukattai' dish name"
+- id: src:epicurious-11732
+  reason: "Western/Epicurious wok-cooked shrimp recipe, no South Indian markers; matched via 'Coconut Rice' dish name"
