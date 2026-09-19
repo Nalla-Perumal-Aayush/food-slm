@@ -34,3 +34,5 @@
   reason: "explicitly Maharashtrian steamed dumplings; matched via 'Kozhukattai' dish name"
 - id: src:epicurious-11732
   reason: "Western/Epicurious wok-cooked shrimp recipe, no South Indian markers; matched via 'Coconut Rice' dish name"
+- id: src:archanas-nargisi-kofta-curry-recipe-spicy-scotched-egg-curry
+  reason: "explicitly Mughlai (mustard oil, kasuri methi, garam masala); matched via 'Muttai Kuzhambu' dish name"
