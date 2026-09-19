@@ -50,25 +50,17 @@ checks:
     optional: true
 
   # --- Phase 2: per-dish canonical extraction (local qwen7b+gemma9b, hours-long) ---
-  # Ollama has been observed to wedge (HTTP alive, generation calls just hang) after
-  # an auto-update; the extraction driver itself now exits non-zero after 5
-  # consecutive doc failures (rather than looking "alive" while failing every doc)
-  # specifically so this restart path — a fresh process, fresh Ollama connection —
-  # can actually recover it instead of the file looking fresh with nothing real
-  # happening.
+  # Auto-restart DISABLED 2026-09-19: a Claude Code session now runs a 30-min cron
+  # check that inspects process + log freshness + Ollama health directly and
+  # relaunches cleanly when needed (with duplicate-process detection and orphan
+  # llama-server.exe cleanup that this blind file_fresh restart doesn't do). With
+  # both active, the watchdog's restart kept racing the cron's own relaunch and
+  # spawning a second canon_extract_dishes.py on top of a perfectly healthy one
+  # every ~30-40 min. Keeping the freshness *check* (still emails if truly stuck)
+  # but not the auto-restart action. Re-enable the restart: block below if the
+  # manual/cron monitoring stops.
   - name: canon_extract
     kind: file_fresh
     path: artifacts/logs/canon_extract_progress.json   # written every 10 docs
     max_age_seconds: 2400
     optional: true
-    restart:
-      # OLLAMA_MODELS is a Windows *User* env var (D: drive per project policy) that
-      # this watchdog process's own shell may not have inherited (e.g. if it was
-      # started from a Git-Bash session predating the var) — set it explicitly so
-      # the restarted job doesn't silently fall back to the default C: model path
-      # and find zero models.
-      cmd: 'cmd /c "set OLLAMA_MODELS=D:\ollama\models&& set OLLAMA_TIMEOUT_S=120&& python -u scripts/canon_extract_dishes.py --max-docs-per-dish 3"'
-      cwd: "."
-      log: artifacts/logs/canon_extract.log
-      cooldown_seconds: 1800
-      max_restarts: 6
