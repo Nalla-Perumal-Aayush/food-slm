@@ -46,3 +46,5 @@
   reason: "explicitly Punjabi egg curry; matched via 'Muttai Kuzhambu' dish name"
 - id: src:archanas-assamese-machor-tenga-anja-recipe-fish-curry-with-kokum
   reason: "explicitly Assamese fish curry; matched via 'Meen Kuzhambu' dish name"
+- id: src:archanas-shahi-egg-curry-recipe-in-tomato-cashew-gravy
+  reason: "Mughlai-style (garam masala, kasuri methi, cashew gravy); matched via 'Muttai Kuzhambu' dish name"
