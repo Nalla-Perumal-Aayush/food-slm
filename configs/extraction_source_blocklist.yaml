@@ -64,3 +64,5 @@
   reason: "explicitly Goan (Goa is out of scope; English-language duplicate of the Hindi version); matched via 'Moru Curry with Vazhuthananga' dish name"
 - id: src:archanas-macha-mahura-recipe-odia-style-fish-curry-with-vegetables
   reason: "explicitly Odia fish curry; matched via 'Meen Kuzhambu' dish name"
+- id: src:archanas-mughlai-fish-curry-recipe
+  reason: "explicitly Mughlai fish curry; matched via 'Meen Kuzhambu' dish name"
