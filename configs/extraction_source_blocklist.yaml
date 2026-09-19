@@ -72,3 +72,5 @@
   reason: "explicitly Sindhi (lotus stem spinach brinjal saag); matched via 'Moru Curry with Vazhuthananga' dish name"
 - id: src:archanas-bom-chount-wangan-recipe-kashmiri-apple-brinjal-curry
   reason: "explicitly Kashmiri apple-brinjal curry; matched via 'Moru Curry with Vazhuthananga' dish name"
+- id: src:archanas-aloo-bilahi-maas-recipe-assamese-fish-curry-with-potatoes-an
+  reason: "explicitly Assamese fish curry; matched via 'Meen Kuzhambu' dish name"
