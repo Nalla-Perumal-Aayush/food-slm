@@ -36,3 +36,9 @@
   reason: "Western/Epicurious wok-cooked shrimp recipe, no South Indian markers; matched via 'Coconut Rice' dish name"
 - id: src:archanas-nargisi-kofta-curry-recipe-spicy-scotched-egg-curry
   reason: "explicitly Mughlai (mustard oil, kasuri methi, garam masala); matched via 'Muttai Kuzhambu' dish name"
+- id: src:archanas-traditional-steamed-modak-recipe-ukadiche-modak-with-rice-fl
+  reason: "explicitly Maharashtrian Ukadiche Modak; matched via 'Kozhukattai' dish name"
+- id: src:archanas-manganem-recipe-goan-style-chana-dal-kheer-payasam
+  reason: "explicitly Goan style (Goa is out of scope, not one of the 6 target regions); matched via 'Payasam' dish name"
+- id: src:archanas-dim-posto-recipe-bengali-egg-curry-with-poppy-seeds
+  reason: "explicitly Bengali egg curry (poppy seed paste); matched via 'Muttai Kuzhambu' dish name"
