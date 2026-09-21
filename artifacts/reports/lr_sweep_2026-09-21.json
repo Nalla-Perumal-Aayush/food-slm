@@ -1,0 +1,16 @@
+{
+  "created": "2026-09-21T04:35:12+00:00",
+  "config": "configs\\train_150m.yaml",
+  "steps": 10,
+  "results": [
+    {
+      "lr": 0.0008,
+      "final_loss": 7.60474,
+      "mean_tail_loss": 8.45771,
+      "best_val": 7.67704,
+      "diverged": false,
+      "tail_spikes": 0
+    }
+  ],
+  "recommended_lr": 0.0008
+}

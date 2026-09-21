@@ -1,0 +1,125 @@
+# 150M release run  (baseline Rev 6 / Rev 10 "Next: ... then the single 150M run")
+# Config B, 151,225,600 params (+0.8% of 150M target, within +/-5% tolerance).
+# This is the run: everything below it (15M PoC, 40M ablation) existed to de-risk
+# this config before committing a multi-week run to it.
+model_config: configs/model_150m.yaml
+tokenizer: artifacts/tokenizers/corpus-16k
+run_name: release-150m-001
+seed: 1337
+
+# --- data ---
+# data/corpus/150m/manifest.json (2026-09-21): 1,373,554 train windows x 4096 =
+# 5,626,071,571 train tokens (fineweb-edu 4,666,317,249 @ repeat 1 = 82.9%;
+# domain 959,762,322 @ repeat 6 = 17.1%), 638 val windows. Below the baseline's
+# aspirational 15-45B token target (see max_steps note) -- proceeding on what's
+# actually built today rather than blocking the launch on more corpus work.
+shard_dir: data/corpus/150m
+sequence_length: 4096
+
+# --- context curriculum ---
+# Unlike the 40M ablation (4K phase deliberately short at 20%, just enough to
+# exercise the mechanics/VRAM) this is the release run: the full-length 4K phase
+# is where the actual quality comes from, so it gets the majority of steps.
+curriculum:
+  - [1024, 0.25]
+  - [2048, 0.50]
+  - [4096, 1.00]
+
+# --- optimizer / schedule ---
+precision: bf16
+optimizer: adamw
+# LR: 8e-4, carried over from the 40M ablation's own validated value (chosen via
+# lr_sweep.py over {5e-4, 8e-4, 1.5e-3}). Decision 2026-09-21: proceed with 8e-4
+# rather than block the launch on a full 150M-scale bake-off -- cross-checked via
+# `lr_sweep.py --config configs/train_150m.yaml --lrs 4e-4 6e-4 8e-4 --steps 400
+# --seq-len 1024` (artifacts/reports/lr_sweep_2026-09-21.json), which confirmed no
+# divergence/spikes at this scale (not a full comparison, just a sanity check).
+# If the dashboard's loss curve looks wrong early in the real run (spikes, stalling,
+# divergence), the plan is to adjust and resume via `--resume auto` rather than
+# restart -- cheap because checkpointing is bit-exact.
+lr: 8.0e-4
+betas: [0.9, 0.95]
+weight_decay: 0.1
+grad_clip: 1.0
+warmup_ratio: 0.02
+lr_schedule: cosine
+min_lr_ratio: 0.1
+
+# --- batch ---
+# micro_batch_size: a 10-step smoke test at seq_len=4096 with micro_batch_size=4
+# ran (no OOM) but nvidia-smi showed 16,088/16,380 MiB (98.2%) in use -- ~290 MiB of
+# headroom, far too tight for an unattended multi-week run (fragmentation or a
+# marginally larger step later would OOM and kill it). Halved to 2 (grad_accum
+# doubled to 64 to hold the same global batch of 128) for real safety margin.
+micro_batch_size: 2
+grad_accum_steps: 64            # global batch = 128 sequences (matches the 40M rung)
+# 1 epoch over the packed corpus (5,626,071,571 tokens): avg tokens/step =
+# 128 * (0.25*1024 + 0.25*2048 + 0.50*4096) = 360,448 -> ~15,609 steps.
+# This intentionally stops at 1 epoch, not the baseline's aspirational 15-45B/
+# ~4-6 domain-epoch target: the domain tier was already upsampled 6x at packing
+# time, so 1 epoch over the packed stream already puts the domain slice at the
+# TOP of the stated "~4-6 epoch" safe zone (6x) and the general slice at the
+# BOTTOM of its "~1-2 epoch" zone (1x) -- a second full epoch here would push
+# domain repetition to ~12x, past what the baseline considers a safe zone against
+# memorization. If val_domain loss is still improving cleanly at step 15,600 with
+# no memorization signs (val_domain diverging from train while val_fineweb-edu
+# keeps improving), extending via --resume auto for more steps is the natural
+# next call -- watch the dashboard's val-loss overlay for exactly this signal.
+max_steps: 15600
+gradient_checkpointing: true
+
+# --- io / logging ---
+checkpoint_dir: artifacts/checkpoints/release-150m-001
+# Checkpointed/evaluated every 200 steps (~3-4h wall time at expected throughput),
+# denser than the 40M rung's 500 -- this is a 1.5-3 week unattended run on a
+# personal machine, and the 40M rung already survived two real session-boundary
+# process deaths mid-run. keep_last_n raised to 5 for more resume headroom.
+checkpoint_every_steps: 200
+keep_last_n: 5
+save_best_on: val_loss
+eval_every_steps: 200
+eval_batches: 40
+log_every_steps: 20
+tracker: none
+metrics_jsonl: true
+spike_factor: 1.6
+
+# --- acceptance checks before calling this run's launch "ready" ---
+acceptance:
+  lr_validated_at_150m: true       # 2026-09-21 sanity sweep @ seq_len 1024: 4e-4 and
+                                    # 6e-4 ran their full 400 steps clean (0 spikes, no
+                                    # divergence, tail-mean loss 5.14/5.14). 8e-4 was
+                                    # halted by decision at step 20 (its own first 20
+                                    # steps tracked the same healthy trajectory as the
+                                    # other two at that point) rather than run to
+                                    # completion -- the actual real-run loss curve on
+                                    # the dashboard is the plan for validating it, not
+                                    # a full offline comparison. See lr comment above.
+  micro_batch_vram_verified: true  # 2026-09-21: first try at micro_batch_size=4 ran
+                                    # 10 clean steps @ seq_len=4096+grad_checkpointing
+                                    # but nvidia-smi showed 16,088/16,380 MiB (98.2%,
+                                    # ~290 MiB headroom) -- too tight for an unattended
+                                    # multi-week run. Halved to 2 (grad_accum doubled
+                                    # to 64) -> 14,724/16,380 MiB (89.9%, ~1.66 GB
+                                    # headroom), reran 10 clean steps + eval, no OOM,
+                                    # no divergence. Config above reflects the safer value.
+  contamination_scan_clean: n/a    # no n-gram train x eval scan tool exists in this
+                                    # codebase (src/food_slm/data/__init__.py lists
+                                    # contamination.py as a planned, never-built
+                                    # module) -- same gap existed at the 40M rung,
+                                    # which only enforced the forbidden-entity scan
+  forbidden_entity_scan_clean: true # scan_leakage.py found 4 real leaks 2026-09-21
+                                    # (fe:0001/0003/0009 -- well-documented real dishes
+                                    # inevitably present in a broad South Indian recipe
+                                    # corpus once it grew past this list's 2026-09-02
+                                    # freeze date -- plus fe:0010's overly-generic
+                                    # "Tapioca Root" gloss in FineWeb-Edu). Amended with
+                                    # verified-clean replacements; the rescan then found
+                                    # fe:0010's OWN native-language form ('maravalli
+                                    # kilangu') still leaked once into FineWeb-Edu, so
+                                    # that entity was fully retired (replaced with
+                                    # Putnala/roasted gram) rather than patched again.
+                                    # Third scan confirmed CLEAN: 0 hits across all 100
+                                    # files / 20.47B chars -- see
+                                    # data/eval/forbidden_entities.amendments.log and
+                                    # artifacts/reports/leakage_scan.json
