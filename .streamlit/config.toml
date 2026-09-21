@@ -4,6 +4,13 @@ address = "localhost"
 headless = true
 enableCORS = false
 enableXsrfProtection = true
+# scripts/watchdog.py (this project's own pipeline-monitoring script) collides
+# with the PyPI `watchdog` package Streamlit's dev-mode file-watcher imports
+# (`from watchdog import events`) -- streamlit adds the app's own directory
+# (scripts/) to sys.path, so that import resolves to our local file instead of
+# the real package, crashing session setup. We don't need auto-reload-on-edit
+# for a monitoring dashboard, so just disable the watcher.
+fileWatcherType = "none"
 
 [browser]
 gatherUsageStats = false
