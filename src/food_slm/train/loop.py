@@ -247,7 +247,8 @@ def train(
         trailing = [*trailing[-49:], loss_sum]
 
         rec = {"step": step, "lr": round(lr, 8), "loss": loss_sum, "ce_loss": ce_sum,
-               "grad_norm": grad_norm, "seq_len": seq_len, "tokens_seen": tokens_seen}
+               "grad_norm": grad_norm, "seq_len": seq_len, "tokens_seen": tokens_seen,
+               "t": round(time.time(), 3)}
         res.history.append(rec)
         res.final_step, res.final_loss = step + 1, loss_sum
         if metrics_fh:
@@ -274,7 +275,8 @@ def train(
                                         n_batches=cfg.eval_batches, device=device,
                                         use_amp=use_amp, seq_len=eval_seq)
                        for n, ds in val_by_source.items()}
-            ev = {"step": step + 1, "val_loss": vl, **{f"val_{n}": v for n, v in per_src.items()}}
+            ev = {"step": step + 1, "val_loss": vl, **{f"val_{n}": v for n, v in per_src.items()},
+                  "t": round(time.time(), 3)}
             res.eval_history.append(ev)
             extra = "  ".join(f"{n} {v:.3f}" for n, v in per_src.items())
             print(f"  [eval] step {step + 1}  val_loss {vl:.4f}"
