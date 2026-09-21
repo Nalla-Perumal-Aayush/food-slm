@@ -15,7 +15,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from food_slm.schema import load_store, parse_record
-from food_slm.schema.models import RECORD_FILES
+from food_slm.schema.models import RECORD_FILES, find_disallowed_term, iter_strings
+from food_slm.schema.store import _ID_REF_FIELDS
 
 CALIBRATION_RATE = 0.025
 CALIBRATION_LOG = "calibration_log.jsonl"
@@ -121,6 +122,141 @@ class PromoteResult:
     issues: list[str]
 
 
+def _content_flagged(obj: dict) -> bool:
+    """True if any string in `content` trips the community/religion-term scan
+    (Rev 5 scope). Per-record schema validation already checks labels/structure;
+    this catches it in prose too, same as `CanonicalStore.check_community_tags`."""
+    for text in iter_strings(obj.get("content", {})):
+        if find_disallowed_term(text):
+            return True
+    return False
+
+
+def _refs_of(obj: dict) -> list[str]:
+    out = list(obj.get("provenance", {}).get("source_ids", []))
+    struct = obj.get("structure", {}) or {}
+    for field_name in _ID_REF_FIELDS.get(obj.get("type", ""), []):
+        val = struct.get(field_name)
+        if val is None:
+            continue
+        out.extend(val if isinstance(val, list) else [val])
+    return out
+
+
+def select_promotable(
+    staged: list[dict],
+    already_canonical: set[str],
+    min_corroboration: int = 2,
+) -> tuple[list[str], dict[str, dict]]:
+    """Trust-anchored transitive closure — the "no dangling reference" way to pick
+    a partial slice of staged records to promote (mcp_extraction_pipeline.md §2).
+
+    An **anchor** record is trusted directly: every `source` record (a provenance
+    envelope, not a factual claim), or any record with `corroboration_count >=
+    min_corroboration` (independent sources agreeing — the AI-primary validation
+    signal, evaluation_strategy.md §3), or already `auto_validated`/`human_validated`.
+
+    Promoting only anchors would leave every supporting ingredient/technique/term/
+    source they reference (usually single-source, still `needs_human`) behind in
+    staging — creating a dangling reference the moment the anchor lands in the
+    canonical store. So this pulls in the full closure: everything a selected
+    record structurally depends on (`schema.store._ID_REF_FIELDS`) or cites via
+    `provenance.source_ids`, recursively, as long as it isn't rejected or itself
+    community/religion-term-flagged.
+
+    A `rel` record needs both endpoints to resolve or it's meaningless, and a
+    non-synthetic record needs at least one real source_id — either one dropped
+    by the closure disqualifies the record too, which can itself orphan whatever
+    depended on *it*, so this iterates to a fixpoint. Whatever's still unresolved
+    after that (source blocklisted, a dependency's source content was flagged, ...)
+    is stripped from the surviving record's structure/provenance instead of
+    blocking that record — same pattern as the manual contamination cleanup this
+    session already used, just applied consistently at promotion time.
+
+    Returns `(ids_to_promote, patches)` — `patches` maps id -> {"structure": {...},
+    "provenance": {...}} field overrides to apply on top of the staged object.
+    """
+    by_id = {r["id"]: r for r in staged}
+    unusable = {
+        r["id"] for r in staged
+        if r.get("quality", {}).get("validation_status") == "rejected" or _content_flagged(r)
+    }
+
+    def is_anchor(r: dict) -> bool:
+        if r["id"] in unusable:
+            return False
+        if r["type"] == "source":
+            return True
+        q = r.get("quality", {})
+        return (q.get("corroboration_count", 0) >= min_corroboration
+                or q.get("validation_status") in ("auto_validated", "human_validated"))
+
+    selected = {rid for rid, r in by_id.items() if is_anchor(r)}
+
+    changed = True
+    while changed:
+        changed = False
+        for rid in list(selected):
+            for ref in _refs_of(by_id[rid]):
+                if ref in selected or ref in already_canonical or ref in unusable:
+                    continue
+                if ref in by_id:
+                    selected.add(ref)
+                    changed = True
+
+    # fixpoint prune: drop anything that can no longer stand on its own once
+    # unresolved refs are accounted for, then re-check what depended on it
+    changed = True
+    while changed:
+        changed = False
+        resolvable = already_canonical | selected
+        for rid in list(selected):
+            r = by_id[rid]
+            if r["type"] == "rel":
+                st = r.get("structure", {})
+                if st.get("subject_id") not in resolvable or st.get("object_id") not in resolvable:
+                    selected.discard(rid)
+                    changed = True
+                    continue
+            prov = r.get("provenance", {})
+            has_source = any(s in resolvable for s in prov.get("source_ids", []))
+            if not has_source and not prov.get("synthetic") \
+                    and "hand_authored" not in prov.get("transformations", []) \
+                    and r["type"] != "source":
+                selected.discard(rid)
+                changed = True
+
+    # final patch pass: strip whatever reference still doesn't resolve, now that
+    # `selected` is stable
+    resolvable = already_canonical | selected
+    patches: dict[str, dict] = {}
+    for rid in selected:
+        r = by_id[rid]
+        patch: dict = {}
+        sids = r.get("provenance", {}).get("source_ids", [])
+        kept_sids = [s for s in sids if s in resolvable]
+        if kept_sids != sids:
+            patch["provenance"] = {"source_ids": kept_sids}
+        struct_patch = {}
+        struct = r.get("structure", {}) or {}
+        for field_name in _ID_REF_FIELDS.get(r["type"], []):
+            val = struct.get(field_name)
+            if val is None:
+                continue
+            if isinstance(val, list):
+                kept = [v for v in val if v in resolvable]
+                if kept != val:
+                    struct_patch[field_name] = kept
+            elif val not in resolvable:
+                struct_patch[field_name] = None
+        if struct_patch:
+            patch["structure"] = struct_patch
+        if patch:
+            patches[rid] = patch
+
+    return sorted(selected), patches
+
+
 def promote_staged(
     ids: list[str],
     *,
@@ -129,12 +265,14 @@ def promote_staged(
     reviewer: str,
     batch_id: str | None = None,
     eval_dir: str | Path | None = None,
+    patches: dict[str, dict] | None = None,
 ) -> PromoteResult:
     if not reviewer:
         raise ValueError("promote_staged requires a reviewer name")
     staging = Path(staging_dir)
     canon = Path(canonical_dir)
     batch_id = batch_id or datetime.now(UTC).strftime("batch-%Y%m%dT%H%M%S")
+    patches = patches or {}
 
     # load candidates
     to_add: dict[str, dict] = {}
@@ -143,6 +281,8 @@ def promote_staged(
         if not p.exists():
             raise FileNotFoundError(f"staged record not found: {rid} ({p})")
         obj = json.loads(p.read_text(encoding="utf-8"))
+        for key, overrides in patches.get(rid, {}).items():
+            obj.setdefault(key, {}).update(overrides)
         obj.setdefault("provenance", {}).setdefault("transformations", []).append(
             f"promoted:{batch_id}")
         obj["quality"]["validation_status"] = "human_validated"
@@ -150,21 +290,27 @@ def promote_staged(
         obj.setdefault("version", {})["updated_on"] = datetime.now(UTC).date().isoformat()
         to_add[rid] = obj
 
-    # merge into the per-type JSONL files (append + resort by id), grouped by type
-    by_file: dict[Path, list[dict]] = {}
+    # merge into the per-type JSONL files, keyed by id so re-promoting (or a
+    # record already present from an earlier batch) overwrites in place instead
+    # of duplicating the row.
+    by_file: dict[Path, dict[str, dict]] = {}
     for rid, obj in to_add.items():
         fpath = canon / RECORD_FILES[_type_for_prefix(rid.split(":", 1)[0])]
         rows = by_file.get(fpath)
         if rows is None:
-            rows = [json.loads(ln) for ln in fpath.read_text(encoding="utf-8").splitlines()
-                    if ln.strip()] if fpath.exists() else []
+            rows = {}
+            if fpath.exists():
+                for ln in fpath.read_text(encoding="utf-8").splitlines():
+                    if ln.strip():
+                        existing = json.loads(ln)
+                        rows[existing["id"]] = existing
             by_file[fpath] = rows
-        rows.append(obj)
+        rows[rid] = obj
 
     for fpath, rows in by_file.items():
-        rows.sort(key=lambda r: r["id"])
+        ordered = sorted(rows.values(), key=lambda r: r["id"])
         fpath.parent.mkdir(parents=True, exist_ok=True)
-        fpath.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n",
+        fpath.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in ordered) + "\n",
                          encoding="utf-8")
 
     # verify store integrity post-merge (non-strict so we can report, not raise)

@@ -19,7 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from food_slm.data.canon_staging import list_staged, promote_staged  # noqa: E402
+from food_slm.data.canon_staging import list_staged, promote_staged, select_promotable  # noqa: E402
 from food_slm.data.coverage import list_gaps  # noqa: E402
 from food_slm.data.forbidden import load_forbidden  # noqa: E402
 from food_slm.data.ingest import Fetcher  # noqa: E402
@@ -169,27 +169,26 @@ def cmd_promote_ready(args) -> int:
     (a) the panel unanimously accepted it, or (b) >= --min-corroboration independent
     sources produced the same id (cross-source corroboration IS the AI-primary
     validation signal here, not a re-run of the panel — evaluation_strategy.md §3).
-    Always excludes `rejected`. `source` records (the provenance envelopes) are
-    promoted unconditionally alongside whatever they support."""
+    `source` records (the provenance envelopes) are promoted unconditionally
+    alongside whatever they support. Promoting only these "anchors" would leave
+    every supporting record they reference behind in staging (still `needs_human`,
+    usually single-source) — creating a dangling reference the moment the anchor
+    lands in the canonical store. `select_promotable` closes over that: it pulls
+    in the full dependency chain and strips whatever still can't resolve rather
+    than blocking the anchor's promotion (mcp_extraction_pipeline.md §2)."""
     staged = list_staged(STAGING)
-    ready = []
-    for rec in staged:
-        q = rec.get("quality", {})
-        if q.get("validation_status") == "rejected":
-            continue
-        if rec["type"] == "source":
-            ready.append(rec["id"])
-        elif q.get("corroboration_count", 0) >= args.min_corroboration:
-            ready.append(rec["id"])
-        elif q.get("validation_status") in ("auto_validated", "human_validated"):
-            ready.append(rec["id"])
+    already_canonical = set(load_store(CANON, strict=False).records)
+    ready, patches = select_promotable(staged, already_canonical, args.min_corroboration)
     if not ready:
         print("nothing ready to promote")
         return 0
     print(f"promoting {len(ready)} of {len(staged)} staged records "
-         f"(corroboration >= {args.min_corroboration}, or already validated)")
+         f"(corroboration >= {args.min_corroboration}, or already validated, "
+         f"plus their closure of dependencies; {len(patches)} had a dangling "
+         f"reference stripped)")
     res = promote_staged(ready, staging_dir=STAGING, canonical_dir=CANON,
-                         reviewer=args.reviewer, batch_id=args.batch, eval_dir=EVAL)
+                         reviewer=args.reviewer, batch_id=args.batch, eval_dir=EVAL,
+                         patches=patches)
     print(json.dumps({"promoted": len(res.promoted), "calibration_sample": res.calibration_sample,
                       "store_ok": res.store_ok, "issues": res.issues}, indent=2))
     return 0 if res.store_ok else 1
