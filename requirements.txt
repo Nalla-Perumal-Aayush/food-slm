@@ -53,3 +53,8 @@ fastembed==0.8.0             # bge-small-en-v1.5 ONNX embeddings (entity resolut
 
 # NOT used in v1 (poor native-Windows support, dense 150M model needs none):
 #   bitsandbytes, flash-attn, deepspeed, xformers, triton, peft, trl
+
+# Local training dashboard (scripts/dashboard.py) — read-only against
+# artifacts/checkpoints/, localhost-only (see .streamlit/config.toml)
+streamlit==1.64.0
+plotly==7.1.0

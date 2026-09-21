@@ -1,0 +1,9 @@
+# Local-only training dashboard. Never expose this beyond localhost.
+[server]
+address = "localhost"
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
