@@ -305,15 +305,20 @@ def main() -> None:
         if st.button("Refresh now"):
             st.rerun()
 
+    # A blocking time.sleep() + st.rerun() loop in the main script body races
+    # Streamlit's own session teardown (AttributeError: 'AppSession' object has
+    # no attribute '_scriptrunner') -- st.fragment(run_every=...) is the native,
+    # race-free way to auto-rerun just this tab on a timer. Only the training
+    # tab auto-refreshes; the try-it tab would otherwise reset mid-interaction.
+    @st.fragment(run_every=interval if auto else None)
+    def _live_training_tab() -> None:
+        render_training_tab(run_name)
+
     tab1, tab2 = st.tabs(["Training Progress", "Try the Model"])
     with tab1:
-        render_training_tab(run_name)
+        _live_training_tab()
     with tab2:
         render_try_tab(run_name)
-
-    if auto:
-        time.sleep(interval)
-        st.rerun()
 
 
 if __name__ == "__main__":
