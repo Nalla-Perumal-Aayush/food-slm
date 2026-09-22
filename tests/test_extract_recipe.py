@@ -119,6 +119,12 @@ def test_parse_measurement_variants():
     }
     rng = parse_measurement("2-3 tsp")
     assert rng["dimension"] == "volume" and rng["range"] == [2.0, 3.0]
+    half_kg = parse_measurement("1/2 kg")
+    assert half_kg["value"] == 0.5 and half_kg["unit"] == "kg" and half_kg["dimension"] == "mass"
+    mixed = parse_measurement("1 1/2 cups")
+    assert mixed["value"] == 1.5 and mixed["unit"] == "cup"
+    frac_range = parse_measurement("1/2-3/4 cup")
+    assert frac_range["range"] == [0.5, 0.75]
     assert parse_measurement("a pinch")["qualitative"] == "a_pinch"
     assert parse_measurement("500")["dimension"] == "count"
     assert parse_measurement(None) is None

@@ -200,6 +200,24 @@ def _dimension_for_unit(unit: str) -> str:
     return "count"
 
 
+# Fractional/mixed quantities ("1/2 cup", "1 1/2 kg") are the normal way recipe
+# ingredient lists write amounts -- more common than plain decimals -- so this has
+# to be tried before the bare-integer case, not as an afterthought.
+_NUM = r"\d+\s+\d/\d|\d/\d|\d+(?:\.\d+)?"
+
+
+def _to_float(s: str) -> float:
+    s = s.strip()
+    if " " in s:
+        whole, frac = s.split(None, 1)
+        num, den = frac.split("/")
+        return float(whole) + float(num) / float(den)
+    if "/" in s:
+        num, den = s.split("/")
+        return float(num) / float(den)
+    return float(s)
+
+
 def parse_measurement(text: str | float | int | None) -> dict | None:
     """Plain-text quantity ("2 cups", "a pinch", "1-2 tsp", "500") -> a schema-v2
     Measurement dict. None if there's nothing usable to parse."""
@@ -216,21 +234,22 @@ def parse_measurement(text: str | float | int | None) -> dict | None:
         if pattern.search(s):
             return {"original_text": s, "dimension": "qualitative", "qualitative": qual,
                     "approximate": True}
-    # range: "2-3", "2 to 3"
-    m_range = re.search(r"(\d+(?:\.\d+)?)\s*(?:-|to)\s*(\d+(?:\.\d+)?)\s*([a-zA-Z]+)?", s)
-    m_single = re.search(r"(\d+(?:\.\d+)?)\s*([a-zA-Z]+)?", s)
+    # range: "2-3", "2 to 3"; numbers may be plain, fractional ("1/2"), or mixed ("1 1/2")
+    m_range = re.search(rf"({_NUM})\s*(?:-|to)\s*({_NUM})\s*([a-zA-Z]+)?", s)
+    m_single = re.search(rf"({_NUM})\s*([a-zA-Z]+)?", s)
     if m_range:
         lo, hi, unit_word = m_range.groups()
         unit = _UNIT_WORDS.get((unit_word or "").lower().strip("."), "count")
-        mid = (float(lo) + float(hi)) / 2
+        lo_v, hi_v = _to_float(lo), _to_float(hi)
+        mid = (lo_v + hi_v) / 2
         return {"original_text": s, "value": mid, "unit": unit,
                 "value_canonical": mid, "unit_canonical": unit,
                 "dimension": _dimension_for_unit(unit), "approximate": True,
-                "range": [float(lo), float(hi)]}
+                "range": [lo_v, hi_v]}
     if m_single:
         val, unit_word = m_single.groups()
         unit = _UNIT_WORDS.get((unit_word or "").lower().strip("."), "count")
-        v = float(val)
+        v = _to_float(val)
         return {"original_text": s, "value": v, "unit": unit,
                 "value_canonical": v, "unit_canonical": unit,
                 "dimension": _dimension_for_unit(unit), "approximate": False}
