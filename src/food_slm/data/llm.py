@@ -93,9 +93,16 @@ class OllamaProvider(_Base):
         # Heavy local models (deepseek-r1:32b) that spill past 16 GB VRAM onto the CPU
         # can take several minutes per call on the 70 W-capped card — allow a long read.
         timeout_s = float(os.environ.get("OLLAMA_TIMEOUT_S", "600"))
+        options = {"temperature": temperature}
+        # OLLAMA_NUM_GPU=0 forces CPU-only inference — for running extraction alongside
+        # an active GPU training job without any VRAM/power contention (verified: 0
+        # measurable VRAM impact). Much slower (~10-13 tok/s vs GPU) but fully isolated.
+        num_gpu = os.environ.get("OLLAMA_NUM_GPU")
+        if num_gpu is not None:
+            options["num_gpu"] = int(num_gpu)
         r = httpx.post(f"{base}/api/chat", timeout=httpx.Timeout(timeout_s, connect=10.0), json={
             "model": self.spec.model, "stream": False,
-            "options": {"temperature": temperature},
+            "options": options,
             "format": "json" if json_out else None,
             "messages": [{"role": "system", "content": system},
                          {"role": "user", "content": prompt}],
