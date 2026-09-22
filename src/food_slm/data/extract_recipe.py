@@ -254,8 +254,26 @@ def _envelope(rid: str, labels: list[str], content: dict, structure: dict,
     }
 
 
+def _dish_diet_to_profile(dish_diet: dict) -> dict:
+    """`dish_list_v1.yaml`'s `diet: {vegetarian, vegan, non_veg, contains: [...]}`
+    -> schema-v2 DietProfile dict. The dish list is the authority on this (it's
+    hand-authored, one entry per dish), not the LLM -- diet is a property of the
+    dish itself, not something worth re-deriving per recipe from free-text page
+    content."""
+    contains = set(dish_diet.get("contains") or [])
+    return {
+        "vegetarian": bool(dish_diet.get("vegetarian", True)),
+        "vegan": bool(dish_diet.get("vegan", False)),
+        "contains_dairy": "dairy" in contains,
+        "contains_egg": "egg" in contains,
+        "contains_seafood": "seafood" in contains,
+        "contains_poultry": "poultry" in contains,
+        "contains_red_meat": "red_meat" in contains or "beef" in contains,
+    }
+
+
 def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
-                  acquired_on: str) -> dict:
+                  acquired_on: str, dish_diet: dict) -> dict:
     ings_raw = raw.get("ingredients") or []
     if not ings_raw:
         raise ValueError("no ingredients")
@@ -338,9 +356,7 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
 
     structure = {
         "dish_id": dish_id, "cuisine_state": cuisine_state,
-        "diet": {"vegetarian": True, "vegan": False, "contains_dairy": False,
-                "contains_egg": False, "contains_seafood": False,
-                "contains_poultry": False, "contains_red_meat": False},
+        "diet": _dish_diet_to_profile(dish_diet),
         "ingredients": ingredients, "equipment_ids": sorted(equipment_ids), "steps": steps,
         "scalable": True, "make_ahead": False,
     }
@@ -377,12 +393,12 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
 
 
 def parse_recipe_extraction(obj: dict, dish_id: str, cuisine_state: str, source_id: str,
-                            *, acquired_on: str | None = None) -> RecipeExtractResult:
+                            dish_diet: dict, *, acquired_on: str | None = None) -> RecipeExtractResult:
     acquired_on = acquired_on or datetime.now(UTC).date().isoformat()
     res = RecipeExtractResult(notes=str(obj.get("notes", "")))
     for raw in obj.get("recipes", []) or []:
         try:
-            rec = _build_recipe(raw, dish_id, cuisine_state, source_id, acquired_on)
+            rec = _build_recipe(raw, dish_id, cuisine_state, source_id, acquired_on, dish_diet)
         except Exception as exc:  # noqa: BLE001
             res.invalid.append((raw, f"build: {exc}"))
             continue
@@ -395,11 +411,12 @@ def parse_recipe_extraction(obj: dict, dish_id: str, cuisine_state: str, source_
 
 
 def extract_recipe(page_text: str, dish_id: str, dish_name: str, cuisine_state: str,
-                   source_id: str, provider: Provider, *,
+                   source_id: str, dish_diet: dict, provider: Provider, *,
                    acquired_on: str | None = None, temperature: float = 0.0) -> RecipeExtractResult:
     system, user = build_recipe_extraction_prompt(page_text, dish_name, source_id)
     raw = provider.complete(system, user, temperature=temperature, json_out=True)
     obj = extract_json(raw)
     if not isinstance(obj, dict):
         return RecipeExtractResult(notes=f"unparseable model output: {raw[:200]!r}")
-    return parse_recipe_extraction(obj, dish_id, cuisine_state, source_id, acquired_on=acquired_on)
+    return parse_recipe_extraction(obj, dish_id, cuisine_state, source_id, dish_diet,
+                                   acquired_on=acquired_on)

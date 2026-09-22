@@ -249,6 +249,66 @@ def process_cached_text(
     return run
 
 
+def process_cached_text_recipe(
+    source_id: str,
+    source_url: str,
+    kind: str,
+    text: str,
+    license_class: str,
+    *,
+    title: str,
+    dish_id: str,
+    dish_name: str,
+    cuisine_state: str,
+    dish_diet: dict,
+    extract_provider: Provider,
+    panel: Panel,
+    staging_dir,
+    store: CanonicalStore | None = None,
+    forbidden: ForbiddenList | None = None,
+    heavy_provider: Provider | None = None,
+    corroboration: dict[str, int] | None = None,
+) -> SourceRun:
+    """Same chain as `process_cached_text` (extract -> resolve refs -> validate ->
+    stage) but for `recipe` records via `food_slm.data.extract_recipe.extract_recipe`
+    instead of the flat dish/ingredient/technique/term extractor. Dish-targeted like
+    canon_extract_dishes.py: `dish_id`/`dish_name`/`cuisine_state` identify which
+    already-matched dish this document's recipe is being extracted for.
+
+    Note: `resolve_batch_refs`'s dangling-ref cleanup only covers recipe's top-level
+    id fields (dish_id/equipment_ids/outcome_ids) -- the ingredient_id/equipment_id/
+    technique_id references nested inside `structure.ingredients[]` and
+    `structure.steps[]` are not resolved/dropped here (a pre-existing gap in how
+    _REF_FIELDS is scoped, not new to this function). They stay as informal
+    references unless/until promote-ready's closure algorithm strips or resolves
+    them at promotion time."""
+    from food_slm.data.extract_recipe import extract_recipe
+    from food_slm.data.licensing import USABLE_FOR, LicenseVerdict
+
+    run = SourceRun(url=source_url, source_id=source_id,
+                    fetch=FetchResult(url=source_url, status=200, text=text))
+    run.license = LicenseVerdict(license_class, "pre-classified at collection",
+                                 USABLE_FOR[license_class], [], 0.85)
+    run.source_record = build_source_record(source_url, run.license, kind=kind, title=title,
+                                            source_id=source_id)
+
+    run.extraction = extract_recipe(text, dish_id, dish_name, cuisine_state,
+                                    source_id, dish_diet, extract_provider)
+    drafts = list(run.extraction.drafts)
+    drafts, run.dropped_refs = resolve_batch_refs(drafts, store)
+
+    run.verdicts = validate_records(
+        drafts, text, panel=panel, forbidden=forbidden,
+        heavy_provider=heavy_provider, corroboration=corroboration)
+    for v, rec in zip(run.verdicts, drafts, strict=True):
+        v.apply_to(rec)
+
+    to_stage = [run.source_record] + [
+        rec for v, rec in zip(run.verdicts, drafts, strict=True) if v.decision != "rejected"]
+    run.staged = stage_records(to_stage, staging_dir).staged
+    return run
+
+
 def process_source(
     url: str,
     kind: str,
