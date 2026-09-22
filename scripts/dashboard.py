@@ -212,34 +212,20 @@ def list_checkpoints(run_dir: Path) -> list[str]:
 
 @st.cache_resource(show_spinner="Loading checkpoint...")
 def _load_model(run_name: str, ckpt_name: str, device: str):
-    import torch
-
-    from food_slm.model import FoodSLM, ModelConfig
-    from food_slm.tokenizer.train import load_tokenizer
-    from food_slm.train.checkpoint import load_checkpoint
+    from food_slm.eval.generate import load_model_for_inference
+    from food_slm.model import ModelConfig
 
     run_dir = CKPT_ROOT / run_name
     cfg = load_train_config(run_name)
     model_cfg_path = REPO / cfg["model_config"] if cfg.get("model_config") else None
     if model_cfg_path is None or not model_cfg_path.exists():
-        # fall back to whatever the checkpoint itself recorded
-        raw = torch.load(run_dir / ckpt_name, map_location="cpu", weights_only=False)
-        model_cfg = ModelConfig(**raw["config"]["model_cfg"]) if "model_cfg" in raw.get("config", {}) \
-            else None
-        if model_cfg is None:
-            raise FileNotFoundError(
-                "no model_config found -- checked configs/train_*.yaml and the checkpoint itself")
-    else:
-        model_cfg = ModelConfig.from_yaml(model_cfg_path)
-
-    tok_path = REPO / cfg["tokenizer"] if cfg.get("tokenizer") else REPO / "artifacts" / "tokenizers" / "corpus-16k"
-    tokenizer = load_tokenizer(tok_path / "tokenizer.json" if (tok_path / "tokenizer.json").exists() else tok_path)
-
-    model = FoodSLM(model_cfg).to(device)
-    info = load_checkpoint(run_dir / ckpt_name, model=model, optimizer=None,
-                           map_location=device, restore_rng=False)
-    model.eval()
-    return model, tokenizer, info["step"]
+        raise FileNotFoundError(
+            "no model_config found in configs/train_*.yaml for this run -- "
+            "check load_train_config()'s match against the run_name")
+    tok_path = REPO / cfg["tokenizer"] if cfg.get("tokenizer") \
+        else REPO / "artifacts" / "tokenizers" / "corpus-16k"
+    ModelConfig.from_yaml(model_cfg_path)  # fail fast with a clear error if the yaml is bad
+    return load_model_for_inference(model_cfg_path, tok_path, run_dir / ckpt_name, device)
 
 
 def render_try_tab(run_name: str) -> None:
