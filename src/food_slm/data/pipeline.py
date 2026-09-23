@@ -22,10 +22,19 @@ from food_slm.data.llm import Panel, Provider
 from food_slm.data.validate import RecordVerdict, validate_records
 from food_slm.schema.store import CanonicalStore
 
-# structure fields holding id-refs that must resolve (subset of store._ID_REF_FIELDS)
+# structure fields holding id-refs that must resolve (subset of store._ID_REF_FIELDS).
+# recipe.dish_id is deliberately NOT here: it's a required (non-nullable) schema
+# field, always chosen from the curated dish_list_v1.yaml rather than invented by
+# extraction, and resolve_batch_refs's dangling-ref handling below sets an
+# unresolvable single-value field to None -- correct for an optional field, but it
+# silently makes a recipe fail re-validation (and get rejected/dropped entirely)
+# whenever its dish doesn't yet have its own canonical `dish:` record, which is the
+# common case (only ~300/2,500 dishes are canonical so far). Found via a real
+# generated-recipe test that unexpectedly rejected: see canon_generate_recipes.py /
+# extract_recipe.generate_recipe.
 _REF_FIELDS = {
     "dish": ["primary_ingredients", "typical_techniques", "regions", "variant_of"],
-    "recipe": ["dish_id", "equipment_ids", "outcome_ids"],
+    "recipe": ["equipment_ids", "outcome_ids"],
     "ingredient": ["common_substitutes"],
     "technique": ["typical_equipment_ids", "precedes", "follows"],
     "term": ["maps_to_id"],
@@ -305,6 +314,51 @@ def process_cached_text_recipe(
 
     to_stage = [run.source_record] + [
         rec for v, rec in zip(run.verdicts, drafts, strict=True) if v.decision != "rejected"]
+    run.staged = stage_records(to_stage, staging_dir).staged
+    return run
+
+
+def process_dish_generation(
+    dish_id: str,
+    dish_name: str,
+    cuisine_state: str,
+    dish_diet: dict,
+    generator_label: str,
+    *,
+    generation_provider: Provider,
+    panel: Panel,
+    staging_dir,
+    store: CanonicalStore | None = None,
+    forbidden: ForbiddenList | None = None,
+    heavy_provider: Provider | None = None,
+    corroboration: dict[str, int] | None = None,
+) -> SourceRun:
+    """Generation-path analog of process_cached_text_recipe(), for a dish with ZERO
+    matched source documents (canon_generate_recipes.py): extract_recipe.generate_recipe()
+    instead of extract_recipe(), validate_records(mode="generation") since there is no
+    source text to check fidelity against, and no `source:` record is staged -- there is
+    no document, only the generated recipe itself, which is always `synthetic: true`
+    (see extract_recipe._envelope) and therefore always routes to needs_human, never
+    auto_validated (corroboration is necessarily 0 with no source_ids)."""
+    from food_slm.data.extract_recipe import generate_recipe
+
+    run = SourceRun(
+        url=f"generated:{generator_label}", source_id=f"gen:{slugify(generator_label)}-{slugify(dish_id)}",
+        fetch=FetchResult(url=f"generated:{generator_label}", status=0, text="",
+                          reason="no source document -- generated from model knowledge"))
+
+    run.extraction = generate_recipe(dish_id, dish_name, cuisine_state, dish_diet,
+                                     generation_provider, generator_label=generator_label)
+    drafts = list(run.extraction.drafts)
+    drafts, run.dropped_refs = resolve_batch_refs(drafts, store)
+
+    run.verdicts = validate_records(
+        drafts, "", panel=panel, forbidden=forbidden,
+        heavy_provider=heavy_provider, corroboration=corroboration, mode="generation")
+    for v, rec in zip(run.verdicts, drafts, strict=True):
+        v.apply_to(rec)
+
+    to_stage = [rec for v, rec in zip(run.verdicts, drafts, strict=True) if v.decision != "rejected"]
     run.staged = stage_records(to_stage, staging_dir).staged
     return run
 

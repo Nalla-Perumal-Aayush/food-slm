@@ -157,3 +157,24 @@ def test_live_ollama_panel_on_true_and_false_records() -> None:
     fake["content"]["gloss"] = "A sweet coconut-milk dessert served chilled at weddings."
     bad = validate_records([fake], src, panel=panel)[0]
     assert bad.decision == "rejected" or "reject" in " ".join(bad.reasons)
+
+
+def test_generation_mode_never_auto_validates_even_on_unanimous_accept():
+    """Synthetic/generated records have no source_ids -> corroboration is always 0,
+    so even a unanimous-accept panel vote can only reach needs_human, never
+    auto_validated -- deliberate: generated-without-grounding content always needs a
+    human look before promotion."""
+    draft = _draft(corr=0)
+    draft["provenance"] = {"source_ids": [], "transformations": ["generated"],
+                           "synthetic": True, "generator": "openai/gpt-oss-120b (Groq)",
+                           "seed_record_ids": ["dish:kootu"]}
+    v = validate_records([draft], "", panel=_panel("accept", "accept"), mode="generation")[0]
+    assert v.decision == "needs_human"
+    assert v.corroboration_count == 0
+    assert any("qwen" in r or "m0" in r for r in v.reasons)
+
+
+def test_generation_mode_ignores_empty_source_text_without_error():
+    draft = _draft(corr=0)
+    v = validate_records([draft], "", panel=_panel("reject", "reject"), mode="generation")[0]
+    assert v.decision == "rejected"

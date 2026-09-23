@@ -11,6 +11,7 @@ from food_slm.data.llm import FakeProvider, Panel, ProviderSpec
 from food_slm.data.pipeline import (
     build_source_record,
     process_cached_text,
+    process_dish_generation,
     process_source,
     resolve_batch_refs,
     source_id_for,
@@ -152,3 +153,32 @@ def test_process_source_skips_on_bad_fetch(tmp_path: Path) -> None:
                          extract_provider=FakeProvider(ProviderSpec("f", "fake", "x", "f")),
                          panel=_panel("accept"), staging_dir=tmp_path)
     assert run.skipped == "disallowed by robots.txt" and not run.staged
+
+
+def test_process_dish_generation_stages_only_the_synthetic_recipe(tmp_path: Path) -> None:
+    """No source: record (there's no document); the recipe is staged as synthetic and
+    -- even with a unanimous-accept panel -- can only reach needs_human, since a
+    generated record's corroboration is necessarily 0."""
+    gen_json = json.dumps({"recipes": [{
+        "servings": 4, "difficulty": "easy",
+        "ingredients": [{"name": "gongura leaves", "quantity_text": "2 cups", "role": "base"}],
+        "steps": [{"action": "Cook the leaves down.", "phase": "cook", "action_verb": "boil",
+                  "ingredients_used": ["gongura leaves"]}],
+    }], "notes": ""})
+    gen_provider = FakeProvider(ProviderSpec("gpt-oss", "fake", "x", "openai"),
+                                responder=lambda s, p: gen_json)
+
+    run = process_dish_generation(
+        dish_id="dish:gongura-pachadi", dish_name="Gongura Pachadi", cuisine_state="telangana",
+        dish_diet={"vegetarian": True, "vegan": True}, generator_label="openai/gpt-oss-120b (Groq)",
+        generation_provider=gen_provider, panel=_panel("accept", "accept"), staging_dir=tmp_path)
+
+    assert run.source_record is None
+    assert len(run.staged) == 1
+    recipe_id = run.staged[0]
+    assert recipe_id.startswith("recipe:gongura-pachadi")
+    staged = {r["id"]: r for r in list_staged(tmp_path)}
+    rec = staged[recipe_id]
+    assert rec["provenance"]["synthetic"] is True
+    assert rec["quality"]["validation_status"] == "unverified" or \
+        rec["quality"]["validation_status"] != "auto_validated"

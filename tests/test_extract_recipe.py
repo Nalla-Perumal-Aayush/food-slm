@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from food_slm.data.extract_recipe import extract_recipe, parse_measurement
+from food_slm.data.extract_recipe import extract_recipe, generate_recipe, parse_measurement
 from food_slm.data.llm import FakeProvider, ProviderSpec
 
 VEG_DIET = {"vegetarian": True, "vegan": True, "non_veg": False}
@@ -129,3 +129,31 @@ def test_parse_measurement_variants():
     assert parse_measurement("500")["dimension"] == "count"
     assert parse_measurement(None) is None
     assert parse_measurement("") is None
+
+
+def test_generate_recipe_marks_synthetic_with_generator_and_seed():
+    payload = {"recipes": [{
+        "servings": 4, "difficulty": "easy",
+        "ingredients": [{"name": "gongura leaves", "quantity_text": "2 cups", "role": "base"}],
+        "steps": [{"action": "Cook the leaves down with spices.", "phase": "cook",
+                  "action_verb": "boil", "ingredients_used": ["gongura leaves"]}],
+    }], "notes": ""}
+    res = generate_recipe("dish:gongura-pachadi", "Gongura Pachadi", "telangana", VEG_DIET,
+                          _provider(payload), generator_label="openai/gpt-oss-120b (Groq)")
+    assert len(res.drafts) == 1
+    rec = res.drafts[0]
+    prov = rec["provenance"]
+    assert prov["synthetic"] is True
+    assert prov["generator"] == "openai/gpt-oss-120b (Groq)"
+    assert prov["seed_record_ids"] == ["dish:gongura-pachadi"]
+    assert prov["source_ids"] == []
+    assert "openai-gpt-oss-120b-groq" in rec["id"]
+
+
+def test_extract_recipe_still_marks_non_synthetic():
+    res = extract_recipe("page text", "dish:idli", "Idli", "karnataka", "src:example-idli",
+                         VEG_DIET, _provider(_FULL_RECIPE))
+    prov = res.drafts[0]["provenance"]
+    assert prov["synthetic"] is False
+    assert prov["source_ids"] == ["src:example-idli"]
+    assert "generator" not in prov or prov["generator"] is None

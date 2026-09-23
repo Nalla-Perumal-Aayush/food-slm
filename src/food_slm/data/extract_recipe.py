@@ -83,6 +83,40 @@ def build_recipe_extraction_prompt(page_text: str, dish_name: str, source_id: st
     return _SYSTEM, user
 
 
+# Same JSON shape / enum rules as _SYSTEM -- only the framing paragraph differs (generate
+# from general knowledge instead of extract from a page) -- for the ~half of dishes with
+# zero matched source documents. See canon_generate_recipes.py.
+_GEN_SYSTEM = _SYSTEM.replace(
+    "You extract a STRUCTURED RECIPE for ONE South Indian dish from a web page.\n"
+    "Return ONLY JSON. Do not invent steps/ingredients not supported by the text. If the\n"
+    "page has no actual recipe (steps + ingredients) for the named dish, return\n"
+    '{"recipes": [], "notes": "no recipe found"}.',
+    "You GENERATE a STRUCTURED RECIPE for ONE South Indian dish from your general "
+    "culinary knowledge (no source page is provided -- this dish has no available "
+    "source document). Return ONLY JSON. Produce the standard, well-known, authentic "
+    "version of the dish -- do not invent an unusual or fabricated variant. If you are "
+    'not confident a real, standard version of this dish exists, return '
+    '{"recipes": [], "notes": "not confident enough to generate"}.',
+)
+assert _GEN_SYSTEM != _SYSTEM, "the .replace() target text drifted out of sync with _SYSTEM"
+
+
+def build_recipe_generation_prompt(dish_name: str, cuisine_state: str,
+                                   dish_diet: dict) -> tuple[str, str]:
+    diet_bits = []
+    if dish_diet.get("vegan"):
+        diet_bits.append("vegan")
+    elif dish_diet.get("vegetarian"):
+        diet_bits.append("vegetarian")
+    else:
+        diet_bits.append("non-vegetarian")
+    if dish_diet.get("contains"):
+        diet_bits.append(f"contains: {', '.join(dish_diet['contains'])}")
+    user = (f"DISH: {dish_name}\nREGION: {cuisine_state}\nDIET: {', '.join(diet_bits)}\n\n"
+           "Generate the recipe as JSON.")
+    return _GEN_SYSTEM, user
+
+
 @dataclass
 class RecipeExtractResult:
     drafts: list[dict] = field(default_factory=list)
@@ -259,14 +293,24 @@ def parse_measurement(text: str | float | int | None) -> dict | None:
 
 
 def _envelope(rid: str, labels: list[str], content: dict, structure: dict,
-             source_id: str, acquired_on: str) -> dict:
+             source_id: str, acquired_on: str, *,
+             synthetic_generator: str | None = None, seed_record_ids: list[str] | None = None) -> dict:
     today = datetime.now(UTC).date().isoformat()
+    if synthetic_generator:
+        # Schema rule (models.Provenance._check): synthetic=true requires both
+        # generator and a non-empty seed_record_ids (source_ids isn't forbidden,
+        # but there genuinely is no source document for a generated recipe).
+        provenance = {"source_ids": [], "transformations": ["generated"],
+                     "acquired_on": acquired_on, "synthetic": True,
+                     "generator": synthetic_generator, "seed_record_ids": seed_record_ids or []}
+    else:
+        provenance = {"source_ids": [source_id], "transformations": ["extracted"],
+                     "acquired_on": acquired_on, "synthetic": False}
     return {
         "id": rid, "type": "recipe", "schema_version": "2",
         "labels": labels or [rid.split(":", 1)[1].replace("-", " ").title()],
         "content": content, "structure": structure,
-        "provenance": {"source_ids": [source_id], "transformations": ["extracted"],
-                       "acquired_on": acquired_on, "synthetic": False},
+        "provenance": provenance,
         "quality": {"confidence": 0.55, "validation_status": "unverified",
                     "corroboration_count": 0},
         "version": {"revision": 1, "created_on": today, "updated_on": today, "status": "active"},
@@ -292,7 +336,8 @@ def _dish_diet_to_profile(dish_diet: dict) -> dict:
 
 
 def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
-                  acquired_on: str, dish_diet: dict) -> dict:
+                  acquired_on: str, dish_diet: dict, *,
+                  synthetic_generator: str | None = None) -> dict:
     ings_raw = raw.get("ingredients") or []
     if not ings_raw:
         raise ValueError("no ingredients")
@@ -408,16 +453,20 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
         rid_parts.insert(1, slugify(raw["variant_label"]))
     rid = f"recipe:{'-'.join(rid_parts)}"[:200]
     labels = [dish_id.split(":", 1)[1].replace("-", " ").title()]
-    return _envelope(rid, labels, content, structure, source_id, acquired_on)
+    return _envelope(rid, labels, content, structure, source_id, acquired_on,
+                     synthetic_generator=synthetic_generator,
+                     seed_record_ids=[dish_id] if synthetic_generator else None)
 
 
 def parse_recipe_extraction(obj: dict, dish_id: str, cuisine_state: str, source_id: str,
-                            dish_diet: dict, *, acquired_on: str | None = None) -> RecipeExtractResult:
+                            dish_diet: dict, *, acquired_on: str | None = None,
+                            synthetic_generator: str | None = None) -> RecipeExtractResult:
     acquired_on = acquired_on or datetime.now(UTC).date().isoformat()
     res = RecipeExtractResult(notes=str(obj.get("notes", "")))
     for raw in obj.get("recipes", []) or []:
         try:
-            rec = _build_recipe(raw, dish_id, cuisine_state, source_id, acquired_on, dish_diet)
+            rec = _build_recipe(raw, dish_id, cuisine_state, source_id, acquired_on, dish_diet,
+                                synthetic_generator=synthetic_generator)
         except Exception as exc:  # noqa: BLE001
             res.invalid.append((raw, f"build: {exc}"))
             continue
@@ -439,3 +488,23 @@ def extract_recipe(page_text: str, dish_id: str, dish_name: str, cuisine_state: 
         return RecipeExtractResult(notes=f"unparseable model output: {raw[:200]!r}")
     return parse_recipe_extraction(obj, dish_id, cuisine_state, source_id, dish_diet,
                                    acquired_on=acquired_on)
+
+
+def generate_recipe(dish_id: str, dish_name: str, cuisine_state: str, dish_diet: dict,
+                    provider: Provider, *, generator_label: str,
+                    acquired_on: str | None = None, temperature: float = 0.0) -> RecipeExtractResult:
+    """Same downstream build/validate machinery as extract_recipe(), but for a dish
+    with zero matched source documents: no page text, a generation-framed prompt, and
+    the result always marked `synthetic: true` (see _envelope) so it can never
+    auto-promote without human review -- corroboration_count is necessarily 0 with no
+    source_ids, and validate.validate_records's auto_validated path requires >= 2.
+    `generator_label` should identify the exact model, e.g. "openai/gpt-oss-120b (Groq)".
+    """
+    system, user = build_recipe_generation_prompt(dish_name, cuisine_state, dish_diet)
+    raw = provider.complete(system, user, temperature=temperature, json_out=True)
+    obj = extract_json(raw)
+    if not isinstance(obj, dict):
+        return RecipeExtractResult(notes=f"unparseable model output: {raw[:200]!r}")
+    return parse_recipe_extraction(obj, dish_id, cuisine_state, f"gen:{slugify(generator_label)}",
+                                   dish_diet, acquired_on=acquired_on,
+                                   synthetic_generator=generator_label)

@@ -39,7 +39,9 @@ class ValidationError(Exception):
 _ID_REF_FIELDS: dict[str, list[str]] = {
     "dish": ["primary_ingredients", "typical_techniques", "regions", "expected_outcome_ids",
              "constraints_typically_met", "variant_of"],
-    "recipe": ["dish_id", "equipment_ids", "states", "outcome_ids", "constraints_met"],
+    # dish_id excluded on purpose -- see pipeline._REF_FIELDS's comment: it's a
+    # required schema field, not something dangling-ref cleanup should ever null out.
+    "recipe": ["equipment_ids", "states", "outcome_ids", "constraints_met"],
     "ingredient": ["common_substitutes"],
     "technique": ["typical_equipment_ids", "precedes", "follows"],
     "equipment": ["substitutes", "required_for_techniques"],
