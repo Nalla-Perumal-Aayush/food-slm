@@ -127,6 +127,30 @@ class RecipeExtractResult:
 # --- enum coercion (extract.py's proven pattern: map free-text model output to
 # the closed schema-v2 enum, safe fallback rather than reject the whole record) ---
 
+def _as_scalar(val) -> str | None:
+    """A field the JSON shape asks for as a single string (ingredient name, a step's
+    equipment/technique) sometimes comes back as a list instead (e.g. "equipment":
+    ["deep fryer"]) -- a real failure observed live: slugify() crashing with
+    "normalize() argument 2 must be str, not list" and dropping an otherwise-valid
+    record. Take the first usable item rather than let downstream str methods crash."""
+    if isinstance(val, list):
+        val = next((v for v in val if v), None)
+    if val is None:
+        return None
+    s = str(val).strip()
+    return s or None
+
+
+def _as_list(val) -> list:
+    """The inverse shape-drift: a field the JSON shape asks for as a list (equipment,
+    tips, ingredients_used) sometimes comes back as a single string instead -- without
+    this, iterating a bare string goes character-by-character rather than raising, so
+    this failure mode is silent corruption, not even a caught exception."""
+    if val is None:
+        return []
+    return val if isinstance(val, list) else [val]
+
+
 def _canon(value, synonyms: dict[str, str], fallback: str | None) -> str | None:
     if not value:
         return fallback
@@ -344,7 +368,7 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
     ingredients = []
     name_to_ing_id: dict[str, str] = {}
     for i in ings_raw:
-        name = (i.get("name") or "").strip()
+        name = _as_scalar(i.get("name")) or ""
         if not name:
             continue
         iid = f"ing:{slugify(name)}"
@@ -370,20 +394,22 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
     if not steps_raw:
         raise ValueError("no steps")
     equipment_ids: set[str] = set()
-    if raw.get("equipment"):
-        equipment_ids.update(f"equip:{slugify(e)}" for e in raw["equipment"] if e)
+    equipment_ids.update(f"equip:{slugify(e)}" for e in _as_list(raw.get("equipment")) if e)
     steps = []
     prev_id = None
     for idx, s in enumerate(steps_raw, start=1):
-        action = (s.get("action") or "").strip()
+        action = _as_scalar(s.get("action")) or ""
         if not action:
             continue
         step_id = f"step-{idx}"
         input_ids = []
-        for used in (s.get("ingredients_used") or []):
-            iid = name_to_ing_id.get(str(used).strip().lower())
+        for used in _as_list(s.get("ingredients_used")):
+            used_name = _as_scalar(used)
+            if not used_name:
+                continue
+            iid = name_to_ing_id.get(used_name.lower())
             if iid is None:
-                iid = f"ing:{slugify(str(used))}"
+                iid = f"ing:{slugify(used_name)}"
             input_ids.append(iid)
         step = {
             "step_id": step_id, "order": idx,
@@ -393,12 +419,12 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
             "input_ingredient_ids": input_ids,
             "depends_on": [prev_id] if prev_id else [],
         }
-        eq = s.get("equipment")
+        eq = _as_scalar(s.get("equipment"))
         if eq:
             eid = f"equip:{slugify(eq)}"
             step["equipment_id"] = eid
             equipment_ids.add(eid)
-        tech = s.get("technique")
+        tech = _as_scalar(s.get("technique"))
         if tech:
             step["technique_id"] = f"tech:{slugify(tech)}"
         params = {}
@@ -441,8 +467,8 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
     content = {
         "summary": f"Recipe for {dish_id.split(':', 1)[1].replace('-', ' ')}"
                   f"{' (' + structure['variant_label'] + ')' if structure.get('variant_label') else ''}.",
-        "tips": [str(t) for t in (raw.get("tips") or [])],
-        "common_mistakes": [str(t) for t in (raw.get("common_mistakes") or [])],
+        "tips": [str(t) for t in _as_list(raw.get("tips"))],
+        "common_mistakes": [str(t) for t in _as_list(raw.get("common_mistakes"))],
     }
     if raw.get("serving_suggestions"):
         content["serving_suggestions"] = str(raw["serving_suggestions"])

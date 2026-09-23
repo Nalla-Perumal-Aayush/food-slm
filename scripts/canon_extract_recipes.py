@@ -37,7 +37,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from canon_extract_dishes import (  # noqa: E402
-    collect_docs, load_dish_index, load_source_blocklist,
+    _interleave_by_dish, collect_docs, load_dish_index, load_source_blocklist,
 )
 from food_slm.data.extract import slugify  # noqa: E402
 from food_slm.data.forbidden import load_forbidden  # noqa: E402
@@ -80,6 +80,12 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="max docs this run (0 = no limit)")
     ap.add_argument("--max-minutes", type=float, default=0, help="wall-clock budget (0 = none)")
     ap.add_argument("--only-region", default=None)
+    ap.add_argument("--max-docs-per-dish", type=int, default=5,
+                    help="cap docs per dish name so a generic-name dish (Coconut "
+                         "Rice, Tomato Chutney...) with many matched/false-positive "
+                         "docs can't dominate a run's whole doc budget before other "
+                         "dishes get any coverage; extra docs are deferred to a "
+                         "later run, not dropped -- same as canon_extract_dishes.py")
     args = ap.parse_args()
 
     dish_index = load_dish_index(args.dish_list)
@@ -95,6 +101,7 @@ def main() -> int:
             and not _recipe_done_for(d["dish"]["id"], d["source_id"], done)]
     print(f"{len(docs)} dish-matched docs total, {len(docs) - len(todo)} already have a "
          f"staged recipe attempt or are blocklisted, {len(todo)} to process")
+    todo = _interleave_by_dish(todo, args.max_docs_per_dish)
 
     roles = load_agents_config(AGENTS)
     extract_p = build_provider(roles["extraction_local"][0])

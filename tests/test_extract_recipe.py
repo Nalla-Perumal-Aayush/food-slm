@@ -150,6 +150,35 @@ def test_generate_recipe_marks_synthetic_with_generator_and_seed():
     assert "openai-gpt-oss-120b-groq" in rec["id"]
 
 
+def test_list_where_scalar_expected_does_not_crash():
+    """Regression: a live qwen2.5:7b response returned a step's `equipment` as
+    `["deep fryer"]` instead of the single string the JSON shape asks for, and
+    slugify() crashed with "normalize() argument 2 must be str, not list",
+    dropping an otherwise-valid record. Also covers the inverse drift (a `tips`-
+    style list field coming back as a bare string, which would otherwise iterate
+    character-by-character instead of raising -- silent corruption, not a crash)."""
+    payload = {"recipes": [{
+        "servings": 8, "difficulty": "moderate",
+        "ingredients": [{"name": ["black gram (urad dal)"], "quantity_text": "1 cup"}],
+        "equipment": "deep fryer",  # scalar where a list was asked for
+        "steps": [{"action": "Deep fry the vadas.", "phase": "cook", "action_verb": "fry",
+                  "ingredients_used": "black gram (urad dal)",  # scalar, not a list
+                  "equipment": ["deep fryer"], "technique": ["shallow_fry"]}],
+        "tips": "Keep oil hot.",  # scalar where a list was asked for
+    }], "notes": ""}
+    res = extract_recipe("page", "dish:medu-vada", "Medu Vada", "tamil_nadu", "src:x",
+                         VEG_DIET, _provider(payload))
+    assert res.invalid == []
+    assert len(res.drafts) == 1
+    rec = res.drafts[0]
+    assert rec["structure"]["ingredients"][0]["ingredient_id"] == "ing:black-gram-urad-dal"
+    step = rec["structure"]["steps"][0]
+    assert step["equipment_id"] == "equip:deep-fryer"
+    assert step["technique_id"] == "tech:shallow-fry"
+    assert step["input_ingredient_ids"] == ["ing:black-gram-urad-dal"]
+    assert rec["content"]["tips"] == ["Keep oil hot."]
+
+
 def test_extract_recipe_still_marks_non_synthetic():
     res = extract_recipe("page text", "dish:idli", "Idli", "karnataka", "src:example-idli",
                          VEG_DIET, _provider(_FULL_RECIPE))
