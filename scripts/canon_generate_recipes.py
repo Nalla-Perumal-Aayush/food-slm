@@ -35,6 +35,12 @@ import types
 from datetime import UTC, datetime
 from pathlib import Path
 
+# See canon_extract_recipes.py's identical fix: stdout redirected to a log file on
+# Windows defaults to cp1252, and a dish/generated-content title with an unencodable
+# character crashes every print() and kills the whole process, not just that one dish.
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from canon_extract_dishes import collect_docs, load_dish_index  # noqa: E402

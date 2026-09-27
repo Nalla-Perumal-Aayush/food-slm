@@ -34,6 +34,16 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+# Real failure (took the whole multi-day run down): stdout redirected to a log file on
+# Windows defaults to the system codepage (cp1252), not UTF-8 -- a dish/source title
+# containing an unencodable character (native-script text, a mangled scrape artifact)
+# crashes every print() with UnicodeEncodeError and kills the process outright, not
+# just that one doc. reconfigure() (Python 3.7+) forces UTF-8 regardless of how stdout
+# is attached; errors="replace" means a genuinely bad byte degrades to a substitution
+# character in the log instead of taking the process down.
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from canon_extract_dishes import (  # noqa: E402
