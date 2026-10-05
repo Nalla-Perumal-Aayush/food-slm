@@ -156,7 +156,13 @@ def main() -> int:
                 print("    Groq daily cap (TPD/RPD) hit -- stopping cleanly. "
                      "Rerun this script once the cap resets to pick up the rest.")
                 _write_progress(stats, stats["dishes_done"], len(todo), t0, final=True)
-                return 0
+                # Distinct from 0 (fully done) and 1 (crashed) -- a bare retry-on-
+                # nonzero wrapper would otherwise either treat this as "finished"
+                # (if it only checks ==0) or burn through retries uselessly before
+                # the cap resets tomorrow (if it treats every nonzero the same as
+                # a crash). Confirmed live: exactly this ambiguity left a prior
+                # wrapper run idle for a day after a cap-hit it misread as done.
+                return 2
             raise
         except Exception as exc:  # noqa: BLE001
             print(f"    ERROR {type(exc).__name__}: {str(exc)[:200]}")
