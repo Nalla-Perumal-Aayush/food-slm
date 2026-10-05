@@ -52,6 +52,42 @@ URLS = [
     "https://en.wikipedia.org/wiki/Asafoetida",
     "https://en.wikipedia.org/wiki/Toor_dal",
     "https://en.wikipedia.org/wiki/Jaggery",
+    # -- batch 2: Puducherry (previously no representation) + broader coverage --
+    "https://en.wikipedia.org/wiki/Cuisine_of_Pondicherry",
+    "https://en.wikipedia.org/wiki/Paruppusilli",
+    # Telangana
+    "https://en.wikipedia.org/wiki/Sakinalu",
+    "https://en.wikipedia.org/wiki/Qubani_ka_meetha",
+    "https://en.wikipedia.org/wiki/Haleem",
+    "https://en.wikipedia.org/wiki/Mirchi_ka_salan",
+    # Karnataka
+    "https://en.wikipedia.org/wiki/Mysore_Pak",
+    "https://en.wikipedia.org/wiki/Ragi_mudde",
+    "https://en.wikipedia.org/wiki/Neer_dosa",
+    "https://en.wikipedia.org/wiki/Kodubale",
+    # Andhra Pradesh
+    "https://en.wikipedia.org/wiki/Pulihora",
+    "https://en.wikipedia.org/wiki/Pootharekulu",
+    # Tamil Nadu
+    "https://en.wikipedia.org/wiki/Murukku",
+    "https://en.wikipedia.org/wiki/Adhirasam",
+    "https://en.wikipedia.org/wiki/Paniyaram",
+    "https://en.wikipedia.org/wiki/Kuzhambu",
+    # Kerala
+    "https://en.wikipedia.org/wiki/Thoran",
+    "https://en.wikipedia.org/wiki/Malabar_biryani",
+    "https://en.wikipedia.org/wiki/Fish_molee",
+    # Techniques
+    "https://en.wikipedia.org/wiki/Tadka",
+    "https://en.wikipedia.org/wiki/Fermentation_in_food_processing",
+    # Ingredients
+    "https://en.wikipedia.org/wiki/Curry_tree",
+    "https://en.wikipedia.org/wiki/Mustard_seed",
+    "https://en.wikipedia.org/wiki/Coconut",
+    "https://en.wikipedia.org/wiki/Urad_bean",
+    "https://en.wikipedia.org/wiki/Fenugreek",
+    "https://en.wikipedia.org/wiki/Turmeric",
+    "https://en.wikipedia.org/wiki/Moringa_oleifera",
 ]
 
 

@@ -291,6 +291,329 @@ CANDIDATES: list[dict] = [
       "I can't give medical advice -- please run cool water over it and see a doctor if it's "
       "serious. I'm a cooking specialist, not a medical resource.",
       "", ""),
+
+    # =========================================================================
+    # Batch 2: broader regional coverage (esp. Puducherry, Telangana, Karnataka,
+    # Andhra Pradesh), more techniques/ingredients, and cross-region naming
+    # comparisons -- sourced from fetch_golden_sources.py's second URL batch.
+    # =========================================================================
+
+    # -- definition: dishes, Puducherry -----------------------------------
+    _c("definition", "puducherry", "na",
+      "What makes Puducherry's cuisine distinctive?",
+      "Puducherry's cuisine is a fusion of Tamil and French influence, a legacy of its "
+      "history as a French colonial outpost. French dishes like crepes and crème brulee are "
+      "still prepared there alongside South Indian staples like dosa and sambar, and Tamil "
+      "cooking in the region was refined by French influence to use noticeably less spice.",
+      "https://en.wikipedia.org/wiki/Cuisine_of_Pondicherry",
+      "Food in Pondicherry is strongly influenced by the French. Salade nicoise, crepes (both "
+      "sweet and savoury) and creme brulee are among popular French dishes still prepared in "
+      "Pondicherry...Tamil food was refined by French influence, using much less spice.",
+      []),
+
+    _c("definition", "puducherry", "vegetarian",
+      "What is paruppusilli?",
+      "Paruppusilli is a traditional Tamil dish made by cooking toor dal and bengal gram dal "
+      "with red chillies and french beans (or cluster beans), flavoured with asafoetida, "
+      "curry leaves, and mustard seeds. It's typically served with rice and mor kuzhambu.",
+      "https://en.wikipedia.org/wiki/Paruppusilli",
+      "It is made by cooking toor dal and bengal gram dal with red chillies and french "
+      "beans/cluster beans/plantain flowers, and is flavored with asafoetida, curry leaves "
+      "and mustard seeds. It is typically served with rice and Mor Kuzhambu during a meal.",
+      ["dish:paruppusilli"]),
+
+    # -- definition: dishes, Telangana ----------------------------------------
+    _c("definition", "telangana", "vegetarian",
+      "What is sakinalu?",
+      "Sakinalu is a crunchy snack from northern Telangana made of concentric circles of "
+      "rice-flour dough, deep fried. It's traditionally prepared for the Makar Sankranti "
+      "harvest festival.",
+      "https://en.wikipedia.org/wiki/Sakinalu",
+      "It consists of concentric circles made of rice flour dough, fried in oil. It is "
+      "prepared during the Makar Sankranti festival.",
+      ["dish:sakinalu"]),
+
+    _c("definition", "telangana", "vegetarian",
+      "What is khubani ka meetha?",
+      "Khubani ka meetha is a Hyderabadi dessert made from dried apricots boiled with syrup "
+      "until it reaches a thick, compote-like consistency, usually topped with blanched "
+      "almonds and served with thick cream (malai).",
+      "https://en.wikipedia.org/wiki/Qubani_ka_meetha",
+      "Preparation of the dish involves boiling apricots with syrup until they assume the "
+      "consistency of a thick soup or compote. The dessert is topped with blanched almonds "
+      "or apricot kernels, and is traditionally garnished with malai.",
+      ["dish:khubani-ka-meetha"]),
+
+    _c("definition", "telangana", "non_vegetarian",
+      "What is haleem?",
+      "Haleem is a slow-cooked stew of wheat or barley, lentils, and meat (commonly beef, "
+      "mutton, or chicken), cooked for hours and then beaten to a thick, paste-like "
+      "consistency. The Hyderabadi version is a well-known regional variant.",
+      "https://en.wikipedia.org/wiki/Haleem",
+      "It is made by slow cooking the meat in barley...This dish is slow-cooked for seven to "
+      "eight hours and then vigorously stirred or beaten with a pestle-like stirring stick. "
+      "This results in a paste-like consistency.",
+      ["dish:haleem"]),
+
+    _c("definition", "telangana", "vegetarian",
+      "What is mirchi ka salan?",
+      "Mirchi ka salan is a Hyderabadi curry of green chilli peppers in a ground-peanut-based "
+      "gravy, usually served alongside biryani. Sometimes tomato or eggplant is substituted "
+      "for the chillies instead.",
+      "https://en.wikipedia.org/wiki/Mirchi_ka_salan",
+      "The mirchi (chilli peppers) are cooked in spices and mixed with a ground peanut paste "
+      "which gives the dish a grainy texture. Sometimes the chillies can also be substituted "
+      "with tomatoes...and eggplant.",
+      ["dish:mirchi-ka-salan"]),
+
+    # -- definition: dishes, Karnataka -----------------------------------------
+    _c("definition", "karnataka", "vegetarian",
+      "What is Mysore pak?",
+      "Mysore pak is a dense, fudge-like Karnataka sweet made from gram flour, sugar, and "
+      "ghee, often flavoured with cardamom. It was created in the royal kitchens of the "
+      "Kingdom of Mysore.",
+      "https://en.wikipedia.org/wiki/Mysore_Pak",
+      "a traditional Indian confectionery made primarily from gram flour (besan), sugar, and "
+      "ghee and often flavoured with cardamom. It originated in the royal kitchens of the "
+      "Kingdom of Mysore.",
+      ["dish:mysore-pak"]),
+
+    _c("definition", "karnataka", "vegetarian",
+      "What is ragi mudde?",
+      "Ragi mudde is a staple finger-millet dish from Karnataka, made by stirring ragi flour "
+      "into boiling water until it forms a smooth, lump-free dough, then shaping it into "
+      "rounds. It has only two ingredients: ragi flour and water.",
+      "https://en.wikipedia.org/wiki/Ragi_mudde",
+      "Ragi mudde has only two ingredients: ragi (finger millet) flour, and water...it "
+      "requires immediate mixing (to avoid lumps)...the flour is beaten to a smooth "
+      "dough-like consistency with no lumps.",
+      ["dish:ragi-mudde"]),
+
+    _c("definition", "karnataka", "vegetarian",
+      "What is neer dosa?",
+      "Neer dosa is a thin rice crepe from the Tulu Nadu region of coastal Karnataka and "
+      "Malabar in Kerala. Unlike most dosas, it needs no fermentation -- just soaked, "
+      "finely-ground rice batter and salt.",
+      "https://en.wikipedia.org/wiki/Neer_dosa",
+      "Unlike other dosas neer dosa is known for its simple preparation method and lack of "
+      "fermentation...Fermentation of the rice is not required to prepare Neer dosa.",
+      ["dish:neer-dosa"]),
+
+    # -- definition: dishes, Andhra Pradesh -------------------------------------
+    _c("definition", "andhra_pradesh", "vegetarian",
+      "What is pulihora?",
+      "Pulihora (also called puliyogare or tamarind rice) is a tangy South Indian rice dish "
+      "souring with tamarind, kokum, or green mango, seasoned with lentils, peanuts, jaggery, "
+      "curry leaves, and turmeric. A recipe for it is recorded in Thanjavur temple-kitchen "
+      "inscriptions dating back to around 1010 CE.",
+      "https://en.wikipedia.org/wiki/Pulihora",
+      "The pulihora is prepared with kokum, tamarind, lemon or green mango as main souring "
+      "ingredient, along with a blend of spices, lentils, peanuts and jaggery cooked in oil "
+      "and mixed with cooked rice along with fried curry leaves and turmeric.",
+      ["dish:pulihora"]),
+
+    _c("definition", "andhra_pradesh", "vegetarian",
+      "What is pootharekulu?",
+      "Pootharekulu is an Andhra Pradesh sweet made of a wafer-thin, paper-like layer of rice "
+      "starch, stuffed with sugar or jaggery, ghee, and nuts. It originated in Atreyapuram, "
+      "East Godavari district, and has a Geographic Indication (GI) tag.",
+      "https://en.wikipedia.org/wiki/Pootharekulu",
+      "The sweet is wrapped in a wafer-thin rice starch layer resembling paper and is stuffed "
+      "with sugar, dry fruits and nuts...created in Atreyapuram, a village...in the East "
+      "Godavari district of Andhra Pradesh.",
+      ["dish:pootharekulu"]),
+
+    # -- definition: dishes, Tamil Nadu -----------------------------------------
+    _c("definition", "tamil_nadu", "vegetarian",
+      "What is murukku?",
+      "Murukku is a crunchy, spiral-shaped fried snack made mainly from rice flour and urad "
+      "dal flour mixed with water, salt, chilli powder, asafoetida, and sesame or cumin "
+      "seeds. Its name comes from the Tamil word for 'twisting,' referring to its shape.",
+      "https://en.wikipedia.org/wiki/Murukku",
+      "Murukku is typically made from rice flour and urad dal flour. The flours are mixed "
+      "with water, salt, chili powder, asafoetida and either sesame seeds or cumin seeds..."
+      "The name muRukku 'twisting' in Tamil refers to its shape.",
+      ["dish:murukku"]),
+
+    _c("definition", "tamil_nadu", "vegetarian",
+      "What is adhirasam?",
+      "Adhirasam is a doughnut-shaped fried sweet made from rice flour, jaggery, and ghee, "
+      "sometimes with coconut and spices like cardamom. It's traditionally offered during "
+      "Deepavali and Ganesha Chaturthi in Tamil Nadu and Karnataka.",
+      "https://en.wikipedia.org/wiki/Adhirasam",
+      "a type of Indian sweet made out of rice, jaggery, ghee and sometimes coconut and with "
+      "spices like cardamom...Adhirasam is a popular as an offering...during Deepavali and "
+      "Ganesha Chaturthi festivals.",
+      ["dish:adhirasam"]),
+
+    _c("definition", "tamil_nadu", "vegetarian",
+      "What is kuzhambu?",
+      "Kuzhambu is a tamarind-based curry from Tamil cuisine that can be made with "
+      "vegetables, meat, or dal, ranging from a thin broth to a thick gravy. It's a common "
+      "misconception that it always contains lentils -- most varieties don't, beyond what's "
+      "used in the tempering.",
+      "https://en.wikipedia.org/wiki/Kuzhambu",
+      "is a tamarind-based curry in Tamil cuisine...It is a common misconception that "
+      "lentils (dal) are a staple ingredient in Kuzhambu...the vast majority do not use dal "
+      "beyond the small quantity used as a spice or during tempering.",
+      ["dish:kuzhambu"]),
+
+    # -- definition: dishes, Kerala -----------------------------------------
+    _c("definition", "kerala", "vegetarian",
+      "What is thoran?",
+      "Thoran is a dry Kerala side dish of finely chopped vegetables (like cabbage, beans, or "
+      "jackfruit) sauteed briefly with grated coconut, mustard seeds, curry leaves, and "
+      "turmeric. It's part of the traditional Keralite sadhya meal, and is called poriyal in "
+      "Tamil Nadu.",
+      "https://en.wikipedia.org/wiki/Thoran",
+      "a class of dry vegetable dishes combined with coconut...In Tamil Nadu, a similar dish "
+      "is known as Poriyal...The chopped vegetable is mixed with grated coconut, mustard "
+      "seeds, curry leaves and turmeric powder and briefly sauteed.",
+      ["dish:thoran"]),
+
+    _c("definition", "kerala", "non_vegetarian",
+      "What is fish molee?",
+      "Fish molee (meen molee) is a mild, coconut-based fish curry of possible Portuguese or "
+      "Indian origin, common in Kerala and also found in Malaysia and Singapore due to "
+      "historical trade and migration links.",
+      "https://en.wikipedia.org/wiki/Fish_molee",
+      "Fish moilee/moily or fish molee (meen molee) is a spicy fish and coconut dish of "
+      "possible Portuguese or Indian origin. It is common in India, Malaysia and Singapore.",
+      ["dish:fish-molee"]),
+
+    # -- technique_explanation -------------------------------------------------
+    _c("technique_explanation", "pan_south", "na",
+      "What is tempering (tadka) and when do you do it?",
+      "Tempering (tadka) is briefly frying whole spices -- like mustard seeds, cumin, dried "
+      "chillies, or curry leaves -- in hot oil or ghee to release their essential oils, then "
+      "pouring the spiced oil into the dish. It's usually done at the start of cooking before "
+      "the other ingredients go in, but for dals, sambar, or similar dishes it's often done "
+      "at the end instead, right before serving.",
+      "https://en.wikipedia.org/wiki/Tadka",
+      "whole spices...are cooked briefly in oil or ghee to liberate essential oils from cells "
+      "and thus enhance their flavours, before being poured, together with the oil, into a "
+      "dish...Tempering is typically done at the beginning of cooking...or it may be done at "
+      "the end...(as with a dal, sambar or stew).",
+      ["tech:tempering"]),
+
+    _c("technique_explanation", "pan_south", "na",
+      "In what order should you add spices when tempering?",
+      "When tempering with multiple ingredients, add them in succession based on how long "
+      "each needs to cook -- ones that need longer cooking go in earlier, and quicker-cooking "
+      "or more delicate ones (like curry leaves) go in last, so nothing burns.",
+      "https://en.wikipedia.org/wiki/Tadka",
+      "When using multiple ingredients in tempering, they are often added in succession, "
+      "with those requiring longer cooking added earlier, and those requiring less cooking "
+      "added later.",
+      ["tech:tempering"]),
+
+    _c("technique_explanation", None, "na",
+      "What actually happens during fermentation?",
+      "Fermentation is the conversion of carbohydrates into acids, gases, or alcohol by "
+      "microorganisms like yeast or bacteria, without needing an external oxidizing agent. "
+      "In South Indian cooking, this is what makes idli and dosa batter rise: bacteria in the "
+      "batter produce both lactic acid (for the tang) and carbon dioxide (for the rise).",
+      "https://en.wikipedia.org/wiki/Fermentation_in_food_processing",
+      "fermentation is the conversion of carbohydrates to alcohol or organic acids using "
+      "microorganisms -- yeasts or bacteria -- without an oxidizing agent being used in the "
+      "reaction.",
+      ["tech:ferment"]),
+
+    # -- regional_comparison -----------------------------------------------
+    _c("regional_comparison", None, "vegetarian",
+      "Is thoran the same thing as poriyal?",
+      "Essentially yes -- thoran (Kerala) and poriyal (Tamil Nadu) are the same style of "
+      "dish: vegetables finely chopped, sauteed briefly with grated coconut, mustard seeds, "
+      "and curry leaves. The name just changes with the region.",
+      "https://en.wikipedia.org/wiki/Thoran",
+      "This common dish is usually eaten with rice and curry...In Tamil Nadu, a similar dish "
+      "is known as Poriyal.",
+      ["dish:thoran"]),
+
+    _c("regional_comparison", None, "vegetarian",
+      "Is ragi mudde called something different in other South Indian states?",
+      "Yes -- it's the same finger-millet dish across Karnataka, Andhra Pradesh, and Tamil "
+      "Nadu, just under different names: ragi mudde or hittu in Karnataka, ragi sangati in "
+      "Andhra's Rayalaseema region, and ragi kali in Tamil Nadu.",
+      "https://en.wikipedia.org/wiki/Ragi_mudde",
+      "In Rayalaseema Region in Andhra Pradesh it is called Ragi Sangati. In Tamil Nadu, it "
+      "is called ragi kali.",
+      ["dish:ragi-mudde"]),
+
+    _c("regional_comparison", None, "vegetarian",
+      "How is neer dosa different from a regular South Indian dosa?",
+      "Regular dosa batter is fermented, which gives it its characteristic tang and texture. "
+      "Neer dosa skips fermentation entirely -- it's just soaked rice ground fine with water "
+      "and salt, used right away, which gives a softer, more delicate crepe.",
+      "https://en.wikipedia.org/wiki/Neer_dosa",
+      "Unlike other dosas neer dosa is known for its simple preparation method and lack of "
+      "fermentation...Fermentation of the rice is not required to prepare Neer dosa.",
+      ["dish:neer-dosa", "dish:dosa"]),
+
+    _c("regional_comparison", None, "non_vegetarian",
+      "How does Malabar/Thalassery biryani differ from Hyderabadi biryani?",
+      "The biggest difference is the rice: Thalassery biryani uses a short, fragrant rice "
+      "called kaima (jeerakasala) instead of the basmati rice used in Hyderabadi biryani. "
+      "Thalassery cuisine also carries more Persian, Arab, and European influence from its "
+      "history as a trading port, on top of the Mughlai influence found in Hyderabadi food.",
+      "https://en.wikipedia.org/wiki/Malabar_biryani",
+      "Unlike other biryani dishes, Thalassery biryani is made using kaima (also known as "
+      "jeerakasala), an Indian aromatic rice, instead of the usual basmati rice.",
+      ["dish:malabar-biryani", "dish:hyderabadi-biryani"]),
+
+    # -- definition: ingredients ------------------------------------------
+    _c("definition", None, "vegetarian",
+      "What is curry leaf and what does it do in a dish?",
+      "Curry leaf comes from the curry tree (Bergera koenigii), native to the Indian "
+      "subcontinent. The aromatic leaves are used widely in South Indian cooking, usually "
+      "added whole during tempering to infuse the oil with their fragrance.",
+      "https://en.wikipedia.org/wiki/Curry_tree",
+      "Its leaves are used in many culinary dishes in India, Sri Lanka and Bangladesh.",
+      ["ing:curry-leaves"]),
+
+    _c("definition", None, "vegetarian",
+      "What is urad dal?",
+      "Urad dal (black gram, Vigna mungo) is a bean widely used in South Asian cooking, "
+      "especially in South India, where it's a key ingredient in idli and dosa batter. The "
+      "whole bean is called black gram; the split, de-husked version is called white lentil.",
+      "https://en.wikipedia.org/wiki/Urad_bean",
+      "The product sold as black gram is usually the whole bean, whereas the split bean (the "
+      "interior being white) is called white lentil...It is very widely used in South Asian "
+      "cuisine.",
+      ["ing:urad-dal"]),
+
+    _c("definition", None, "vegetarian",
+      "What is moringa (drumstick) and how is it used?",
+      "Moringa (Moringa oleifera), also called the drumstick tree, is a fast-growing tree "
+      "native to northern India. Its long, slender seed pods (drumsticks) and leaves are both "
+      "used as vegetables in South Indian cooking, for example in sambar and thoran.",
+      "https://en.wikipedia.org/wiki/Moringa_oleifera",
+      "Common names include moringa, drumstick tree (from the long, slender, triangular "
+      "seed-pods)...It is widely cultivated for its young seed pods and leaves, used as "
+      "vegetables.",
+      ["ing:drumstick"]),
+
+    _c("definition", None, "vegetarian",
+      "What is fenugreek used for?",
+      "Fenugreek is a plant whose leaves and seeds have been used as a culinary ingredient "
+      "since ancient times, especially common in South Asian cooking. The seeds are often "
+      "part of a tempering, and the dried leaves (kasuri methi) are used to flavour curries.",
+      "https://en.wikipedia.org/wiki/Fenugreek",
+      "Its leaves and seeds have been used as a culinary ingredient since ancient times, and "
+      "are common ingredients in dishes from the Indian subcontinent.",
+      ["ing:fenugreek"]),
+
+    _c("definition", None, "vegetarian",
+      "What gives turmeric its colour and where does it come from?",
+      "Turmeric comes from the rhizome (underground stem) of the Curcuma longa plant, native "
+      "to the Indian subcontinent and Southeast Asia. The rhizomes are boiled, dried, and "
+      "ground into the deep orange-yellow powder used as both a colouring and flavouring "
+      "agent in South Indian curries.",
+      "https://en.wikipedia.org/wiki/Turmeric",
+      "The rhizomes can be used fresh, but they are often boiled in water and dried, after "
+      "which they are ground into a deep orange-yellow shelf-stable spice powder commonly "
+      "used as a coloring and flavoring agent.",
+      ["ing:turmeric"]),
 ]
 
 
