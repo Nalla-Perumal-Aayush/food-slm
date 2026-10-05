@@ -37,7 +37,7 @@ URLS = [
     "https://en.wikipedia.org/wiki/Avial",
     "https://en.wikipedia.org/wiki/Pesarattu",
     "https://en.wikipedia.org/wiki/Hyderabadi_biryani",
-    "https://en.wikipedia.org/wiki/Dosa",
+    "https://en.wikipedia.org/wiki/Dosa_(food)",
     "https://en.wikipedia.org/wiki/Rasam_(soup)",
     "https://en.wikipedia.org/wiki/Payasam",
     "https://en.wikipedia.org/wiki/Pongal_(dish)",
