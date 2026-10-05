@@ -143,6 +143,19 @@ def _refs_of(obj: dict) -> list[str]:
     return out
 
 
+# A `recipe` record can't accumulate corroboration the way a flat entity (ingredient,
+# term, ...) does: every source produces its OWN `recipe:{dish}-{source}` id, so two
+# sources never cite the same record -- corroboration_count structurally never
+# reaches min_corroboration for recipes, even a well-extracted one. validate.py's
+# RecordVerdict.apply_to() already bumps quality.confidence to >= 0.85 if and only if
+# the data_validation panel unanimously accepted the record (confirmed empirically:
+# every staged recipe today is at exactly 0.85 or 0.55, nothing in between) -- so for
+# type=recipe specifically, that confidence floor substitutes for the corroboration
+# bar below, rather than requiring independent-source agreement that structurally
+# can't happen here.
+_RECIPE_CONFIDENCE_ANCHOR = 0.8
+
+
 def select_promotable(
     staged: list[dict],
     already_canonical: set[str],
@@ -152,9 +165,12 @@ def select_promotable(
     a partial slice of staged records to promote (mcp_extraction_pipeline.md §2).
 
     An **anchor** record is trusted directly: every `source` record (a provenance
-    envelope, not a factual claim), or any record with `corroboration_count >=
+    envelope, not a factual claim), any record with `corroboration_count >=
     min_corroboration` (independent sources agreeing — the AI-primary validation
-    signal, evaluation_strategy.md §3), or already `auto_validated`/`human_validated`.
+    signal, evaluation_strategy.md §3), any already `auto_validated`/`human_validated`
+    record, or a `recipe` whose panel unanimously accepted it (see
+    `_RECIPE_CONFIDENCE_ANCHOR` above — corroboration doesn't apply to recipes the
+    same way).
 
     Promoting only anchors would leave every supporting ingredient/technique/term/
     source they reference (usually single-source, still `needs_human`) behind in
@@ -188,8 +204,15 @@ def select_promotable(
         if r["type"] == "source":
             return True
         q = r.get("quality", {})
-        return (q.get("corroboration_count", 0) >= min_corroboration
-                or q.get("validation_status") in ("auto_validated", "human_validated"))
+        if (q.get("corroboration_count", 0) >= min_corroboration
+                or q.get("validation_status") in ("auto_validated", "human_validated")):
+            return True
+        if r["type"] == "recipe" and not r.get("provenance", {}).get("synthetic"):
+            # synthetic (LLM-generated, no source document) recipes are deliberately
+            # excluded even at confidence 0.85 -- they should never auto-promote
+            # without an actual human look, per extract_recipe.generate_recipe's design.
+            return q.get("confidence", 0.0) >= _RECIPE_CONFIDENCE_ANCHOR
+        return False
 
     selected = {rid for rid, r in by_id.items() if is_anchor(r)}
 
