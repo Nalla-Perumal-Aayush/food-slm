@@ -272,6 +272,46 @@ def select_promotable(
                     struct_patch[field_name] = kept
             elif val not in resolvable:
                 struct_patch[field_name] = None
+        if r["type"] == "recipe":
+            # _ID_REF_FIELDS only covers recipe's TOP-level equipment_ids -- a
+            # step's own equipment_id (nested) was never checked here, so a step
+            # could keep pointing at equipment that doesn't exist in canonical,
+            # surviving the strip above and failing strict load_store() the
+            # moment this promotes. Confirmed live: 796 such dangling refs across
+            # already-promoted recipes.
+            #
+            # input_ingredient_ids is different: schema.store.check_all() checks
+            # it for SELF-consistency against the recipe's own `ingredients` list
+            # (matching equipment_id's pattern), not against the global store --
+            # an ingredient only needs its own separate ingredient: record as a
+            # future enrichment, not as a recipe-validity gate. So that side is
+            # repaired here for self-consistency only, independent of `resolvable`.
+            declared_ing = {i.get("ingredient_id") for i in struct.get("ingredients", [])}
+            steps = struct.get("steps") or []
+            new_steps = [dict(s) for s in steps]
+            any_step_changed = False
+            for step in new_steps:
+                eid = step.get("equipment_id")
+                if eid and eid not in resolvable:
+                    step.pop("equipment_id", None)
+                    any_step_changed = True
+                iids = step.get("input_ingredient_ids") or []
+                kept_iids = [v for v in iids if v in declared_ing]
+                if kept_iids != iids:
+                    step["input_ingredient_ids"] = kept_iids
+                    any_step_changed = True
+            if any_step_changed:
+                struct_patch["steps"] = new_steps
+            # equipment_ids must stay self-consistent with whatever steps still
+            # reference (after the strip above) AND externally resolvable -- check
+            # and backfill this unconditionally, not only when a step needed a
+            # strip, since a never-struck equipment_ids list can still be missing
+            # entries a resolvable step legitimately references.
+            equip_in_steps = {s.get("equipment_id") for s in new_steps if s.get("equipment_id")}
+            current_equip = struct_patch.get("equipment_ids", struct.get("equipment_ids") or [])
+            wanted_equip = sorted(set(current_equip) | equip_in_steps)
+            if wanted_equip != struct.get("equipment_ids", []):
+                struct_patch["equipment_ids"] = wanted_equip
         if struct_patch:
             patch["structure"] = struct_patch
         if patch:

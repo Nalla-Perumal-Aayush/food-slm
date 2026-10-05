@@ -409,7 +409,17 @@ def _build_recipe(raw: dict, dish_id: str, cuisine_state: str, source_id: str,
                 continue
             iid = name_to_ing_id.get(used_name.lower())
             if iid is None:
-                iid = f"ing:{slugify(used_name)}"
+                # Not a real ingredient -- a step frequently describes its input as
+                # an intermediate state ("the combined mixture", "the batter", "the
+                # sauteed mixture") rather than a raw ingredient name. Fabricating a
+                # new ingredient_id for this (the old behavior) created a reference
+                # to something that was never added to `ingredients`, i.e. a
+                # self-inconsistent record -- confirmed live: 1,735 dangling-
+                # ingredient integrity issues across already-promoted recipes, all
+                # of this exact shape. Dropping it is conservative but correct: a
+                # step's input_ingredient_ids is informational, not required non-
+                # empty, so losing an unresolvable one beats corrupting the record.
+                continue
             input_ids.append(iid)
         step = {
             "step_id": step_id, "order": idx,

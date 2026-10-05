@@ -179,6 +179,32 @@ def test_list_where_scalar_expected_does_not_crash():
     assert rec["content"]["tips"] == ["Keep oil hot."]
 
 
+def test_unresolvable_ingredients_used_is_dropped_not_fabricated():
+    """Regression: a step describing its input as an intermediate state ("the
+    combined mixture") rather than a raw ingredient used to get a fabricated
+    ing:combined-mixture id that was never added to `ingredients` -- a dangling
+    self-reference. Confirmed live: 1,735 such integrity issues across already-
+    promoted recipes. Dropping the unresolvable reference instead keeps the record
+    internally consistent."""
+    payload = {"recipes": [{
+        "servings": 4,
+        "ingredients": [{"name": "rice", "quantity_text": "1 cup"}],
+        "steps": [
+            {"action": "Combine rice with water.", "phase": "prep", "action_verb": "mix",
+             "ingredients_used": ["rice"]},
+            {"action": "Saute the combined mixture.", "phase": "cook", "action_verb": "saute",
+             "ingredients_used": ["combined mixture"]},
+        ],
+    }], "notes": ""}
+    res = extract_recipe("page", "dish:x", "X", "tamil_nadu", "src:x", VEG_DIET, _provider(payload))
+    assert len(res.drafts) == 1
+    steps = res.drafts[0]["structure"]["steps"]
+    assert steps[0]["input_ingredient_ids"] == ["ing:rice"]
+    assert steps[1]["input_ingredient_ids"] == []
+    ing_ids = {i["ingredient_id"] for i in res.drafts[0]["structure"]["ingredients"]}
+    assert "ing:combined-mixture" not in ing_ids
+
+
 def test_extract_recipe_still_marks_non_synthetic():
     res = extract_recipe("page text", "dish:idli", "Idli", "karnataka", "src:example-idli",
                          VEG_DIET, _provider(_FULL_RECIPE))

@@ -61,3 +61,46 @@ def test_corroboration_2_still_promotes_regardless_of_type():
     staged = [_source(), _recipe("recipe:idli-x", confidence=0.55, corroboration=2)]
     ids, _ = select_promotable(staged, already_canonical=set())
     assert "recipe:idli-x" in ids
+
+
+def test_nested_step_equipment_ref_to_nonexistent_equipment_gets_stripped():
+    """_ID_REF_FIELDS only ever covered recipe's TOP-level equipment_ids -- a step's
+    own equipment_id (nested) wasn't checked, so a step could keep pointing at
+    equipment that doesn't exist anywhere, surviving promotion and failing strict
+    load_store() later. Confirmed live: 796 such dangling refs across
+    already-promoted recipes."""
+    rec = _recipe("recipe:idli-x", confidence=0.85, corroboration=1)
+    rec["structure"]["equipment_ids"] = []
+    rec["structure"]["ingredients"] = [{"ingredient_id": "ing:rice"}]
+    rec["structure"]["steps"] = [
+        {"step_id": "step-1", "order": 1, "phase": "cook", "action": "heat",
+         "action_verb": "heat", "equipment_id": "equip:nonexistent-pan",
+         "input_ingredient_ids": ["ing:rice", "ing:not-in-recipe-ingredients"], "depends_on": []},
+    ]
+    staged = [_source(), rec]
+    ids, patches = select_promotable(staged, already_canonical=set())
+    assert "recipe:idli-x" in ids
+    step = patches["recipe:idli-x"]["structure"]["steps"][0]
+    assert "equipment_id" not in step
+    # input_ingredient_ids is self-consistency against the recipe's own
+    # ingredients list, not global existence -- "ing:rice" IS declared so it
+    # survives even though no standalone ingredient:rice record exists anywhere.
+    assert step["input_ingredient_ids"] == ["ing:rice"]
+    # already [] and stays [] -- no patch entry needed for an unchanged field
+    assert "equipment_ids" not in patches["recipe:idli-x"].get("structure", {})
+
+
+def test_nested_step_ref_to_resolvable_equipment_is_backfilled_into_top_level():
+    """The self-consistency half of the same fix: a step's equipment_id that DOES
+    resolve must also end up in the recipe's own top-level equipment_ids."""
+    rec = _recipe("recipe:idli-x", confidence=0.85, corroboration=1)
+    rec["structure"]["equipment_ids"] = []
+    rec["structure"]["steps"] = [
+        {"step_id": "step-1", "order": 1, "phase": "cook", "action": "heat",
+         "action_verb": "heat", "equipment_id": "equip:idli-stand",
+         "input_ingredient_ids": [], "depends_on": []},
+    ]
+    staged = [_source(), rec]
+    ids, patches = select_promotable(staged, already_canonical={"equip:idli-stand"})
+    assert "recipe:idli-x" in ids
+    assert patches["recipe:idli-x"]["structure"]["equipment_ids"] == ["equip:idli-stand"]
