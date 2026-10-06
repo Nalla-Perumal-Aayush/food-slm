@@ -88,6 +88,12 @@ URLS = [
     "https://en.wikipedia.org/wiki/Fenugreek",
     "https://en.wikipedia.org/wiki/Turmeric",
     "https://en.wikipedia.org/wiki/Moringa_oleifera",
+    # Peer-reviewed food-science source for troubleshooting items (encyclopedia
+    # text doesn't cover failure modes; this does). License status from
+    # classify_license() came back "unknown" (gov-tld signal only, no explicit
+    # open-access statement found) -- cited minimally (one sentence) rather
+    # than treated as freely reusable, same standard as every other source here.
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC3551100/",
 ]
 
 

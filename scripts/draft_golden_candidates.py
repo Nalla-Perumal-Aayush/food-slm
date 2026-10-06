@@ -614,6 +614,75 @@ CANDIDATES: list[dict] = [
       "which they are ground into a deep orange-yellow shelf-stable spice powder commonly "
       "used as a coloring and flavoring agent.",
       ["ing:turmeric"]),
+
+    # =========================================================================
+    # Batch 3: troubleshooting (grounded in peer-reviewed food-science sources,
+    # since encyclopedia text doesn't cover failure modes), more
+    # regional_comparison (same-dish-different-name pattern), and a definition
+    # that needed the Haleem source's cross-regional detail.
+    # =========================================================================
+
+    # -- troubleshooting: grounded in peer-reviewed fermentation microbiology,
+    # not casual blog tips, since that's what's actually citable here. --------
+    _c("troubleshooting", "pan_south", "na",
+      "My idli/dosa batter isn't rising even after a long time. What's wrong?",
+      "Idli batter rises because lactic acid bacteria (mainly Leuconostoc mesenteroides, "
+      "plus others such as Enterococcus faecalis) ferment it, producing both the lactic "
+      "acid that gives it a tang and the carbon dioxide that makes it rise. Cold "
+      "temperatures slow that bacterial activity down or stop it, which is the most common "
+      "reason batter fails to rise. Fix: move it somewhere consistently warm and give it "
+      "more time. To prevent this, start fermentation earlier in cold weather and keep the "
+      "batter warm throughout rather than at room temperature.",
+      "https://en.wikipedia.org/wiki/Idli",
+      "The fermentation process is performed by lactic acid bacteria, particularly "
+      "Leuconostoc mesenteroides and Enterococcus faecalis, which generate both lactic acid "
+      "and carbon dioxide.",
+      ["dish:idli"]),
+
+    _c("troubleshooting", "pan_south", "na",
+      "Why do people say idli batter needs both time and warmth to ferment well?",
+      "Because the rise (leavening) and the sourness (acidification) in idli batter are "
+      "both produced by the same lactic-acid-bacteria fermentation, and that process is "
+      "temperature- and time-dependent -- cutting either short gives you batter that's "
+      "both flat and under-fermented, not one problem or the other in isolation.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC3551100/",
+      "Two significant changes occurring in idli fermentation are leavening and "
+      "acidification of the batter.",
+      ["dish:idli"]),
+
+    # -- regional_comparison: same dish, different regional names --------------
+    _c("regional_comparison", None, "vegetarian",
+      "Is murukku called something else in other parts of India?",
+      "It's the same basic fried, spiral snack across the South, but the name changes by "
+      "language: murukku in Tamil Nadu/Kerala, chakkuli in Kannada, and janthikalu (or "
+      "chakralu) in Andhra Pradesh and Telangana.",
+      "https://en.wikipedia.org/wiki/Murukku",
+      "It is called murkulu in Telangana, janthikalu in Andhra Pradesh...Other names of the "
+      "dish include Kannada: chakkuli.",
+      ["dish:murukku"]),
+
+    _c("regional_comparison", None, "vegetarian",
+      "Is adhirasam the same sweet as what's made in Karnataka or Andhra Pradesh?",
+      "Yes, essentially -- the same rice-and-jaggery fried sweet is called adhirasam in "
+      "Tamil Nadu, kajjaya in Kannada, and ariselu in Telugu, across Tamil, Karnataka, and "
+      "Andhra/Telangana cuisine.",
+      "https://en.wikipedia.org/wiki/Adhirasam",
+      "kajjaya or athrasa in Kannada...ariselu in Telugu...is a type of Indian sweet made "
+      "out of rice, jaggery, ghee...from Tamil cuisine, Karnataka cuisine, Telugu cuisine.",
+      ["dish:adhirasam"]),
+
+    # -- definition: needed the Haleem source's cross-regional detail -------
+    _c("definition", "telangana", "non_vegetarian",
+      "What makes Hyderabadi haleem specifically different from haleem elsewhere?",
+      "Haleem as a dish exists across West, Central, and South Asia under different names "
+      "(like keshkek in Turkey or harisa in the Arab world) -- Hyderabadi haleem is "
+      "specifically the Indian, Hyderabad-associated version, slow-cooked for hours with "
+      "wheat or barley, lentils, and meat, then beaten into a thick, paste-like stew.",
+      "https://en.wikipedia.org/wiki/Haleem",
+      "Popular variations of haleem include halim (in Iran, Afghanistan, India, Mauritius, "
+      "Pakistan and Bangladesh); keskek (in Turkey...); harisa (in the Arab world and "
+      "Armenia); and Hyderabadi haleem (in India).",
+      ["dish:haleem"]),
 ]
 
 
