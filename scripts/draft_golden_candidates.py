@@ -688,18 +688,27 @@ CANDIDATES: list[dict] = [
 
 def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    existing_questions = set()
+    # Keyed on the full (question, task_type, region, diet) tuple, not question
+    # text alone -- the same question phrasing legitimately recurs across
+    # different regions (e.g. "How is mutton biryani prepared?" tagged
+    # andhra_pradesh vs telangana as two distinct candidates). Hashing on
+    # question text alone collided those into one id, silently discarding one
+    # of the two -- found live, repaired via scripts/repair_golden_candidate_ids.py.
+    existing_keys = set()
     if OUT.exists():
         for line in OUT.read_text(encoding="utf-8").splitlines():
             if line.strip():
-                existing_questions.add(json.loads(line)["question"])
+                d = json.loads(line)
+                existing_keys.add((d["question"], d["task_type"], d.get("region"), d.get("diet")))
 
-    new = [c for c in CANDIDATES if c["question"] not in existing_questions]
+    new = [c for c in CANDIDATES
+          if (c["question"], c["task_type"], c.get("region"), c.get("diet")) not in existing_keys]
     with OUT.open("a", encoding="utf-8") as fh:
         for c in new:
             # deterministic (unlike Python's built-in hash(), which is salted
             # per-process) so re-running doesn't reassign ids to the same item
-            digest = hashlib.sha256(c["question"].encode()).hexdigest()[:8]
+            key = f"{c['question']}|{c['task_type']}|{c.get('region')}|{c.get('diet')}"
+            digest = hashlib.sha256(key.encode()).hexdigest()[:8]
             c["id"] = f"golden:{digest}"
             fh.write(json.dumps(c, ensure_ascii=False) + "\n")
 

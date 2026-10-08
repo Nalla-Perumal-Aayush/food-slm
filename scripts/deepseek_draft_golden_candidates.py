@@ -99,17 +99,40 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="max items this run (0 = all)")
     args = ap.parse_args()
 
+    import hashlib
+
+    def _key(r: dict) -> tuple:
+        # Full (question, task_type, region, diet) tuple, not question text alone --
+        # the same question phrasing legitimately recurs across different regions
+        # (e.g. "How is mutton biryani prepared?" tagged andhra_pradesh vs telangana
+        # as two distinct candidates). Question-text-only dedup/ids collided those,
+        # silently discarding one of each pair -- found live via
+        # scripts/repair_golden_candidate_ids.py, fixed here going forward.
+        return (r["question"], r["task_type"], r.get("region"), r.get("diet"))
+
     backlog = [json.loads(line) for line in BACKLOG_PATH.read_text(encoding="utf-8").splitlines()
               if line.strip()]
-    existing_questions = set()
+    existing_keys = set()
     if CANDIDATES_PATH.exists():
         for line in CANDIDATES_PATH.read_text(encoding="utf-8").splitlines():
             if line.strip():
-                existing_questions.add(json.loads(line)["question"])
+                existing_keys.add(_key(json.loads(line)))
 
-    todo = [r for r in backlog if r["question"] not in existing_questions]
-    print(f"{len(backlog)} backlog items, {len(backlog) - len(todo)} already drafted, "
-         f"{len(todo)} to process")
+    # The backlog itself also contains literal full-duplicate rows (e.g. the same
+    # abstention question appears verbatim 10x with identical task_type/region/
+    # diet) -- dedup those WITHIN this run too, not just against already-drafted
+    # history, so a single run doesn't burn ~90s/item redrafting the same thing
+    # repeatedly.
+    todo = []
+    seen_this_run = set()
+    for r in backlog:
+        k = _key(r)
+        if k in existing_keys or k in seen_this_run:
+            continue
+        seen_this_run.add(k)
+        todo.append(r)
+    print(f"{len(backlog)} backlog items, {len(backlog) - len(todo)} already drafted or "
+         f"an intra-backlog duplicate, {len(todo)} to process")
     if args.limit:
         todo = todo[:args.limit]
         print(f"--limit {args.limit}: processing {len(todo)} this run")
@@ -117,8 +140,6 @@ def main() -> int:
     provider = build_provider(ProviderSpec(
         name="deepseek-r1-local", kind="ollama", model="deepseek-r1:32b",
         family="deepseek", local=True, max_tokens=800))
-
-    import hashlib
 
     done = 0
     errors = 0
@@ -147,7 +168,8 @@ def main() -> int:
                 "status": "pending", "reviewer_notes": "",
                 "drafted_by": MODEL_LABEL,
             }
-            digest = hashlib.sha256(out["question"].encode()).hexdigest()[:8]
+            key_str = f"{out['question']}|{out['task_type']}|{out.get('region')}|{out.get('diet')}"
+            digest = hashlib.sha256(key_str.encode()).hexdigest()[:8]
             out["id"] = f"golden:{digest}"
             fh.write(json.dumps(out, ensure_ascii=False) + "\n")
             fh.flush()
