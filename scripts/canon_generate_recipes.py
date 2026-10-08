@@ -23,7 +23,16 @@ cleanly rather than sleeping for hours, and just needs a rerun (tomorrow, or onc
 cap resets) to pick up the rest.
 
 Resumable: a dish with an already-staged `recipe:{dish}-{generator-slug}` record is
-skipped, same mechanism as canon_extract_recipes.py's own resume check.
+skipped, same mechanism as canon_extract_recipes.py's own resume check. A dish that
+was ATTEMPTED but produced nothing stageable (gpt-oss says "no recipe found", or the
+validation panel rejects every draft) is tracked separately in
+artifacts/logs/canon_generate_recipes_no_result.json and also skipped on future runs --
+without this, a hard-to-generate dish sitting near the front of the prominence-sorted
+list gets re-attempted on every single restart, burning the whole run's quota on the
+same unproductive handful of dishes before the daily cap hits, and the rest of the list
+is never reached. Confirmed live: 2 days and 15 restarts produced zero net progress on
+the main todo count for exactly this reason. Use --retry-no-result to clear that list
+and give those dishes another chance (e.g. after extract_recipe.py's prompt changes).
 """
 from __future__ import annotations
 
@@ -58,6 +67,7 @@ STAGING = REPO / "data" / "interim" / "canon_staging"
 EVAL = REPO / "data" / "eval"
 AGENTS = REPO / "configs" / "agents.yaml"
 PROGRESS = REPO / "artifacts" / "logs" / "canon_generate_recipes_progress.json"
+NO_RESULT_PATH = REPO / "artifacts" / "logs" / "canon_generate_recipes_no_result.json"
 
 GENERATOR_LABEL = "openai/gpt-oss-120b (Groq)"
 # TPM 8000 / ~1.9k tokens-per-call observed -> a real 429 is the authoritative backstop,
@@ -79,6 +89,20 @@ def find_gap_dishes(dish_list_path: Path, *, only_region: str | None = None) -> 
         gap = [d for d in gap if d["region"] == only_region]
     gap.sort(key=lambda d: -d.get("prominence", 1))
     return gap
+
+
+def load_no_result_ids() -> set[str]:
+    if not NO_RESULT_PATH.exists():
+        return set()
+    try:
+        return set(json.loads(NO_RESULT_PATH.read_text(encoding="utf-8")))
+    except json.JSONDecodeError:
+        return set()
+
+
+def save_no_result_ids(ids: set[str]) -> None:
+    NO_RESULT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    NO_RESULT_PATH.write_text(json.dumps(sorted(ids), indent=2), encoding="utf-8")
 
 
 def _complete_with_backoff(provider, system: str, prompt: str, *, max_retries: int = 3):
@@ -109,14 +133,25 @@ def main() -> int:
     ap.add_argument("--dish-list", type=Path, default=REPO / "configs" / "dish_list_v1.yaml")
     ap.add_argument("--limit", type=int, default=0, help="max dishes this run (0 = no limit)")
     ap.add_argument("--only-region", default=None)
+    ap.add_argument("--retry-no-result", action="store_true",
+                    help="clear the no-result list and give those dishes another "
+                         "attempt (e.g. after a prompt/model change)")
     args = ap.parse_args()
+
+    if args.retry_no_result:
+        save_no_result_ids(set())
+        print("cleared no-result list -- those dishes will be retried this run")
 
     gap = find_gap_dishes(args.dish_list, only_region=args.only_region)
     done = _recipe_ids_done()
+    no_result = load_no_result_ids()
     gen_source_id = f"gen:{slugify(GENERATOR_LABEL)}"
-    todo = [d for d in gap if not _recipe_done_for(d["id"], gen_source_id, done)]
-    print(f"{len(gap)} source-gap dishes total, {len(gap) - len(todo)} already generated, "
-         f"{len(todo)} to process")
+    already_generated = [d for d in gap if _recipe_done_for(d["id"], gen_source_id, done)]
+    no_result_this_scope = [d for d in gap if d["id"] in no_result and d not in already_generated]
+    todo = [d for d in gap if d not in already_generated and d not in no_result_this_scope]
+    print(f"{len(gap)} source-gap dishes total, {len(already_generated)} already generated, "
+         f"{len(no_result_this_scope)} previously tried with no usable result "
+         f"(skipped -- use --retry-no-result to retry), {len(todo)} to process")
 
     roles = load_agents_config(AGENTS)
     gen_provider = build_provider(roles["recipe_generation_remote"][0])
@@ -181,6 +216,16 @@ def main() -> int:
         for v in run.verdicts:
             stats["by_decision"][v.decision] = stats["by_decision"].get(v.decision, 0) + 1
         print(f"    extracted={n_extracted} invalid={n_invalid} staged={len(run.staged)}")
+
+        if not run.staged:
+            # Nothing landed in staging for this dish (no recipe generated, or every
+            # draft got rejected) -- without recording this, the dish stays at the
+            # front of the prominence-sorted list forever and gets re-attempted (and
+            # re-fails) on every future run, starving everything behind it of quota.
+            # Saved incrementally (not just at the end) so a mid-run daily-cap exit
+            # still keeps whatever ground was covered this run.
+            no_result.add(dish["id"])
+            save_no_result_ids(no_result)
 
         if (i + 1) % 10 == 0:
             _write_progress(stats, i + 1, len(todo), t0)
