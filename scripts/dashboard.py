@@ -1,5 +1,8 @@
-"""Local training dashboard (read-only) + model try-out tab + recipe-extraction
-monitor.
+"""Single unified Streamlit dashboard: training monitor + model try-out +
+recipe-extraction monitor + golden QA review, consolidated from what used to
+be four separate app instances (two redundant copies of this file, plus the
+now-retired standalone extraction_dashboard.py and golden_qa_review.py direct
+launches) into one app on one port.
 
     streamlit run scripts/dashboard.py
 
@@ -11,10 +14,21 @@ a checkpoint and generates text for a prompt -- a qualitative sanity check
 only. The numbers in Tab 1 are the ones that matter; Tab 2 is for human
 satisfaction, not a metric. Tab 3, "Recipe Extraction", watches
 scripts/canon_extract_recipes.py's progress snapshot + log + staged output.
+Tab 4, "Golden QA Review", embeds scripts/golden_qa_review.py's
+render_review_page() -- the human-approval gate for the golden QA set; unlike
+tabs 1 and 3 it's interactive (buttons/text edits) so it is NOT wrapped in the
+auto-refresh fragment, same reasoning as "Try the Model".
+
+golden_qa_review.py can still be run standalone (`streamlit run
+scripts/golden_qa_review.py`) for a dedicated single-purpose instance; this
+file just also embeds the same page so one dashboard can cover everything.
 
 Never touches the training process or its checkpoints, and never touches the
 extraction process or its staged files: everything here is read-only against
-artifacts/checkpoints/<run>/ and data/interim/canon_staging/.
+artifacts/checkpoints/<run>/ and data/interim/canon_staging/ (Golden QA
+Review is the one interactive exception, writing reviewer decisions to
+data/eval/golden_qa_candidates.jsonl / golden_qa_set.jsonl, same as it does
+standalone).
 """
 from __future__ import annotations
 
@@ -29,6 +43,8 @@ import plotly.graph_objects as go
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+import golden_qa_review  # noqa: E402  (sibling script import, scripts/ dir is on sys.path)
 
 REPO = Path(__file__).resolve().parents[1]
 CKPT_ROOT = REPO / "artifacts" / "checkpoints"
@@ -448,14 +464,18 @@ def render_extraction_tab() -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    st.title("Food SLM -- Training Dashboard")
+    st.title("Food SLM -- Unified Dashboard")
     runs = discover_runs()
-    if not runs:
-        st.warning(f"No runs found under `{CKPT_ROOT}` (looking for a `metrics.jsonl` in each).")
-        st.stop()
+    # Missing training runs no longer hard-stops the whole app: this dashboard
+    # also hosts Recipe Extraction and Golden QA Review, which don't depend on
+    # a training run existing, so they should stay usable either way.
+    run_name = None
 
     with st.sidebar:
-        run_name = st.selectbox("Run", runs, index=len(runs) - 1)
+        if runs:
+            run_name = st.selectbox("Run", runs, index=len(runs) - 1)
+        else:
+            st.caption(f"No runs found under `{CKPT_ROOT}`.")
         auto = st.checkbox("Auto-refresh", value=True)
         interval = st.slider("Refresh every (s)", 5, 60, 15) if auto else None
         if st.button("Refresh now"):
@@ -464,23 +484,33 @@ def main() -> None:
     # A blocking time.sleep() + st.rerun() loop in the main script body races
     # Streamlit's own session teardown (AttributeError: 'AppSession' object has
     # no attribute '_scriptrunner') -- st.fragment(run_every=...) is the native,
-    # race-free way to auto-rerun just this tab on a timer. Only the training
-    # tab auto-refreshes; the try-it tab would otherwise reset mid-interaction.
+    # race-free way to auto-rerun just this tab on a timer. Only the read-only
+    # monitoring tabs auto-refresh; interactive tabs (Try the Model, Golden QA
+    # Review) would otherwise reset mid-interaction.
     @st.fragment(run_every=interval if auto else None)
     def _live_training_tab() -> None:
-        render_training_tab(run_name)
+        if run_name:
+            render_training_tab(run_name)
+        else:
+            st.info(f"No runs found under `{CKPT_ROOT}` (looking for a `metrics.jsonl` in each).")
 
     @st.fragment(run_every=interval if auto else None)
     def _live_extraction_tab() -> None:
         render_extraction_tab()
 
-    tab1, tab2, tab3 = st.tabs(["Training Progress", "Try the Model", "Recipe Extraction"])
+    tab1, tab2, tab3, tab4 = st.tabs(
+        ["Training Progress", "Try the Model", "Recipe Extraction", "Golden QA Review"])
     with tab1:
         _live_training_tab()
     with tab2:
-        render_try_tab(run_name)
+        if run_name:
+            render_try_tab(run_name)
+        else:
+            st.info("No checkpoints available to try.")
     with tab3:
         _live_extraction_tab()
+    with tab4:
+        golden_qa_review.render_review_page()
 
 
 if __name__ == "__main__":

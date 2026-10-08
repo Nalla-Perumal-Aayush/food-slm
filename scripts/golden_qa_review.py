@@ -1,7 +1,8 @@
 """Golden QA review tool -- the human-verification gate for every candidate
 drafted by draft_golden_candidates.py (or future sourcing passes).
 
-    streamlit run scripts/golden_qa_review.py
+    streamlit run scripts/golden_qa_review.py          # standalone
+    (or as a tab inside scripts/dashboard.py -- see render_review_page() below)
 
 Every candidate needs an explicit decision here before it counts as golden
 (evaluation_strategy.md SS5: "never AI generation" for the golden set itself --
@@ -34,8 +35,6 @@ TASK_TYPES = ["recipe_request", "scaling", "ingredient_substitution", "troublesh
              "technique_explanation", "regional_comparison", "definition", "abstention"]
 REGIONS = ["tamil_nadu", "kerala", "karnataka", "andhra_pradesh", "telangana",
           "puducherry", "pan_south"]
-
-st.set_page_config(page_title="Golden QA Review", layout="wide")
 
 
 def load_candidates() -> list[dict]:
@@ -152,8 +151,10 @@ def render_item(row: dict, rows: list[dict], idx: int) -> None:
             st.rerun()
 
 
-def main() -> None:
-    st.title("Golden QA Review")
+def render_review_page() -> None:
+    """The whole review UI (progress + filterable queue), with no page-level
+    chrome (title/page_config) of its own -- callable standalone (via main(),
+    below) or embedded as a tab inside another Streamlit app (scripts/dashboard.py)."""
     st.caption(
         "Every item needs an explicit Approve/Reject -- no sampling, no batch-approve. "
         "This is the human-verification gate the whole eval design depends on "
@@ -163,15 +164,16 @@ def main() -> None:
     if not rows:
         st.warning(f"No candidates found at `{CANDIDATES_PATH}`. Run "
                   "scripts/draft_golden_candidates.py first.")
-        st.stop()
+        return
 
     render_progress(rows)
 
     st.subheader("Review queue")
     f1, f2, f3 = st.columns(3)
-    status_filter = f1.selectbox("Show", ["pending", "approved", "rejected", "all"], index=0)
-    task_filter = f2.selectbox("Task type", ["(all)"] + TASK_TYPES)
-    region_filter = f3.selectbox("Region", ["(all)"] + REGIONS + ["(none)"])
+    status_filter = f1.selectbox("Show", ["pending", "approved", "rejected", "all"], index=0,
+                                 key="gqr_status_filter")
+    task_filter = f2.selectbox("Task type", ["(all)"] + TASK_TYPES, key="gqr_task_filter")
+    region_filter = f3.selectbox("Region", ["(all)"] + REGIONS + ["(none)"], key="gqr_region_filter")
 
     indexed = list(enumerate(rows))
     if status_filter != "all":
@@ -185,6 +187,12 @@ def main() -> None:
     st.caption(f"{len(indexed)} item(s) match this filter.")
     for idx, row in indexed:
         render_item(row, rows, idx)
+
+
+def main() -> None:
+    st.set_page_config(page_title="Golden QA Review", layout="wide")
+    st.title("Golden QA Review")
+    render_review_page()
 
 
 if __name__ == "__main__":
