@@ -115,8 +115,17 @@ def render_item(row: dict, rows: list[dict], idx: int) -> None:
         if src.get("url"):
             with st.expander(f"Source: {src['url']}"):
                 st.write(src.get("quote", "(no quote recorded)"))
-        else:
+        elif row["task_type"] == "abstention":
             st.caption("No source citation (abstention item -- behavior, not a fact claim).")
+        else:
+            st.warning(
+                "No source citation on this item -- it was drafted without a checkable "
+                "reference (see 'drafted_by' below). Verify the factual content yourself "
+                "before approving; don't treat the absence of a citation request as "
+                "confirmation it's correct."
+            )
+        if row.get("drafted_by"):
+            st.caption(f"Drafted by: {row['drafted_by']}")
 
         notes_key = f"notes_{row['id']}"
         st.text_input("Reviewer notes (optional)", key=notes_key,
