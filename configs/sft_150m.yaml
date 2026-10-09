@@ -1,0 +1,45 @@
+# SFT config for the 150M release model (Config B, LOCKED architecture --
+# unchanged from pretraining; only the weights are fine-tuned, full-parameter,
+# no LoRA/PEFT, consistent with this project's existing decision for a dense
+# 150M model on native Windows).
+#
+# lr / epochs below are PLACEHOLDERS, not yet empirically validated. Pretraining's
+# own LR (8e-4 peak) went through a real sweep before being locked in
+# train_150m.yaml -- SFT needs the same treatment before a real multi-epoch run:
+# a full fine-tune from a trained checkpoint typically wants a peak LR roughly
+# 10-50x lower than pretraining's, and the right epoch count depends on how fast
+# val_loss starts rising again (overfitting) on this specific, fairly small and
+# partially-templated dataset (3,392 examples currently, ~1,032 of them in the
+# formulaic "scaling" shape) -- see the small ablation proposed alongside this
+# config before trusting these numbers for the real run.
+
+model_config: configs/model_150m.yaml
+pack_dir: data/corpus/sft_v1
+checkpoint_dir: artifacts/checkpoints/sft-150m-001
+init_from: artifacts/checkpoints/release-150m-001/best.pt
+run_name: sft-150m-001
+seed: 1337
+
+lr: 2.0e-5            # PLACEHOLDER -- needs the LR sweep (see above)
+betas: [0.9, 0.95]
+weight_decay: 0.1
+grad_clip: 1.0
+warmup_ratio: 0.03
+min_lr_ratio: 0.1
+
+micro_batch_size: 8   # measured: micro_batch=16 at seq_len=768 reserved 20.6GB on
+                      # a 16.4GB card (silently spilled into slow Windows shared
+                      # memory rather than OOM-crashing -- caught by checking
+                      # actual nvidia-smi/torch memory stats, not just "did it
+                      # run"). micro_batch=8 reserved 11.7GB, 4.7GB headroom --
+                      # a bigger safety margin than pretraining's own accepted
+                      # 1.66GB, deliberately, since this runs alongside other
+                      # project processes that also touch the GPU/system.
+grad_accum_steps: 4    # global batch 32
+epochs: 3.0            # PLACEHOLDER -- needs the ablation's val_loss curve
+
+checkpoint_every_steps: 50
+eval_every_steps: 25
+log_every_steps: 10
+keep_last_n: 3
+metrics_jsonl: true
