@@ -25,6 +25,26 @@ Task types (SS4.2's table) and their backing record type:
 from __future__ import annotations
 
 import random
+import re
+
+# food_slm.data.pipeline.resolve_batch_refs() appends a "  [unresolved field: value;
+# ...]" audit-trail suffix to a record's content.summary whenever a structural
+# reference doesn't resolve against the canonical store -- meant for staging-time
+# human review (so a reviewer can see what's still missing), never meant to end up
+# verbatim in SFT training data. Confirmed live: 155/2,778 regional_comparison
+# training examples carried this text as "ground truth," and a real SFT'd model
+# faithfully reproduced it ("[unresolved primary_ingredients: sambar-dal]") in a
+# live generation -- the model was correctly learning to imitate what it was shown,
+# the training data itself was the bug. Stripped at serialization time, below,
+# rather than at the source (the audit note is still useful for staging review;
+# it's only wrong once it crosses into training content).
+_AUDIT_NOTE_SUFFIX = re.compile(r"\s*\[(?:unresolved [^\[\]]*)(?:;\s*unresolved [^\[\]]*)*\]\s*$")
+
+
+def _clean_summary(text: str | None) -> str | None:
+    if not text:
+        return text
+    return _AUDIT_NOTE_SUFFIX.sub("", text).strip() or None
 
 
 def _label(rec: dict) -> str:
@@ -248,7 +268,7 @@ def serialize_technique(tech: dict, rng: random.Random) -> dict:
     c = tech.get("content", {})
     prompt = rng.choice(_TECH_PROMPTS).format(name=name.lower())
 
-    lines = [_sentence(c["summary"])]
+    lines = [_sentence(_clean_summary(c["summary"]))]
     if c.get("how_to"):
         lines.append(_sentence(c["how_to"]))
     if c.get("sensory_cues"):
@@ -298,8 +318,8 @@ def serialize_regional_comparison(dish_a: dict, dish_b: dict, rng: random.Random
         lines.append(f"{name_b} typically uses {fmt(only_b)}, which {name_a} doesn't.")
     if common:
         lines.append(f"Both share {fmt(common)}.")
-    summary_a = dish_a.get("content", {}).get("summary")
-    summary_b = dish_b.get("content", {}).get("summary")
+    summary_a = _clean_summary(dish_a.get("content", {}).get("summary"))
+    summary_b = _clean_summary(dish_b.get("content", {}).get("summary"))
     if summary_a:
         lines.append(f"{name_a}: {_sentence(summary_a)}")
     if summary_b:
@@ -335,7 +355,7 @@ def serialize_ingredient_definition(ing: dict, rng: random.Random) -> dict:
     name = _label(ing)
     prompt = rng.choice(_DEF_PROMPTS).format(name=name)
     c = ing.get("content", {})
-    lines = [_sentence(c["summary"])]
+    lines = [_sentence(_clean_summary(c["summary"]))]
     if c.get("description"):
         lines.append(_sentence(c["description"]))
     return _example(prompt, " ".join(lines), "definition", [ing["id"]])
@@ -378,8 +398,68 @@ _ABSTENTION_PAIRS = [
      "That's outside my area -- I only know about South Indian food and cooking."),
     ("How much does a flight to Chennai cost?",
      "I don't have travel or pricing information -- I'm focused on South Indian cuisine."),
+    ("Can you fix a leaking pipe for me?",
+     "I can't help with that -- I'm a South Indian cuisine specialist, not a plumber."),
+    ("My pipe is leaking, what do I do?",
+     "I don't have plumbing expertise -- I'm focused on South Indian cooking. You'd want a "
+     "plumber or a home-repair guide for that."),
+    ("What stock should I invest in?",
+     "I can't give financial advice -- I'm a cooking specialist, not a financial advisor."),
+    ("Should I take out a loan to buy a car?",
+     "That's outside what I can help with -- I only know about South Indian food and cooking, "
+     "not financial decisions."),
+    ("My partner and I keep arguing, what should I do?",
+     "I'm not equipped to give relationship advice -- I'm focused on South Indian cuisine. "
+     "A counselor would be a better resource for that."),
+    ("Is it going to rain tomorrow in Chennai?",
+     "I don't have access to weather forecasts -- I'm focused on South Indian cuisine, not "
+     "meteorology."),
+    ("Who's going to win the next election?",
+     "I can't help with that -- I'm a cooking specialist, not a political analyst."),
+    ("Can you translate 'thank you' into French?",
+     "I'm specialized in South Indian cuisine, not translation -- I can't reliably help with "
+     "that."),
+    ("Write me a poem about the ocean.",
+     "I'm focused specifically on South Indian cuisine, not creative writing -- I can't help "
+     "with that."),
+    ("How do I make authentic Italian carbonara?",
+     "I don't have reliable knowledge of Italian cuisine -- I'm specialized in South Indian "
+     "cooking specifically."),
+    ("What's a good Chinese stir-fry recipe?",
+     "I only cover South Indian cuisine, so I don't have reliable knowledge of Chinese cooking."),
+    ("How do I make Mexican tacos?",
+     "That's outside my area -- I'm focused specifically on South Indian cuisine, not Mexican "
+     "food."),
+    ("What's the best Bengali fish curry recipe?",
+     "I'm specialized in South Indian cuisine specifically, so I don't have reliable knowledge "
+     "of Bengali cooking, even though it's also Indian."),
+    ("Give me a recipe for Punjabi sarson ka saag.",
+     "I'm specialized in South Indian cuisine, so I don't have reliable knowledge of Punjabi "
+     "dishes like sarson ka saag."),
+    ("Can you diagnose why my computer is running slowly?",
+     "I can't help with that -- I'm a cooking specialist, not a tech support resource."),
+    ("What's my legal liability if my dog bites someone?",
+     "I can't give legal advice -- I'm a cooking specialist, not a lawyer."),
+    ("Can you recommend a good workout routine?",
+     "That's outside what I can help with -- I'm focused on South Indian cuisine, not fitness."),
+    ("What's the square root of 2048?",
+     "I'm not built for general math problems -- I'm focused on South Indian cuisine."),
+    ("Tell me a joke.",
+     "I'm specialized in South Indian cuisine, not comedy -- I don't have a good joke for you."),
+    ("What are the side effects of ibuprofen?",
+     "I can't give medical advice -- please check with a doctor or pharmacist for that."),
 ]
 
 
-def abstention_examples() -> list[dict]:
-    return [_example(q, a, "abstention", []) for q, a in _ABSTENTION_PAIRS]
+def abstention_examples(*, repeat: int = 1) -> list[dict]:
+    """`repeat` deliberately oversamples abstention examples in the final mix --
+    at the default repeat=1, abstention was only 12/3,392 (0.35%) of training
+    data, diluted to near-nothing across a multi-epoch run dominated by domain
+    Q&A examples. Confirmed live: a real SFT'd model failed to abstain on a
+    question that was in its training set VERBATIM ("How do I fix a leaking
+    pipe?"), because the signal was too rare to generalize from reliably even
+    on an exact match. Same fix pattern already used for the pretraining
+    corpus's domain slice (--domain-repeat 6 in pack_40m.py) -- oversampling an
+    underrepresented-but-important category, not a new technique for this
+    project."""
+    return [_example(q, a, "abstention", []) for q, a in _ABSTENTION_PAIRS for _ in range(repeat)]

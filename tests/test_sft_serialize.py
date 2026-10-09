@@ -5,6 +5,7 @@ from __future__ import annotations
 import random
 
 from food_slm.data.sft_serialize import (
+    _clean_summary,
     abstention_examples,
     serialize_ingredient_definition,
     serialize_recipe_request,
@@ -140,6 +141,49 @@ _DISH_B = {
 }
 
 
+def test_clean_summary_strips_unresolved_ref_audit_note():
+    """pipeline.resolve_batch_refs() appends this exact shape to content.summary
+    when a structural ref doesn't resolve -- confirmed live in 155/2,778 SFT
+    training examples, and a real SFT'd model reproduced the leaked text verbatim
+    ("[unresolved primary_ingredients: sambar-dal]") in a live generation."""
+    polluted = ("A South Indian snack made from a mixture of bajra flour, whole "
+               "wheat flour, and other ingredients, fried until crispy and golden "
+               "brown.  [unresolved primary_ingredients: green-chillies; unresolved "
+               "primary_ingredients: garlic; unresolved primary_ingredients: kalonji]")
+    cleaned = _clean_summary(polluted)
+    assert cleaned == ("A South Indian snack made from a mixture of bajra flour, whole "
+                      "wheat flour, and other ingredients, fried until crispy and golden "
+                      "brown.")
+    assert "unresolved" not in cleaned
+    assert "[" not in cleaned
+
+
+def test_clean_summary_leaves_normal_text_untouched():
+    assert _clean_summary("A tangy chutney made from tamarind.") == \
+        "A tangy chutney made from tamarind."
+
+
+def test_clean_summary_handles_none_and_empty():
+    assert _clean_summary(None) is None
+    assert _clean_summary("") == ""
+
+
+def test_clean_summary_does_not_strip_an_unrelated_bracket():
+    # only the specific "[unresolved ...]" audit-note shape is stripped -- a
+    # legitimate bracketed aside in real content must survive untouched.
+    text = "Payasam (also called kheer in the north) is a sweet pudding."
+    assert _clean_summary(text) == text
+
+
+def test_regional_comparison_strips_leaked_audit_notes_from_both_dishes():
+    dish_a = {**_DISH_A, "content": {"summary": _DISH_A["content"]["summary"] +
+                                    "  [unresolved primary_ingredients: fenugreek]"}}
+    ex = serialize_regional_comparison(dish_a, _DISH_B, _rng())
+    answer = ex["messages"][1]["content"]
+    assert "unresolved" not in answer
+    assert "[" not in answer
+
+
 def test_regional_comparison():
     ex = serialize_regional_comparison(_DISH_A, _DISH_B, _rng())
     _assert_example_shape(ex, "regional_comparison", 2)
@@ -207,3 +251,14 @@ def test_abstention_examples_have_no_backing_records():
     for ex in examples:
         _assert_example_shape(ex, "abstention", 0)
         assert ex["provenance"]["backing_record_ids"] == []
+
+
+def test_abstention_examples_repeat_oversamples():
+    base = abstention_examples()
+    repeated = abstention_examples(repeat=8)
+    assert len(repeated) == len(base) * 8
+    # every underlying pair appears exactly `repeat` times, not just more rows
+    # of a few pairs
+    from collections import Counter
+    counts = Counter(ex["messages"][0]["content"] for ex in repeated)
+    assert set(counts.values()) == {8}

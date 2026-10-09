@@ -41,6 +41,12 @@ OUT = REPO / "data" / "instruction" / "sft_v1.jsonl"
 
 MAX_REGIONAL_PAIRS_PER_CATEGORY = 20
 SCALING_TARGETS = [2, 6]  # e.g. a 4-serving recipe gets a "for 2" and "for 6" variant
+# Deliberate oversampling, same pattern as the pretraining corpus's domain upsample
+# (pack_40m.py's --domain-repeat 6): at repeat=1 abstention was 12/3,392 (0.35%) of
+# the mix, too rare a signal for a multi-epoch SFT run to generalize from -- a real
+# SFT'd model failed to abstain on a question that was in its training data
+# VERBATIM. ~32 distinct pairs x 8 = ~256, roughly 7% of the final mix.
+ABSTENTION_REPEAT = 8
 
 
 def _rng_for(record_id: str) -> random.Random:
@@ -92,7 +98,7 @@ def main() -> int:
         for a, b in pairs[:MAX_REGIONAL_PAIRS_PER_CATEGORY]:
             examples.append(serialize_regional_comparison(a, b, _rng_for(f"{a['id']}-{b['id']}")))
 
-    examples.extend(abstention_examples())
+    examples.extend(abstention_examples(repeat=ABSTENTION_REPEAT))
 
     by_task: dict[str, int] = defaultdict(int)
     for ex in examples:

@@ -3,6 +3,16 @@
 # no LoRA/PEFT, consistent with this project's existing decision for a dense
 # 150M model on native Windows).
 #
+# checkpoint_dir/run_name bumped 001 -> 002 (2026-10-10): the 001 run trained on
+# data with two real bugs -- leaked "[unresolved ...]" audit-note text in 155/2,778
+# regional_comparison examples (pipeline.resolve_batch_refs's staging-only note
+# bleeding into "ground truth", confirmed reproduced verbatim by the trained
+# model), and abstention at just 12/3,392 examples (0.35%), too rare a signal to
+# generalize from even on a verbatim-seen question. Both fixed in sft_serialize.py/
+# build_sft_dataset.py (_clean_summary(), ABSTENTION_REPEAT=8 -> 256 examples,
+# ~7% of the mix) -- 001 is kept on disk as the pre-fix historical record, not
+# deleted or overwritten.
+#
 # lr / epochs below are now EMPIRICALLY VALIDATED via scripts/sft_lr_ablation.py
 # (2026-10-09, artifacts/reports/sft_lr_ablation.json) -- same discipline
 # pretraining's own 8e-4 peak LR went through before being locked in, not
@@ -28,9 +38,9 @@
 
 model_config: configs/model_150m.yaml
 pack_dir: data/corpus/sft_v1
-checkpoint_dir: artifacts/checkpoints/sft-150m-001
+checkpoint_dir: artifacts/checkpoints/sft-150m-002
 init_from: artifacts/checkpoints/release-150m-001/best.pt
-run_name: sft-150m-001
+run_name: sft-150m-002
 seed: 1337
 
 lr: 3.0e-5            # validated via ablation (see above) -- best val_loss of the 4 candidates
