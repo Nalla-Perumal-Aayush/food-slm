@@ -13,6 +13,14 @@
 # ~7% of the mix) -- 001 is kept on disk as the pre-fix historical record, not
 # deleted or overwritten.
 #
+# checkpoint_dir/run_name bumped 002 -> 003 (2026-10-10): 002's over-abstention
+# regression (correctly refusing in-domain ingredient_substitution/troubleshooting
+# questions, confirmed at greedy decoding) traced to those two categories being
+# far too thin (3 and 27 canonical records) relative to abstention's now-correct
+# 256. scripts/seed_substitutes_and_problems.py added 30 substitutes_for rels and
+# 31 problem records (promoted, store_ok: true) -> ingredient_substitution 3 -> 33
+# SFT examples, troubleshooting 27 -> 58. 002 kept on disk as the pre-fix record.
+#
 # lr / epochs below are now EMPIRICALLY VALIDATED via scripts/sft_lr_ablation.py
 # (2026-10-09, artifacts/reports/sft_lr_ablation.json) -- same discipline
 # pretraining's own 8e-4 peak LR went through before being locked in, not
@@ -38,9 +46,9 @@
 
 model_config: configs/model_150m.yaml
 pack_dir: data/corpus/sft_v1
-checkpoint_dir: artifacts/checkpoints/sft-150m-002
+checkpoint_dir: artifacts/checkpoints/sft-150m-003
 init_from: artifacts/checkpoints/release-150m-001/best.pt
-run_name: sft-150m-002
+run_name: sft-150m-003
 seed: 1337
 
 lr: 3.0e-5            # validated via ablation (see above) -- best val_loss of the 4 candidates
