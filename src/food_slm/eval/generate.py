@@ -22,7 +22,17 @@ def generate(
     top_k: int | None = 50,
     top_p: float | None = 0.95,
     eos_id: int | None = None,
+    repetition_penalty: float = 1.0,
 ) -> torch.Tensor:
+    """`repetition_penalty` > 1.0 discourages re-emitting any token already in
+    the sequence (prompt + generated so far) -- the standard HF-style penalty:
+    a positive logit is divided by the penalty, a negative one multiplied by it,
+    so already-seen tokens become less likely regardless of their original
+    sign. 1.0 (default) is a no-op. Applied before temperature/top_k/top_p, to
+    both the greedy and sampling paths -- this model has no KV cache, so
+    degenerate repetition loops (the same phrase emitted over and over) are a
+    real, observed failure mode worth having a direct lever for, independent
+    of sampling settings."""
     was_training = model.training
     model.eval()
     device = next(model.parameters()).device
@@ -33,6 +43,10 @@ def generate(
 
     for _ in range(max_new_tokens):
         logits = model(ids[:, -max_len:]).logits[:, -1, :].float()
+        if repetition_penalty != 1.0:
+            seen = torch.gather(logits, 1, ids)
+            seen = torch.where(seen < 0, seen * repetition_penalty, seen / repetition_penalty)
+            logits = logits.scatter(1, ids, seen)
         if temperature <= 0:
             nxt = logits.argmax(-1, keepdim=True)
         else:
