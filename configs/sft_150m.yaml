@@ -1,0 +1,78 @@
+# SFT config for the 150M release model (Config B, LOCKED architecture --
+# unchanged from pretraining; only the weights are fine-tuned, full-parameter,
+# no LoRA/PEFT, consistent with this project's existing decision for a dense
+# 150M model on native Windows).
+#
+# checkpoint_dir/run_name bumped 001 -> 002 (2026-10-10): the 001 run trained on
+# data with two real bugs -- leaked "[unresolved ...]" audit-note text in 155/2,778
+# regional_comparison examples (pipeline.resolve_batch_refs's staging-only note
+# bleeding into "ground truth", confirmed reproduced verbatim by the trained
+# model), and abstention at just 12/3,392 examples (0.35%), too rare a signal to
+# generalize from even on a verbatim-seen question. Both fixed in sft_serialize.py/
+# build_sft_dataset.py (_clean_summary(), ABSTENTION_REPEAT=8 -> 256 examples,
+# ~7% of the mix) -- 001 is kept on disk as the pre-fix historical record, not
+# deleted or overwritten.
+#
+# checkpoint_dir/run_name bumped 002 -> 003 (2026-10-10): 002's over-abstention
+# regression (correctly refusing in-domain ingredient_substitution/troubleshooting
+# questions, confirmed at greedy decoding) traced to those two categories being
+# far too thin (3 and 27 canonical records) relative to abstention's now-correct
+# 256. scripts/seed_substitutes_and_problems.py added 30 substitutes_for rels and
+# 31 problem records (promoted, store_ok: true) -> ingredient_substitution 3 -> 33
+# SFT examples, troubleshooting 27 -> 58. 002 kept on disk as the pre-fix record.
+#
+# lr / epochs below are now EMPIRICALLY VALIDATED via scripts/sft_lr_ablation.py
+# (2026-10-09, artifacts/reports/sft_lr_ablation.json) -- same discipline
+# pretraining's own 8e-4 peak LR went through before being locked in, not
+# asserted from instinct. 4 log-spaced LR candidates, each a fresh 12-epoch run
+# from the same pretrained checkpoint, fine-grained eval (every 15 steps):
+#
+#   lr=1.0e-05: best_val=0.7331 @ epoch 10.99 (still improving at budget end --
+#               too conservative within this budget, never clearly converged)
+#   lr=3.0e-05: best_val=0.7167 @ epoch 5.06  <- winner
+#   lr=6.0e-05: best_val=0.7247 @ epoch 2.97  (converges faster, worse minimum)
+#   lr=1.2e-04: best_val=0.7328 @ epoch 1.74  (overfits hard & fast afterward --
+#               train_loss collapsed to ~0.04 by epoch 12 while val_loss climbed
+#               to 0.95, a textbook memorization curve)
+#
+# lr=3.0e-05's full curve is a clean, broad U: steady decrease to a genuine
+# plateau across epoch ~3.1-5.2 (0.7302-0.7167, not a single noisy point --
+# epoch 4.88=0.7210 and epoch 5.23=0.7217 flank the epoch-5.06 minimum closely),
+# then a steady, monotonic climb through epoch 12 -- clear overfitting onset
+# around epoch 6. epochs=5.0 below sits inside that plateau, not at its exact
+# single-step minimum (which would be overfit to this particular ablation run's
+# noise, not a real target to re-hit on a fresh training run with a different
+# batch order).
+
+model_config: configs/model_150m.yaml
+pack_dir: data/corpus/sft_v1
+checkpoint_dir: artifacts/checkpoints/sft-150m-003
+init_from: artifacts/checkpoints/release-150m-001/best.pt
+run_name: sft-150m-003
+seed: 1337
+
+lr: 3.0e-5            # validated via ablation (see above) -- best val_loss of the 4 candidates
+betas: [0.9, 0.95]
+weight_decay: 0.1
+grad_clip: 1.0
+warmup_ratio: 0.03
+min_lr_ratio: 0.1
+
+micro_batch_size: 8   # measured: micro_batch=16 at seq_len=768 reserved 20.6GB on
+                      # a 16.4GB card (silently spilled into slow Windows shared
+                      # memory rather than OOM-crashing -- caught by checking
+                      # actual nvidia-smi/torch memory stats, not just "did it
+                      # run"). micro_batch=8 reserved 11.7GB, 4.7GB headroom --
+                      # a bigger safety margin than pretraining's own accepted
+                      # 1.66GB, deliberately, since this runs alongside other
+                      # project processes that also touch the GPU/system.
+grad_accum_steps: 4    # global batch 32
+epochs: 5.0            # validated via ablation (see above) -- inside the broad
+                      # val_loss plateau for lr=3e-5, before the clear overfitting
+                      # climb that starts around epoch 6
+
+checkpoint_every_steps: 50
+eval_every_steps: 25
+log_every_steps: 10
+keep_last_n: 3
+metrics_jsonl: true

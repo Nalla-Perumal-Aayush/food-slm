@@ -32,6 +32,7 @@ artifacts/tokenizers/**
 *.bin
 *.safetensors
 *.gguf
+*.zip
 
 # --- misc ---
 .env

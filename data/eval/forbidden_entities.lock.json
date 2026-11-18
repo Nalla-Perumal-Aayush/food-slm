@@ -1,12 +1,12 @@
 {
-  "sha256": "6580eed59bf4fe14fcf7033b6dccc5d81bb350aa777f3f609cab8629b6303720",
+  "sha256": "af27d75756f9bb82933627da4fae94cda07483cf669f339aaed79780b88f64db",
   "n_entries": 18,
   "kinds": {
     "withheld_real": 11,
     "fictitious": 7
   },
   "frozen_on": "2026-09-01",
-  "last_amended": "2026-09-08T06:24:57+00:00",
+  "last_amended": "2026-09-21T04:29:52+00:00",
   "amendments": [
     {
       "at": "2026-09-01T23:43:51+00:00",
@@ -21,6 +21,20 @@
       "to_sha256": "6580eed59bf4fe14fcf7033b6dccc5d81bb350aa777f3f609cab8629b6303720",
       "n_entries": 18,
       "note": "fe:0009: drop bare 'Kadappa'/'\u0b95\u0b9f\u0baa\u0bcd\u0baa\u0bbe' surface form \u2014 collides with the Andhra place name Kadapa/Cuddapah, causing false-positive corpus-leak hits (historical geography + 'Kadappa Black' limestone). The dish stays held out via 'Kumbakonam Kadappa' / 'kadappa kurma'."
+    },
+    {
+      "at": "2026-09-21T04:03:47+00:00",
+      "from_sha256": "6580eed59bf4fe14fcf7033b6dccc5d81bb350aa777f3f609cab8629b6303720",
+      "to_sha256": "ff4efc431fa0f4381f1c40b37d31bf2b391759d0a73b9438773287f9ea3a3933",
+      "n_entries": 18,
+      "note": "2026-09-21: swapped fe:0001/0003/0009 (leaked into the grown domain corpus - well-documented real dishes inevitably appear in a broad South Indian recipe corpus) for verified-clean obscure replacements; dropped fe:0010's overly-generic 'Tapioca Root' surface form (leaked into 4 FineWeb-Edu shards). Found via scan_leakage.py run before the 150M training launch."
+    },
+    {
+      "at": "2026-09-21T04:29:52+00:00",
+      "from_sha256": "ff4efc431fa0f4381f1c40b37d31bf2b391759d0a73b9438773287f9ea3a3933",
+      "to_sha256": "af27d75756f9bb82933627da4fae94cda07483cf669f339aaed79780b88f64db",
+      "n_entries": 18,
+      "note": "2026-09-21 (follow-up): fully retired fe:0010 (Maravalli Kizhangu/tapioca) rather than continuing to patch surface-form spellings -- even after dropping 'Tapioca Root', the native-language form 'maravalli kilangu' itself leaked once into FineWeb-Edu (shard_00069). Replaced with Putnala (roasted gram), verified clean everywhere. Found by a second scan_leakage.py rerun after the first amendment."
     }
   ]
 }

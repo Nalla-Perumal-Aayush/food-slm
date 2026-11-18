@@ -36,6 +36,12 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+# See canon_extract_recipes.py's identical fix: stdout redirected to a log file on
+# Windows defaults to cp1252, and a title with an unencodable character crashes every
+# print() and kills the whole process, not just that one doc.
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from food_slm.data.dish_list import normalise_name  # noqa: E402

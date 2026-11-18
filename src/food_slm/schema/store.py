@@ -39,7 +39,9 @@ class ValidationError(Exception):
 _ID_REF_FIELDS: dict[str, list[str]] = {
     "dish": ["primary_ingredients", "typical_techniques", "regions", "expected_outcome_ids",
              "constraints_typically_met", "variant_of"],
-    "recipe": ["dish_id", "equipment_ids", "states", "outcome_ids", "constraints_met"],
+    # dish_id excluded on purpose -- see pipeline._REF_FIELDS's comment: it's a
+    # required schema field, not something dangling-ref cleanup should ever null out.
+    "recipe": ["equipment_ids", "states", "outcome_ids", "constraints_met"],
     "ingredient": ["common_substitutes"],
     "technique": ["typical_equipment_ids", "precedes", "follows"],
     "equipment": ["substitutes", "required_for_techniques"],
@@ -112,9 +114,21 @@ class CanonicalStore:
                     if self.records.get(ref) is None:
                         issues.append(f"{rid}: relationship {side} {ref!r} does not resolve")
 
-            # recipe: step equipment / technique must be declared on the recipe
+            # recipe: step equipment / ingredient must be declared on the recipe
+            # itself (self-consistency) -- NOT checked against the global store.
+            # A recipe's own `ingredients`/`equipment_ids` are its authoritative,
+            # self-contained parts list; whether any one of them ALSO happens to
+            # have its own separately-promoted ingredient:/equipment: knowledge
+            # record is a separate enrichment concern, not a recipe-validity gate.
+            # (This file originally checked input_ingredient_ids against the full
+            # store while equipment_id was already self-consistency-only -- an
+            # asymmetry that, in practice, meant almost no recipe's step-ingredient
+            # links could ever survive promotion, since ingredient canonical
+            # coverage is a small fraction of what recipes reference. Fixed to
+            # match equipment_id's existing, more sensible pattern.)
             if rec.type == "recipe":
                 declared_equip = set(rec.structure.equipment_ids)
+                declared_ing = {i.ingredient_id for i in rec.structure.ingredients}
                 for step in rec.structure.steps:
                     if step.equipment_id and step.equipment_id not in declared_equip:
                         issues.append(
@@ -122,8 +136,11 @@ class CanonicalStore:
                             "not in recipe.equipment_ids"
                         )
                     for iid in step.input_ingredient_ids:
-                        if self.records.get(iid) is None:
-                            issues.append(f"{rid}: step {step.step_id} ingredient {iid!r} dangling")
+                        if iid not in declared_ing:
+                            issues.append(
+                                f"{rid}: step {step.step_id} ingredient {iid!r} "
+                                "not in recipe.ingredients"
+                            )
 
         return issues
 

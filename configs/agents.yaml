@@ -43,6 +43,19 @@ roles:
     - {name: gemma9b,    kind: ollama, model: "gemma2:9b-instruct-q4_K_M", family: gemma,    local: true}
     - {name: deepseek-r1, kind: ollama, model: "deepseek-r1:32b",         family: deepseek, local: true}
 
+  # --- recipe generation for source-gap dishes only (canon_generate_recipes.py) ---
+  # 499/985 dishes have zero matched source documents -- for those (and only those;
+  # every other recipe still comes from a real document via canon_extract_recipes.py)
+  # a recipe is generated from the model's own knowledge instead of extracted, then
+  # run through the same local data_validation / data_validation_heavy panels as any
+  # other draft, and always staged as `synthetic: true` (never auto-promotable without
+  # human review -- see food_slm.data.validate's "generation" mode). Groq's free tier
+  # needs a signup but no billing account, consistent with this project's "optional
+  # free-tier APIs" note above; the judge panels stay 100% local either way.
+  recipe_generation_remote:
+    - {name: gpt-oss-120b, kind: groq, model: "openai/gpt-oss-120b", family: openai,
+       local: false, max_tokens: 3000}
+
 # --- non-LLM helpers (all local, all free) ---
 helpers:
   embeddings:  {name: bge-small, model: "BAAI/bge-small-en-v1.5", backend: fastembed}   # ONNX, dim 384

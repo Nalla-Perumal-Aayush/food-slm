@@ -93,15 +93,53 @@ class OllamaProvider(_Base):
         # Heavy local models (deepseek-r1:32b) that spill past 16 GB VRAM onto the CPU
         # can take several minutes per call on the 70 W-capped card — allow a long read.
         timeout_s = float(os.environ.get("OLLAMA_TIMEOUT_S", "600"))
+        options = {"temperature": temperature}
+        # OLLAMA_NUM_GPU=0 forces CPU-only inference — for running extraction alongside
+        # an active GPU training job without any VRAM/power contention (verified: 0
+        # measurable VRAM impact). Much slower (~10-13 tok/s vs GPU) but fully isolated.
+        num_gpu = os.environ.get("OLLAMA_NUM_GPU")
+        if num_gpu is not None:
+            options["num_gpu"] = int(num_gpu)
         r = httpx.post(f"{base}/api/chat", timeout=httpx.Timeout(timeout_s, connect=10.0), json={
             "model": self.spec.model, "stream": False,
-            "options": {"temperature": temperature},
+            "options": options,
             "format": "json" if json_out else None,
             "messages": [{"role": "system", "content": system},
                          {"role": "user", "content": prompt}],
         })
         r.raise_for_status()
         return r.json()["message"]["content"]
+
+
+class GroqProvider(_Base):
+    """Groq's free-tier hosted inference (OpenAI-compatible endpoint). Used only for
+    openai/gpt-oss-120b recipe generation on source-gap dishes -- see agents.yaml's
+    recipe_generation_remote role. Reasoning-model specific: gpt-oss spends part of
+    its token budget on an internal reasoning pass before the visible answer, so
+    reasoning_effort is forced to "low" (this task needs a formulaic recipe JSON,
+    not deep reasoning) and include_reasoning=false keeps the reasoning trace out of
+    the parsed response -- confirmed empirically: ~30-100 reasoning tokens on "low"
+    vs. exhausting the whole max_tokens budget with reasoning-only output otherwise.
+    """
+
+    def complete(self, system, prompt, *, temperature=0.0, json_out=False) -> str:
+        import httpx
+
+        key = os.environ["GROQ_API_KEY"]
+        body: dict[str, Any] = {
+            "model": self.spec.model, "temperature": temperature,
+            "max_tokens": self.spec.max_tokens,
+            "reasoning_effort": "low", "include_reasoning": False,
+            "messages": [{"role": "system", "content": system},
+                         {"role": "user", "content": prompt}],
+        }
+        if json_out:
+            body["response_format"] = {"type": "json_object"}
+        r = httpx.post("https://api.groq.com/openai/v1/chat/completions",
+                       timeout=httpx.Timeout(120.0, connect=10.0),
+                       headers={"Authorization": f"Bearer {key}"}, json=body)
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"]
 
 
 @dataclass
@@ -117,7 +155,8 @@ class FakeProvider(_Base):
 
 _KINDS = {
     "anthropic": AnthropicProvider, "openai": OpenAIProvider,
-    "google": GoogleProvider, "ollama": OllamaProvider, "fake": FakeProvider,
+    "google": GoogleProvider, "ollama": OllamaProvider, "groq": GroqProvider,
+    "fake": FakeProvider,
 }
 
 
